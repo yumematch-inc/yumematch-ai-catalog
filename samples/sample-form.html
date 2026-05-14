@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>書類自動生成ツール | サンプル</title>
+<style>
+:root{--indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);--green:#059669;--green-lt:#ecfdf5;--amber:#92400e;--amber-lt:#fffbeb;--red:#e11d48;--red-lt:#fff1f2;--bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* HEADER */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 24px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back{font-size:11px;color:var(--mute);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1px solid var(--bdr);transition:all .15s;}
+.back:hover{color:var(--indigo);border-color:var(--indigo-bdr);}
+.htag{font-size:9px;font-weight:600;letter-spacing:.15em;color:var(--indigo);background:var(--indigo-bg);padding:3px 9px;border-radius:20px;border:1px solid var(--indigo-bdr);}
+.htl{font-size:14px;font-weight:700;color:var(--ink);}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 24px 100px;}
+.lead{margin-bottom:22px;}
+.lead-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;}
+.lead-ttl{font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--ink);margin-bottom:5px;}
+.lead-sub{font-size:13px;color:var(--sub);line-height:1.7;}
+.cols{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start;}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+.card-hd{padding:14px 18px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.card-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#dbeafe,#c7d2fe);flex-shrink:0;}
+.card-ht{font-size:12px;font-weight:700;color:var(--ink);}
+.card-hsub{font-size:10px;color:var(--mute);margin-left:auto;}
+
+/* FORM */
+.form-body{padding:18px;}
+.flabel{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.05em;margin-bottom:5px;margin-top:14px;display:flex;align-items:center;gap:5px;}
+.flabel:first-child{margin-top:0;}
+.freq{font-size:8px;background:var(--red-lt);color:var(--red);padding:1px 5px;border-radius:3px;font-weight:600;}
+.finput{width:100%;padding:8px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;color:var(--ink);background:var(--bg);transition:border .15s;}
+.finput:focus{outline:none;border-color:var(--indigo);background:var(--white);}
+select.finput{cursor:pointer;}
+textarea.finput{resize:vertical;min-height:80px;line-height:1.6;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.gen-btn{margin-top:18px;width:100%;padding:11px;background:linear-gradient(135deg,#6366f1,var(--indigo));color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(79,70,229,.3);display:flex;align-items:center;justify-content:center;gap:7px;}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(79,70,229,.4);}
+.gen-btn.loading{opacity:.7;pointer-events:none;}
+
+/* PREVIEW */
+.preview-wrap{padding:16px;}
+.doc-sheet{background:var(--white);border:1px solid var(--bdr);border-radius:8px;padding:32px 36px;min-height:480px;box-shadow:0 4px 20px rgba(15,23,42,.08);position:relative;opacity:0;transform:translateY(8px);transition:all .4s ease;}
+.doc-sheet.visible{opacity:1;transform:none;}
+.doc-head{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px;}
+.doc-type{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--sub);margin-bottom:4px;}
+.doc-title{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
+.doc-num{font-size:10px;color:var(--mute);margin-top:3px;}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+.doc-mt{font-size:9px;color:var(--sub);margin-bottom:3px;font-weight:600;letter-spacing:.05em;}
+.doc-mv{font-size:12px;color:var(--ink);font-weight:600;}
+.doc-table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.doc-table th{font-size:9px;font-weight:700;color:var(--sub);padding:7px 10px;border:1px solid var(--bdr);background:var(--bg);text-align:left;}
+.doc-table td{font-size:11px;color:var(--ink);padding:7px 10px;border:1px solid var(--bdr);}
+.doc-table td.num{text-align:right;font-weight:600;}
+.doc-total{background:var(--indigo-bg);border:2px solid var(--indigo-bdr);}
+.doc-total td{font-weight:800;color:var(--indigo);}
+.doc-note{font-size:10px;color:var(--sub);line-height:1.7;padding:10px 12px;background:var(--bg);border-radius:6px;border-left:3px solid var(--indigo);}
+.doc-actions{display:flex;gap:10px;margin-top:16px;}
+.dact{padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.dact-pdf{background:var(--red);color:#fff;border:none;box-shadow:0 2px 8px rgba(225,29,72,.25);}
+.dact-pdf:hover{background:#be123c;}
+.dact-copy{background:var(--white);color:var(--sub);border:1px solid var(--bdr);}
+.dact-copy:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:var(--mute);gap:12px;}
+.placeholder-ico{font-size:40px;opacity:.4;}
+.placeholder-txt{font-size:12px;text-align:center;line-height:1.7;}
+
+/* CTA BAR */
+.cta-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;box-shadow:0 -4px 16px rgba(15,23,42,.06);}
+.cta-back{font-size:12px;color:var(--sub);text-decoration:none;padding:9px 18px;border:1px solid var(--bdr);border-radius:8px;transition:all .15s;}
+.cta-back:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.cta-main{font-size:13px;font-weight:700;color:#fff;background:var(--indigo);padding:10px 22px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .15s;}
+.cta-main:hover{background:var(--indigo-d);transform:translateY(-1px);}
+
+@media(max-width:800px){
+  .cols{grid-template-columns:1fr;}
+  .hdr{padding:0 16px;}
+  .wrap{padding:20px 16px 90px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="../ai-tools-catalog.html" class="back">← カタログに戻る</a>
+  <span class="htag">FORM→DOC</span>
+  <span class="htl" id="js-htl">書類自動生成ツール</span>
+</header>
+
+<div class="wrap">
+  <div class="lead">
+    <div class="lead-tag">Sample Demo</div>
+    <h1 class="lead-ttl" id="js-ttl">書類自動生成ツール</h1>
+    <p class="lead-sub">フォームに入力するだけで見積書・請求書・提案書が自動生成。ダウンロードまで数秒で完了します。</p>
+  </div>
+
+  <div class="cols">
+    <!-- LEFT: フォーム -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico">📝</div>
+        <div><div class="card-ht">入力フォーム</div></div>
+        <span class="card-hsub">必要事項を入力</span>
+      </div>
+      <div class="form-body">
+        <div class="flabel"><span class="freq">必須</span>書類種別</div>
+        <select class="finput" id="f-type">
+          <option value="見積書">見積書</option>
+          <option value="請求書">請求書</option>
+          <option value="提案書">提案書</option>
+          <option value="補助金申請書">補助金申請書</option>
+        </select>
+
+        <div class="flabel"><span class="freq">必須</span>宛先（会社名）</div>
+        <input class="finput" id="f-to" type="text" value="株式会社サンプル商事">
+
+        <div class="flabel">担当者名</div>
+        <input class="finput" id="f-contact" type="text" value="鈴木 一郎 様">
+
+        <div class="frow">
+          <div>
+            <div class="flabel"><span class="freq">必須</span>発行日</div>
+            <input class="finput" id="f-date" type="text" value="2026年5月14日">
+          </div>
+          <div>
+            <div class="flabel">有効期限</div>
+            <input class="finput" id="f-expire" type="text" value="2026年6月14日">
+          </div>
+        </div>
+
+        <div class="flabel"><span class="freq">必須</span>件名・内容</div>
+        <textarea class="finput" id="f-subject">AI業務改善ツール 導入支援サービス一式</textarea>
+
+        <div class="flabel">備考・条件</div>
+        <textarea class="finput" id="f-note" style="min-height:60px">お支払い期限：発行日より30日以内
+振込手数料はご負担ください</textarea>
+
+        <button class="gen-btn" id="gen-btn" onclick="generate()">✨ 書類を生成する</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: プレビュー -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico">📄</div>
+        <div><div class="card-ht">書類プレビュー</div></div>
+        <span class="card-hsub" id="preview-status">生成待ち</span>
+      </div>
+      <div class="preview-wrap">
+        <div class="doc-sheet" id="doc-sheet">
+          <div class="placeholder">
+            <div class="placeholder-ico">📋</div>
+            <div class="placeholder-txt">左のフォームに入力して<br>「書類を生成する」を押してください</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bar">
+  <a href="../ai-tools-catalog.html" class="cta-back">← カタログに戻る</a>
+  <a href="mailto:info@yumematch.co.jp?subject=書類自動生成ツールについて問い合わせ" id="js-cta" class="cta-main">このツールを依頼する →</a>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const toolName = params.get('name') || '書類自動生成ツール';
+document.title = toolName + ' | サンプル';
+document.getElementById('js-ttl').textContent = toolName;
+document.getElementById('js-htl').textContent = toolName;
+const cta = document.getElementById('js-cta');
+cta.href = `mailto:info@yumematch.co.jp?subject=${encodeURIComponent(toolName)}について問い合わせ`;
+
+function generate(){
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ 生成中...';
+  setTimeout(()=>{
+    const type = document.getElementById('f-type').value;
+    const to = document.getElementById('f-to').value;
+    const contact = document.getElementById('f-contact').value;
+    const date = document.getElementById('f-date').value;
+    const expire = document.getElementById('f-expire').value;
+    const subject = document.getElementById('f-subject').value;
+    const note = document.getElementById('f-note').value;
+    const docNo = 'YM-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
+    const sheet = document.getElementById('doc-sheet');
+    sheet.innerHTML = `
+      <div class="doc-head">
+        <div class="doc-type">${type.toUpperCase()}</div>
+        <div class="doc-title">${type}</div>
+        <div class="doc-num">No. ${docNo} | 発行日: ${date}</div>
+      </div>
+      <div class="doc-meta">
+        <div>
+          <div class="doc-mt">宛先</div>
+          <div class="doc-mv">${to}</div>
+          <div style="font-size:11px;color:var(--sub);margin-top:2px;">${contact}</div>
+        </div>
+        <div>
+          <div class="doc-mt">発行元</div>
+          <div class="doc-mv">YUMEMATCH株式会社</div>
+          <div style="font-size:11px;color:var(--sub);margin-top:2px;">東京都渋谷区〇〇1-2-3</div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:12px;">件名：${subject}</div>
+      <table class="doc-table">
+        <thead><tr><th>品目</th><th>数量</th><th>単価</th><th>金額</th></tr></thead>
+        <tbody>
+          <tr><td>AI業務改善ツール 初期構築費</td><td class="num">1式</td><td class="num">¥150,000</td><td class="num">¥150,000</td></tr>
+          <tr><td>データ連携・API設定</td><td class="num">1式</td><td class="num">¥50,000</td><td class="num">¥50,000</td></tr>
+          <tr><td>操作マニュアル作成・研修</td><td class="num">2h</td><td class="num">¥25,000</td><td class="num">¥50,000</td></tr>
+          <tr><td>月次保守・サポート（3ヶ月分）</td><td class="num">3</td><td class="num">¥15,000</td><td class="num">¥45,000</td></tr>
+          <tr><td style="color:var(--mute)">小計</td><td></td><td></td><td class="num">¥295,000</td></tr>
+          <tr><td style="color:var(--mute)">消費税（10%）</td><td></td><td></td><td class="num">¥29,500</td></tr>
+          <tr class="doc-total"><td>合計金額</td><td></td><td></td><td class="num">¥324,500</td></tr>
+        </tbody>
+      </table>
+      <div class="doc-note">${note.replace(/\n/g,'<br>')}</div>
+      ${expire ? `<div style="font-size:10px;color:var(--mute);margin-top:8px;">有効期限：${expire}</div>` : ''}
+      <div class="doc-actions">
+        <button class="dact dact-pdf">📥 PDFダウンロード</button>
+        <button class="dact dact-copy" onclick="this.textContent='✓ コピー済み'">📋 コピー</button>
+      </div>
+    `;
+    sheet.classList.add('visible');
+    document.getElementById('preview-status').textContent = '生成完了';
+    btn.classList.remove('loading');
+    btn.textContent = '✨ 書類を生成する';
+  }, 900);
+}
+
+// 初期状態でプレビューを表示
+setTimeout(generate, 400);
+</script>
+</body>
+</html>

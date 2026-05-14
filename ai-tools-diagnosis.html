@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業務効率化 ポテンシャル診断 | YUMEMATCH</title>
+<style>
+  :root {
+    --navy: #0d1b35;
+    --red: #e63946;
+    --gold: #f4a261;
+    --green: #2a9d8f;
+    --bg: #f2f4f7;
+    --card: #ffffff;
+    --border: #e4e7ec;
+    --ink: #1a2033;
+    --ink-sub: #5a6475;
+    --ink-mute: #9aa3b0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    background: var(--navy);
+    color: white;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .page-header .logo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .page-header h1 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .page-header h1 em { font-style: normal; color: var(--gold); }
+  .page-header p { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.1);
+    height: 3px;
+    margin-top: 20px;
+    border-radius: 3px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width .4s ease;
+  }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── Screens ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── Step card ── */
+  .step-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    margin-bottom: 16px;
+  }
+  .step-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .step-q { font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1.5; margin-bottom: 6px; }
+  .step-sub { font-size: 13px; color: var(--ink-mute); margin-bottom: 24px; }
+
+  .options { display: grid; gap: 10px; }
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s, background .15s, transform .1s;
+    font-family: inherit;
+  }
+  .option-btn:hover { border-color: var(--navy); background: #f8f9fb; transform: translateX(2px); }
+  .option-btn.selected { border-color: var(--red); background: #fff0f0; }
+  .opt-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .opt-text { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.5; }
+  .opt-sub { font-size: 12px; color: var(--ink-mute); font-weight: 400; margin-top: 2px; }
+
+  /* Multi select note */
+  .multi-note {
+    font-size: 12px;
+    color: var(--ink-mute);
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #f8f9fb;
+    border-radius: 8px;
+  }
+
+  .nav-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+  .btn-back {
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: 30px;
+    background: white;
+    color: var(--ink-sub);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color .15s;
+  }
+  .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-next {
+    padding: 12px 28px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 30px;
+    background: var(--red);
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(230,57,70,0.4); }
+  .btn-next:disabled { background: var(--border); color: var(--ink-mute); cursor: not-allowed; box-shadow: none; transform: none; }
+
+  /* ── Result ── */
+  .result-header {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .result-score-wrap { margin-bottom: 20px; }
+  .result-score {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--red), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .result-score-label { font-size: 13px; color: var(--ink-mute); margin-top: 4px; }
+  .result-level { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .result-desc { font-size: 14px; color: var(--ink-sub); line-height: 1.8; max-width: 460px; margin: 0 auto; }
+
+  .result-areas {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .result-areas-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 16px; letter-spacing: 1px; }
+  .area-row { margin-bottom: 14px; }
+  .area-label-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .area-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .area-score-text { font-size: 12px; font-weight: 700; color: var(--ink-mute); }
+  .area-bar-bg { background: var(--bg); border-radius: 6px; height: 8px; overflow: hidden; }
+  .area-bar { height: 100%; border-radius: 6px; transition: width 1s ease; }
+  .area-rec { font-size: 12px; color: var(--ink-mute); margin-top: 5px; }
+  .area-rec strong { color: var(--red); }
+
+  .result-tools {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .result-tools-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 16px; letter-spacing: 1px; }
+  .rec-tool-list { display: grid; gap: 10px; }
+  .rec-tool {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: #fff8f0;
+    border-radius: 10px;
+    border-left: 3px solid var(--gold);
+  }
+  .rec-tool-icon { font-size: 20px; flex-shrink: 0; }
+  .rec-tool-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+  .rec-tool-why { font-size: 12px; color: var(--ink-sub); margin-top: 2px; }
+
+  .cta-block {
+    background: var(--navy);
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(230,57,70,0.2) 0%, transparent 60%);
+  }
+  .cta-block h2 { font-size: 20px; font-weight: 800; margin-bottom: 8px; position: relative; }
+  .cta-block h2 em { font-style: normal; color: var(--gold); }
+  .cta-block p { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px; position: relative; }
+  .cta-btn {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 30px;
+    text-decoration: none;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(230,57,70,0.4);
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: transform .15s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); }
+  .cta-sub { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 14px; position: relative; }
+
+  .back-to-catalog {
+    display: block;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 24px;
+  }
+  .back-to-catalog:hover { color: var(--navy); }
+
+  @media (max-width: 600px) {
+    .step-card { padding: 24px 18px; }
+    .step-q { font-size: 16px; }
+    .result-score { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="logo">YUMEMATCH</div>
+  <h1>業務効率化 <em>ポテンシャル診断</em></h1>
+  <p>8問・3分で、あなたの会社で一番改善インパクトが大きい領域がわかります</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Q1 -->
+  <div class="screen active" id="q1">
+    <div class="step-card">
+      <div class="step-num">Q1 / 8</div>
+      <div class="step-q">どんな業種・事業ですか？</div>
+      <div class="step-sub">最も近いものを選んでください</div>
+      <div class="options">
+        <button class="option-btn" data-val="service" onclick="selectOption(this,'q1')">
+          <span class="opt-icon">🏢</span>
+          <div><div class="opt-text">士業・コンサル・コーチング</div><div class="opt-sub">税理士、社労士、コンサルタントなど</div></div>
+        </button>
+        <button class="option-btn" data-val="welfare" onclick="selectOption(this,'q1')">
+          <span class="opt-icon">🌸</span>
+          <div><div class="opt-text">福祉・医療・介護</div><div class="opt-sub">障害福祉、調剤薬局、クリニックなど</div></div>
+        </button>
+        <button class="option-btn" data-val="retail" onclick="selectOption(this,'q1')">
+          <span class="opt-icon">🛍️</span>
+          <div><div class="opt-text">小売・飲食・サービス業</div><div class="opt-sub">店舗運営、EC、飲食店など</div></div>
+        </button>
+        <button class="option-btn" data-val="freelance" onclick="selectOption(this,'q1')">
+          <span class="opt-icon">💼</span>
+          <div><div class="opt-text">フリーランス・個人事業主</div><div class="opt-sub">デザイナー、ライター、営業代行など</div></div>
+        </button>
+        <button class="option-btn" data-val="other" onclick="selectOption(this,'q1')">
+          <span class="opt-icon">🔧</span>
+          <div><div class="opt-text">その他・製造・建設など</div><div class="opt-sub">上記以外の事業</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-next" id="next-q1" disabled onclick="goNext('q1','q2')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="q2">
+    <div class="step-card">
+      <div class="step-num">Q2 / 8</div>
+      <div class="step-q">従業員・スタッフは何人くらいですか？</div>
+      <div class="step-sub">パート・アルバイト含む</div>
+      <div class="options">
+        <button class="option-btn" data-val="solo" onclick="selectOption(this,'q2')">
+          <span class="opt-icon">👤</span>
+          <div><div class="opt-text">1人（自分だけ）</div></div>
+        </button>
+        <button class="option-btn" data-val="small" onclick="selectOption(this,'q2')">
+          <span class="opt-icon">👥</span>
+          <div><div class="opt-text">2〜9人</div></div>
+        </button>
+        <button class="option-btn" data-val="mid" onclick="selectOption(this,'q2')">
+          <span class="opt-icon">🏬</span>
+          <div><div class="opt-text">10〜50人</div></div>
+        </button>
+        <button class="option-btn" data-val="large" onclick="selectOption(this,'q2')">
+          <span class="opt-icon">🏭</span>
+          <div><div class="opt-text">50人以上</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q2','q1')">← 戻る</button>
+      <button class="btn-next" id="next-q2" disabled onclick="goNext('q2','q3')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="q3">
+    <div class="step-card">
+      <div class="step-num">Q3 / 8</div>
+      <div class="step-q">会議・打ち合わせの後、議事録はどうしていますか？</div>
+      <div class="step-sub">現状に最も近いものを選んでください</div>
+      <div class="options">
+        <button class="option-btn" data-val="no_meeting" data-area="meeting" data-score="0" onclick="selectOption(this,'q3')">
+          <span class="opt-icon">❌</span>
+          <div><div class="opt-text">会議・打ち合わせはほとんどない</div></div>
+        </button>
+        <button class="option-btn" data-val="manual_write" data-area="meeting" data-score="3" onclick="selectOption(this,'q3')">
+          <span class="opt-icon">✏️</span>
+          <div><div class="opt-text">手書きやWordで毎回作っている</div><div class="opt-sub">30分〜1時間かかっている</div></div>
+        </button>
+        <button class="option-btn" data-val="partial_tool" data-area="meeting" data-score="2" onclick="selectOption(this,'q3')">
+          <span class="opt-icon">🛠️</span>
+          <div><div class="opt-text">ツールは使っているが整理が大変</div><div class="opt-sub">Notion等を使うが、まとめに時間がかかる</div></div>
+        </button>
+        <button class="option-btn" data-val="no_record" data-area="meeting" data-score="2" onclick="selectOption(this,'q3')">
+          <span class="opt-icon">📭</span>
+          <div><div class="opt-text">議事録をほぼ作っていない</div><div class="opt-sub">決定事項が共有されず困ることがある</div></div>
+        </button>
+        <button class="option-btn" data-val="automated" data-area="meeting" data-score="0" onclick="selectOption(this,'q3')">
+          <span class="opt-icon">✅</span>
+          <div><div class="opt-text">すでに自動化できている</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q3','q2')">← 戻る</button>
+      <button class="btn-next" id="next-q3" disabled onclick="goNext('q3','q4')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="screen" id="q4">
+    <div class="step-card">
+      <div class="step-num">Q4 / 8</div>
+      <div class="step-q">売上・経費・KPIの数字把握はどうやっていますか？</div>
+      <div class="step-sub">経営管理の現状を教えてください</div>
+      <div class="options">
+        <button class="option-btn" data-val="no_management" data-area="management" data-score="3" onclick="selectOption(this,'q4')">
+          <span class="opt-icon">📉</span>
+          <div><div class="opt-text">感覚でやっている / ほとんど管理していない</div><div class="opt-sub">数字を見るのが月1回以下</div></div>
+        </button>
+        <button class="option-btn" data-val="excel_manual" data-area="management" data-score="3" onclick="selectOption(this,'q4')">
+          <span class="opt-icon">📊</span>
+          <div><div class="opt-text">Excelに手入力して集計している</div><div class="opt-sub">集計に30分〜数時間かかる</div></div>
+        </button>
+        <button class="option-btn" data-val="tool_partial" data-area="management" data-score="2" onclick="selectOption(this,'q4')">
+          <span class="opt-icon">🔧</span>
+          <div><div class="opt-text">ツールはあるが使いこなせていない</div><div class="opt-sub">freee・マネフォ等を入れているが活用できず</div></div>
+        </button>
+        <button class="option-btn" data-val="dashboard_ok" data-area="management" data-score="0" onclick="selectOption(this,'q4')">
+          <span class="opt-icon">✅</span>
+          <div><div class="opt-text">ダッシュボードで見える化できている</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q4','q3')">← 戻る</button>
+      <button class="btn-next" id="next-q4" disabled onclick="goNext('q4','q5')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="screen" id="q5">
+    <div class="step-card">
+      <div class="step-num">Q5 / 8</div>
+      <div class="step-q">採用・スタッフ管理で一番困っていることは？</div>
+      <div class="step-sub">最も当てはまるものを選んでください</div>
+      <div class="options">
+        <button class="option-btn" data-val="no_staff" data-area="hr" data-score="0" onclick="selectOption(this,'q5')">
+          <span class="opt-icon">🙅</span>
+          <div><div class="opt-text">スタッフ管理の課題は今のところない</div></div>
+        </button>
+        <button class="option-btn" data-val="paperwork" data-area="hr" data-score="3" onclick="selectOption(this,'q5')">
+          <span class="opt-icon">📋</span>
+          <div><div class="opt-text">採用のたびに書類作成が大変</div><div class="opt-sub">契約書・誓約書など毎回ゼロから作っている</div></div>
+        </button>
+        <button class="option-btn" data-val="shift" data-area="hr" data-score="3" onclick="selectOption(this,'q5')">
+          <span class="opt-icon">📅</span>
+          <div><div class="opt-text">シフト調整に毎月時間がかかる</div><div class="opt-sub">LINEで調整、まとめるのが大変</div></div>
+        </button>
+        <button class="option-btn" data-val="info_scattered" data-area="hr" data-score="2" onclick="selectOption(this,'q5')">
+          <span class="opt-icon">🗂️</span>
+          <div><div class="opt-text">スタッフ情報がバラバラで探せない</div><div class="opt-sub">名刺・Excel・LINEに分散している</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q5','q4')">← 戻る</button>
+      <button class="btn-next" id="next-q5" disabled onclick="goNext('q5','q6')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="screen" id="q6">
+    <div class="step-card">
+      <div class="step-num">Q6 / 8</div>
+      <div class="step-q">請求・見積・受注の処理はどうしていますか？</div>
+      <div class="step-sub">経理・バックオフィス業務の現状</div>
+      <div class="options">
+        <button class="option-btn" data-val="no_invoice" data-area="management" data-score="0" onclick="selectOption(this,'q6')">
+          <span class="opt-icon">🙅</span>
+          <div><div class="opt-text">請求書の発行はほぼない</div></div>
+        </button>
+        <button class="option-btn" data-val="manual_invoice" data-area="management" data-score="3" onclick="selectOption(this,'q6')">
+          <span class="opt-icon">📄</span>
+          <div><div class="opt-text">毎回ExcelやWordで手作りしている</div><div class="opt-sub">テンプレートはあるが転記作業が発生する</div></div>
+        </button>
+        <button class="option-btn" data-val="error_prone" data-area="management" data-score="2" onclick="selectOption(this,'q6')">
+          <span class="opt-icon">⚠️</span>
+          <div><div class="opt-text">ツールはあるが転記ミスや漏れが起きる</div></div>
+        </button>
+        <button class="option-btn" data-val="ok_invoice" data-area="management" data-score="0" onclick="selectOption(this,'q6')">
+          <span class="opt-icon">✅</span>
+          <div><div class="opt-text">自動化できていて問題ない</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q6','q5')">← 戻る</button>
+      <button class="btn-next" id="next-q6" disabled onclick="goNext('q6','q7')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="screen" id="q7">
+    <div class="step-card">
+      <div class="step-num">Q7 / 8</div>
+      <div class="step-q">集客・マーケティングの現状は？</div>
+      <div class="step-sub">告知・LP・SNS運用について</div>
+      <div class="options">
+        <button class="option-btn" data-val="no_marketing" data-area="marketing" data-score="0" onclick="selectOption(this,'q7')">
+          <span class="opt-icon">🙅</span>
+          <div><div class="opt-text">集客の仕組みは今は不要</div></div>
+        </button>
+        <button class="option-btn" data-val="no_lp" data-area="marketing" data-score="3" onclick="selectOption(this,'q7')">
+          <span class="opt-icon">📱</span>
+          <div><div class="opt-text">サービス・イベントの告知ページをいつも困っている</div><div class="opt-sub">毎回デザイナーに頼むか、自分でやって大変</div></div>
+        </button>
+        <button class="option-btn" data-val="sns_trouble" data-area="marketing" data-score="2" onclick="selectOption(this,'q7')">
+          <span class="opt-icon">📲</span>
+          <div><div class="opt-text">SNS運用の手間が大きい</div><div class="opt-sub">投稿作成・スケジュール管理が負担</div></div>
+        </button>
+        <button class="option-btn" data-val="ok_marketing" data-area="marketing" data-score="0" onclick="selectOption(this,'q7')">
+          <span class="opt-icon">✅</span>
+          <div><div class="opt-text">集客の仕組みはうまくいっている</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q7','q6')">← 戻る</button>
+      <button class="btn-next" id="next-q7" disabled onclick="goNext('q7','q8')">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="screen" id="q8">
+    <div class="step-card">
+      <div class="step-num">Q8 / 8</div>
+      <div class="step-q">毎月の「繰り返し作業」で、一番時間がかかっているのはどれですか？</div>
+      <div class="step-sub">直感で選んでください</div>
+      <div class="options">
+        <button class="option-btn" data-val="rep_meeting" data-area="meeting" data-score="3" onclick="selectOption(this,'q8')">
+          <span class="opt-icon">📝</span>
+          <div><div class="opt-text">会議の準備・議事録・共有</div></div>
+        </button>
+        <button class="option-btn" data-val="rep_report" data-area="management" data-score="3" onclick="selectOption(this,'q8')">
+          <span class="opt-icon">📊</span>
+          <div><div class="opt-text">月次の数字集計・レポート作成</div></div>
+        </button>
+        <button class="option-btn" data-val="rep_hr" data-area="hr" data-score="3" onclick="selectOption(this,'q8')">
+          <span class="opt-icon">👥</span>
+          <div><div class="opt-text">スタッフへの連絡・シフト・書類</div></div>
+        </button>
+        <button class="option-btn" data-val="rep_client" data-area="marketing" data-score="3" onclick="selectOption(this,'q8')">
+          <span class="opt-icon">📩</span>
+          <div><div class="opt-text">顧客への連絡・提案資料・見積</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goBack('q8','q7')">← 戻る</button>
+      <button class="btn-next" id="next-q8" disabled onclick="showResult()">診断する →</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="screen" id="result">
+
+    <div class="result-header">
+      <div class="result-score-wrap">
+        <div class="result-score" id="totalScore">--</div>
+        <div class="result-score-label">業務効率化 ポテンシャルスコア</div>
+      </div>
+      <div class="result-level" id="resultLevel">診断中...</div>
+      <div class="result-desc" id="resultDesc"></div>
+    </div>
+
+    <div class="result-areas">
+      <div class="result-areas-title">📍 領域別スコア（改善インパクト）</div>
+      <div id="areaScores"></div>
+    </div>
+
+    <div class="result-tools">
+      <div class="result-tools-title">🔧 おすすめツール（御社向け）</div>
+      <div class="rec-tool-list" id="recTools"></div>
+    </div>
+
+    <div class="cta-block">
+      <h2>無料で<em>個別ヒアリング</em>を受ける</h2>
+      <p>診断結果をもとに、具体的な改善提案をします。30分・完全無料。</p>
+      <a href="https://lin.ee/placeholder" class="cta-btn">LINEで相談する →</a>
+      <div class="cta-sub">※相談後に無理な勧誘は一切しません</div>
+    </div>
+
+    <a href="./ai-tools-catalog.html" class="back-to-catalog">← 実績カタログに戻る</a>
+  </div>
+
+</div>
+
+<script>
+  const answers = {};
+  const areaScores = { meeting: 0, management: 0, hr: 0, marketing: 0 };
+  const TOTAL_Q = 8;
+
+  function updateProgress(step) {
+    document.getElementById('progressBar').style.width = (step / TOTAL_Q * 100) + '%';
+  }
+
+  function selectOption(btn, qId) {
+    const parent = btn.closest('.options');
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[qId] = {
+      val: btn.dataset.val,
+      area: btn.dataset.area,
+      score: parseInt(btn.dataset.score || 0)
+    };
+    document.getElementById('next-' + qId).disabled = false;
+  }
+
+  function goNext(fromId, toId) {
+    document.getElementById(fromId).classList.remove('active');
+    document.getElementById(toId).classList.add('active');
+    const stepNum = parseInt(toId.replace('q',''));
+    updateProgress(stepNum - 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBack(fromId, toId) {
+    document.getElementById(fromId).classList.remove('active');
+    document.getElementById(toId).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showResult() {
+    // Calc area scores
+    Object.values(answers).forEach(a => {
+      if (a.area && areaScores[a.area] !== undefined) {
+        areaScores[a.area] += a.score;
+      }
+    });
+
+    // Total score (max ~20 points → convert to 100)
+    const rawTotal = Object.values(areaScores).reduce((s, v) => s + v, 0);
+    const totalPct = Math.min(100, Math.round(rawTotal / 18 * 100));
+
+    // Show result
+    document.getElementById('q8').classList.remove('active');
+    document.getElementById('result').classList.add('active');
+    updateProgress(8);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Score
+    setTimeout(() => {
+      document.getElementById('totalScore').textContent = totalPct + 'pt';
+
+      let level, desc;
+      if (totalPct >= 70) {
+        level = '改善余地 大！今すぐ着手を';
+        desc = '複数の領域で手作業・非効率が積み重なっています。ツール化することで月10〜30時間以上の削減が見込めます。今の状態が最もコストが高い状態です。';
+      } else if (totalPct >= 40) {
+        level = '改善余地 あり。部分的に着手できます';
+        desc = '一部の業務で効率化できる余地があります。1〜2本のツールを入れるだけで月3〜15時間程度の削減が見込めます。';
+      } else if (totalPct >= 10) {
+        level = '軽微な改善で更に良くなります';
+        desc = '概ねうまく回っていますが、小さな自動化でさらに楽になれる部分があります。';
+      } else {
+        level = '現状のオペレーションは良好です';
+        desc = '現時点では大きな効率化の余地は少ないようです。ただし事業が拡大したタイミングで再検討することをお勧めします。';
+      }
+      document.getElementById('resultLevel').textContent = level;
+      document.getElementById('resultDesc').textContent = desc;
+
+      // Area bars
+      const areaLabels = {
+        meeting: { label: '会議・議事録', max: 6, color: '#6c63ff', rec: 'AI議事録 自動生成ツールで解決' },
+        management: { label: '経営・経理管理', max: 9, color: '#e63946', rec: '経営ダッシュボード or 請求書自動化で解決' },
+        hr: { label: '採用・労務管理', max: 6, color: '#f4a261', rec: '採用書類自動生成 or シフト管理ツールで解決' },
+        marketing: { label: '集客・LP・営業', max: 6, color: '#2a9d8f', rec: 'イベントLP即日生成ツールで解決' }
+      };
+
+      const areaHtml = Object.entries(areaScores).map(([key, score]) => {
+        const info = areaLabels[key];
+        const pct = Math.min(100, Math.round(score / info.max * 100));
+        return `
+          <div class="area-row">
+            <div class="area-label-wrap">
+              <span class="area-label">${info.label}</span>
+              <span class="area-score-text">${pct}pt</span>
+            </div>
+            <div class="area-bar-bg">
+              <div class="area-bar" style="width:0%;background:${info.color}" data-pct="${pct}"></div>
+            </div>
+            ${score >= 2 ? `<div class="area-rec">→ <strong>${info.rec}</strong></div>` : ''}
+          </div>
+        `;
+      }).join('');
+      document.getElementById('areaScores').innerHTML = areaHtml;
+
+      // Animate bars
+      setTimeout(() => {
+        document.querySelectorAll('.area-bar').forEach(bar => {
+          bar.style.width = bar.dataset.pct + '%';
+        });
+      }, 200);
+
+      // Recommend tools
+      const sorted = Object.entries(areaScores).sort((a,b) => b[1]-a[1]);
+      const tools = {
+        meeting: { icon: '📝', name: 'AI議事録 自動生成ツール', why: '会議後の議事録作成・共有をゼロにします' },
+        management: { icon: '📊', name: '経営ダッシュボード + 請求書自動化', why: '数字の集計・レポート・請求処理を自動化します' },
+        hr: { icon: '👥', name: '採用書類自動生成 / シフト管理ツール', why: '採用・スタッフ管理の手作業を大幅削減します' },
+        marketing: { icon: '📱', name: 'イベントLP即日公開ツール', why: '告知・集客ページをその日に公開できます' }
+      };
+
+      const recHtml = sorted
+        .filter(([,v]) => v > 0)
+        .slice(0, 3)
+        .map(([key]) => {
+          const t = tools[key];
+          return `
+            <div class="rec-tool">
+              <span class="rec-tool-icon">${t.icon}</span>
+              <div>
+                <div class="rec-tool-name">${t.name}</div>
+                <div class="rec-tool-why">${t.why}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      document.getElementById('recTools').innerHTML = recHtml || '<div style="color:var(--ink-mute);font-size:13px;">現時点では大きな課題は見当たりません。</div>';
+    }, 100);
+  }
+</script>
+</body>
+</html>

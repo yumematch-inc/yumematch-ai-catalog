@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一覧管理ツール | サンプル</title>
+<style>
+:root{--indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);--green:#059669;--green-lt:#ecfdf5;--amber:#92400e;--amber-lt:#fffbeb;--red:#e11d48;--red-lt:#fff1f2;--bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* HEADER */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 24px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back{font-size:11px;color:var(--mute);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1px solid var(--bdr);transition:all .15s;}
+.back:hover{color:var(--indigo);border-color:var(--indigo-bdr);}
+.htag{font-size:9px;font-weight:600;letter-spacing:.15em;color:var(--indigo);background:var(--indigo-bg);padding:3px 9px;border-radius:20px;border:1px solid var(--indigo-bdr);}
+.htl{font-size:14px;font-weight:700;color:var(--ink);}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 24px 100px;}
+.lead{margin-bottom:22px;}
+.lead-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;}
+.lead-ttl{font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--ink);margin-bottom:5px;}
+.lead-sub{font-size:13px;color:var(--sub);line-height:1.7;}
+.main-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.search-box{flex:1;min-width:200px;position:relative;}
+.search-box input{width:100%;padding:8px 11px 8px 34px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:inherit;background:var(--white);color:var(--ink);transition:border .15s;}
+.search-box input:focus{outline:none;border-color:var(--indigo);}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--mute);}
+.add-btn{padding:8px 16px;background:var(--indigo);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(79,70,229,.25);transition:all .15s;}
+.add-btn:hover{background:var(--indigo-d);}
+
+/* FILTER TABS */
+.ftabs{display:flex;gap:4px;margin-bottom:12px;}
+.ftab{font-size:11px;padding:5px 14px;border-radius:20px;border:1px solid var(--bdr);background:var(--white);color:var(--sub);cursor:pointer;transition:all .15s;}
+.ftab:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.ftab.active{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+.ftab-count{font-size:9px;background:rgba(255,255,255,.25);padding:1px 5px;border-radius:20px;margin-left:3px;}
+.ftab:not(.active) .ftab-count{background:var(--bg);color:var(--mute);}
+
+/* TABLE CARD */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.05em;padding:10px 14px;border-bottom:2px solid var(--bdr);text-align:left;background:var(--bg);white-space:nowrap;}
+td{font-size:12px;color:var(--ink);padding:10px 14px;border-bottom:1px solid var(--bdr);vertical-align:middle;}
+.trow{cursor:pointer;transition:background .12s;position:relative;}
+.trow:last-child td{border-bottom:none;}
+.trow:hover{background:#fafbff;}
+.trow.selected{background:var(--indigo-bg);}
+.trow.selected td{color:var(--indigo);}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.name-cell{display:flex;align-items:center;gap:9px;}
+.name-sub{font-size:10px;color:var(--mute);margin-top:1px;}
+
+.badge{font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.b-active{background:var(--green-lt);color:var(--green);border:1px solid rgba(5,150,105,.2);}
+.b-pending{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(146,64,14,.2);}
+.b-closed{background:var(--bg);color:var(--mute);border:1px solid var(--bdr);}
+.b-vip{background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
+.b-new{background:var(--red-lt);color:var(--red);border:1px solid rgba(225,29,72,.2);}
+
+.act-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--white);color:var(--sub);cursor:pointer;font-family:inherit;transition:all .12s;}
+.act-btn:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+
+/* DETAIL PANEL */
+.detail{background:var(--white);border:1px solid var(--bdr);border-radius:14px;box-shadow:0 1px 4px rgba(15,23,42,.06);position:sticky;top:68px;}
+.detail-hd{padding:14px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.detail-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;background:linear-gradient(135deg,#818cf8,#4f46e5);flex-shrink:0;}
+.detail-name{font-size:13px;font-weight:700;color:var(--ink);}
+.detail-sub{font-size:10px;color:var(--mute);}
+.detail-body{padding:14px 16px;}
+.drow{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bdr);}
+.drow:last-child{border-bottom:none;}
+.dlbl{font-size:10px;color:var(--sub);font-weight:600;}
+.dval{font-size:11px;color:var(--ink);text-align:right;max-width:160px;}
+.detail-memo{margin:12px 0;padding:10px 12px;background:var(--bg);border-radius:7px;font-size:11px;color:var(--sub);line-height:1.7;}
+.detail-actions{display:flex;flex-direction:column;gap:6px;padding:0 16px 16px;}
+.dact{width:100%;padding:8px;border-radius:7px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;border:1px solid var(--bdr);background:var(--white);color:var(--sub);}
+.dact.primary{background:var(--indigo);color:#fff;border-color:var(--indigo);box-shadow:0 2px 8px rgba(79,70,229,.2);}
+.dact.primary:hover{background:var(--indigo-d);}
+
+/* CTA BAR */
+.cta-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;box-shadow:0 -4px 16px rgba(15,23,42,.06);}
+.cta-back{font-size:12px;color:var(--sub);text-decoration:none;padding:9px 18px;border:1px solid var(--bdr);border-radius:8px;transition:all .15s;}
+.cta-back:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.cta-main{font-size:13px;font-weight:700;color:#fff;background:var(--indigo);padding:10px 22px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .15s;}
+.cta-main:hover{background:var(--indigo-d);transform:translateY(-1px);}
+
+@media(max-width:800px){
+  .main-layout{grid-template-columns:1fr;}
+  .detail{display:none;}
+  .hdr{padding:0 16px;}
+  .wrap{padding:20px 16px 90px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="../ai-tools-catalog.html" class="back">← カタログに戻る</a>
+  <span class="htag">LIST / DB</span>
+  <span class="htl" id="js-htl">一覧管理ツール</span>
+</header>
+
+<div class="wrap">
+  <div class="lead">
+    <div class="lead-tag">Sample Demo</div>
+    <h1 class="lead-ttl" id="js-ttl">一覧管理ツール</h1>
+    <p class="lead-sub">顧客・採用候補・在庫・カルテなど、あらゆるデータを一画面で管理。検索・絞り込み・詳細表示をシームレスに。</p>
+  </div>
+
+  <div class="main-layout">
+    <div>
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-ico">🔍</span>
+          <input type="text" placeholder="名前・会社名・キーワードで検索..." value="">
+        </div>
+        <button class="add-btn">＋ 新規追加</button>
+      </div>
+
+      <div class="ftabs">
+        <div class="ftab active">すべて<span class="ftab-count">8</span></div>
+        <div class="ftab">対応中<span class="ftab-count" style="background:var(--bg);color:var(--mute);">3</span></div>
+        <div class="ftab">商談中<span class="ftab-count" style="background:var(--bg);color:var(--mute);">2</span></div>
+        <div class="ftab">成約済<span class="ftab-count" style="background:var(--bg);color:var(--mute);">2</span></div>
+        <div class="ftab">クローズ<span class="ftab-count" style="background:var(--bg);color:var(--mute);">1</span></div>
+      </div>
+
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名前 / 会社名</th>
+                <th>ステータス</th>
+                <th>担当者</th>
+                <th>最終更新</th>
+                <th>アクション</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="trow selected" onclick="select(this, '田中 美穂', '株式会社タナカ商事', 'active', '山田 太郎', '2026/05/13', '経営改善ツールの導入検討中。来週デモ予定。月次売上が前期比15%減で危機感あり。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#818cf8,#4f46e5)">田</div><div><div>田中 美穂</div><div class="name-sub">株式会社タナカ商事</div></div></div></td>
+                <td><span class="badge b-vip">VIP顧客</span></td>
+                <td>山田 太郎</td>
+                <td>2026/05/13</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '佐藤 健二', 'さとう薬局', 'pending', '鈴木 花子', '2026/05/12', '補助金申請ツールに関心。詳細資料を送付済み。返信待ち。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#34d399,#059669)">佐</div><div><div>佐藤 健二</div><div class="name-sub">さとう薬局</div></div></div></td>
+                <td><span class="badge b-pending">商談中</span></td>
+                <td>鈴木 花子</td>
+                <td>2026/05/12</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '渡辺 恵', 'ワタナベ建設株式会社', 'new', '山田 太郎', '2026/05/11', '新規問合せ。LINE自動応答ツールの見積もり希望。規模：従業員20名。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#fb7185,#e11d48)">渡</div><div><div>渡辺 恵</div><div class="name-sub">ワタナベ建設株式会社</div></div></div></td>
+                <td><span class="badge b-new">新規</span></td>
+                <td>山田 太郎</td>
+                <td>2026/05/11</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '伊藤 亮', '伊藤コンサルティング', 'active', '中村 誠', '2026/05/10', 'ダッシュボードツール導入済み。追加機能として採用管理も検討中。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#fbbf24,#d97706)">伊</div><div><div>伊藤 亮</div><div class="name-sub">伊藤コンサルティング</div></div></div></td>
+                <td><span class="badge b-active">対応中</span></td>
+                <td>中村 誠</td>
+                <td>2026/05/10</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '中島 さくら', 'なかしまカフェ', 'active', '鈴木 花子', '2026/05/09', '原価計算ツール導入検討。現在手動でExcel管理中。月30時間の削減が目標。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">中</div><div><div>中島 さくら</div><div class="name-sub">なかしまカフェ</div></div></div></td>
+                <td><span class="badge b-active">対応中</span></td>
+                <td>鈴木 花子</td>
+                <td>2026/05/09</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '山本 浩二', '山本不動産', 'closed', '山田 太郎', '2026/04/30', '不動産CFシミュレーターを導入。月次レポート自動化に成功。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#94a3b8,#64748b)">山</div><div><div>山本 浩二</div><div class="name-sub">山本不動産</div></div></div></td>
+                <td><span class="badge b-active">成約済</span></td>
+                <td>山田 太郎</td>
+                <td>2026/04/30</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '小林 智子', '小林クリニック', 'active', '中村 誠', '2026/04/28', 'カルテ管理ツールの問合せ。院長が直接意思決定可能。スピード対応優先。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#67e8f9,#0891b2)">小</div><div><div>小林 智子</div><div class="name-sub">小林クリニック</div></div></div></td>
+                <td><span class="badge b-pending">商談中</span></td>
+                <td>中村 誠</td>
+                <td>2026/04/28</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+              <tr class="trow" onclick="select(this, '加藤 正樹', 'カトウ製作所', 'closed_lost', '鈴木 花子', '2026/04/15', '予算の都合でクローズ。半年後に再検討の意向あり。フォローアップ予定。')">
+                <td><div class="name-cell"><div class="avatar" style="background:linear-gradient(135deg,#d1d5db,#9ca3af)">加</div><div><div>加藤 正樹</div><div class="name-sub">カトウ製作所</div></div></div></td>
+                <td><span class="badge b-closed">クローズ</span></td>
+                <td>鈴木 花子</td>
+                <td>2026/04/15</td>
+                <td><button class="act-btn">詳細</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail" id="detail-panel">
+      <div class="detail-hd">
+        <div class="detail-ico" id="d-ico">田</div>
+        <div>
+          <div class="detail-name" id="d-name">田中 美穂</div>
+          <div class="detail-sub" id="d-company">株式会社タナカ商事</div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="drow"><span class="dlbl">ステータス</span><span class="dval" id="d-status"><span class="badge b-vip">VIP顧客</span></span></div>
+        <div class="drow"><span class="dlbl">担当者</span><span class="dval" id="d-staff">山田 太郎</span></div>
+        <div class="drow"><span class="dlbl">最終更新</span><span class="dval" id="d-date">2026/05/13</span></div>
+        <div class="drow"><span class="dlbl">成約確率</span><span class="dval" style="color:var(--green);font-weight:700;">78%</span></div>
+      </div>
+      <div class="detail-memo" id="d-memo">経営改善ツールの導入検討中。来週デモ予定。月次売上が前期比15%減で危機感あり。</div>
+      <div class="detail-actions">
+        <button class="dact primary">📞 架電メモを追加</button>
+        <button class="dact">✏️ 情報を編集</button>
+        <button class="dact">📧 メールを送る</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bar">
+  <a href="../ai-tools-catalog.html" class="cta-back">← カタログに戻る</a>
+  <a href="mailto:info@yumematch.co.jp?subject=一覧管理ツールについて問い合わせ" id="js-cta" class="cta-main">このツールを依頼する →</a>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const toolName = params.get('name') || '一覧管理ツール';
+document.title = toolName + ' | サンプル';
+document.getElementById('js-ttl').textContent = toolName;
+document.getElementById('js-htl').textContent = toolName;
+const cta = document.getElementById('js-cta');
+cta.href = `mailto:info@yumematch.co.jp?subject=${encodeURIComponent(toolName)}について問い合わせ`;
+
+const icoColors = {
+  'active':'linear-gradient(135deg,#818cf8,#4f46e5)',
+  'pending':'linear-gradient(135deg,#fbbf24,#d97706)',
+  'new':'linear-gradient(135deg,#fb7185,#e11d48)',
+  'closed':'linear-gradient(135deg,#94a3b8,#64748b)',
+  'closed_lost':'linear-gradient(135deg,#d1d5db,#9ca3af)'
+};
+const statusLabels = {
+  'active':'<span class="badge b-active">対応中</span>',
+  'pending':'<span class="badge b-pending">商談中</span>',
+  'new':'<span class="badge b-new">新規</span>',
+  'closed':'<span class="badge b-active">成約済</span>',
+  'closed_lost':'<span class="badge b-closed">クローズ</span>',
+  'vip':'<span class="badge b-vip">VIP顧客</span>'
+};
+
+function select(row, name, company, status, staff, date, memo){
+  document.querySelectorAll('.trow').forEach(r=>r.classList.remove('selected'));
+  row.classList.add('selected');
+  document.getElementById('d-ico').textContent = name[0];
+  document.getElementById('d-ico').style.background = icoColors[status] || icoColors['active'];
+  document.getElementById('d-name').textContent = name;
+  document.getElementById('d-company').textContent = company;
+  document.getElementById('d-status').innerHTML = statusLabels[status] || statusLabels['active'];
+  document.getElementById('d-staff').textContent = staff;
+  document.getElementById('d-date').textContent = date;
+  document.getElementById('d-memo').textContent = memo;
+}
+
+document.querySelectorAll('.ftab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

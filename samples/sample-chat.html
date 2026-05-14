@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自動応答ツール | サンプル</title>
+<style>
+:root{--indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);--green:#059669;--green-lt:#ecfdf5;--amber:#92400e;--amber-lt:#fffbeb;--red:#e11d48;--red-lt:#fff1f2;--bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* HEADER */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 24px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back{font-size:11px;color:var(--mute);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1px solid var(--bdr);transition:all .15s;}
+.back:hover{color:var(--indigo);border-color:var(--indigo-bdr);}
+.htag{font-size:9px;font-weight:600;letter-spacing:.15em;color:var(--indigo);background:var(--indigo-bg);padding:3px 9px;border-radius:20px;border:1px solid var(--indigo-bdr);}
+.htl{font-size:14px;font-weight:700;color:var(--ink);}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 24px 100px;}
+.lead{margin-bottom:22px;}
+.lead-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;}
+.lead-ttl{font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--ink);margin-bottom:5px;}
+.lead-sub{font-size:13px;color:var(--sub);line-height:1.7;}
+.cols{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+.card-hd{padding:14px 18px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.card-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#dbeafe,#c7d2fe);flex-shrink:0;}
+.card-ht{font-size:12px;font-weight:700;color:var(--ink);}
+.card-hsub{font-size:10px;color:var(--mute);margin-left:auto;}
+
+/* LINE PHONE */
+.phone-outer{padding:18px;display:flex;justify-content:center;}
+.phone{background:#1a1a2e;border-radius:28px;overflow:hidden;border:6px solid #1a1a2e;box-shadow:0 10px 40px rgba(0,0,0,.35);width:100%;max-width:340px;}
+.ph-bar{background:#111128;padding:8px 18px 6px;display:flex;align-items:center;justify-content:space-between;}
+.ph-time{font-size:10px;color:#aaa;font-weight:600;}
+.ph-icons{font-size:10px;color:#aaa;}
+.ph-screen{background:#ebebeb;min-height:500px;display:flex;flex-direction:column;}
+.ph-header{background:#4DB952;padding:10px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.ph-avi{width:32px;height:32px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ph-name{font-size:12px;font-weight:700;color:#fff;}
+.ph-sub{font-size:9px;color:rgba(255,255,255,.8);}
+.ph-msgs{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.ph-date{text-align:center;font-size:9px;color:#999;margin-bottom:4px;}
+
+/* USER MSG (right) */
+.msg-user{display:flex;justify-content:flex-end;gap:6px;align-items:flex-end;}
+.msg-user .bubble{background:#4DB952;color:#fff;border-radius:12px 12px 0 12px;padding:9px 12px;max-width:200px;font-size:11px;line-height:1.5;}
+.msg-user .mtime{font-size:9px;color:#999;flex-shrink:0;}
+
+/* AI MSG (left) */
+.msg-ai{display:flex;gap:6px;align-items:flex-end;}
+.ai-avi{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#818cf8,var(--indigo));display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.msg-ai .bubble{background:#fff;border-radius:0 12px 12px 12px;padding:9px 12px;max-width:220px;font-size:11px;line-height:1.55;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.msg-ai .mtime{font-size:9px;color:#999;flex-shrink:0;}
+.ai-badge{font-size:8px;background:var(--indigo-bg);color:var(--indigo);padding:2px 6px;border-radius:3px;margin-bottom:4px;display:inline-block;}
+
+/* RESPONSE BADGE */
+.speed-badge{text-align:center;padding:4px;font-size:9px;color:var(--green);background:var(--green-lt);border-top:1px solid rgba(5,150,105,.1);}
+
+/* INPUT BAR */
+.ph-input{background:#f5f5f5;border-top:1px solid #ddd;padding:8px 10px;display:flex;gap:6px;align-items:center;}
+.ph-inp-box{flex:1;background:#fff;border-radius:20px;padding:7px 12px;font-size:11px;color:#666;border:1px solid #ddd;}
+.ph-send{width:30px;height:30px;border-radius:50%;background:#4DB952;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;flex-shrink:0;}
+
+/* RIGHT PANELS */
+.right-col{display:flex;flex-direction:column;gap:14px;}
+
+/* FAQ LIST */
+.faq-item{padding:12px 16px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .12s;}
+.faq-item:last-child{border-bottom:none;}
+.faq-item:hover{background:#fafbff;}
+.faq-q{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;}
+.fq-icon{font-size:10px;background:var(--indigo-bg);color:var(--indigo);padding:2px 5px;border-radius:3px;font-weight:700;flex-shrink:0;}
+.faq-a{font-size:10px;color:var(--sub);line-height:1.6;padding-left:26px;}
+
+/* STATS */
+.stats-body{padding:16px 18px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-box{background:var(--bg);border-radius:8px;padding:12px 14px;border:1px solid var(--bdr);}
+.stat-lbl{font-size:9px;color:var(--sub);font-weight:600;margin-bottom:4px;}
+.stat-val{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1.1;}
+.stat-val span{font-size:11px;font-weight:500;color:var(--sub);}
+.stat-diff{font-size:9px;color:var(--green);margin-top:2px;}
+
+/* CTA BAR */
+.cta-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;box-shadow:0 -4px 16px rgba(15,23,42,.06);}
+.cta-back{font-size:12px;color:var(--sub);text-decoration:none;padding:9px 18px;border:1px solid var(--bdr);border-radius:8px;transition:all .15s;}
+.cta-back:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.cta-main{font-size:13px;font-weight:700;color:#fff;background:var(--indigo);padding:10px 22px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .15s;}
+.cta-main:hover{background:var(--indigo-d);transform:translateY(-1px);}
+
+@media(max-width:768px){
+  .cols{grid-template-columns:1fr;}
+  .hdr{padding:0 16px;}
+  .wrap{padding:20px 16px 90px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="../ai-tools-catalog.html" class="back">← カタログに戻る</a>
+  <span class="htag">CHAT / AUTO</span>
+  <span class="htl" id="js-htl">自動応答ツール</span>
+</header>
+
+<div class="wrap">
+  <div class="lead">
+    <div class="lead-tag">Sample Demo</div>
+    <h1 class="lead-ttl" id="js-ttl">自動応答ツール</h1>
+    <p class="lead-sub">LINEに届く問い合わせをAIが瞬時に解析し、FAQ登録内容をもとに0.3秒で自動返信。スタッフの対応工数をゼロに近づけます。</p>
+  </div>
+
+  <div class="cols">
+    <!-- LEFT: LINE CHAT -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico">💬</div>
+        <div><div class="card-ht">LINE自動応答チャット</div></div>
+        <span class="card-hsub">リアルタイム動作中</span>
+      </div>
+      <div class="phone-outer">
+        <div class="phone">
+          <div class="ph-bar">
+            <span class="ph-time">14:32</span>
+            <span class="ph-icons">▲▲ 100%</span>
+          </div>
+          <div class="ph-screen">
+            <div class="ph-header">
+              <div class="ph-avi">🤖</div>
+              <div>
+                <div class="ph-name">AI自動応答</div>
+                <div class="ph-sub">通常1分以内に返信</div>
+              </div>
+            </div>
+
+            <div class="ph-msgs">
+              <div class="ph-date">2026年5月14日</div>
+
+              <!-- ユーザー1 -->
+              <div class="msg-user">
+                <div class="mtime">14:28</div>
+                <div class="bubble">こんにちは！営業時間を教えていただけますか？</div>
+              </div>
+
+              <!-- AI返信1 -->
+              <div class="msg-ai">
+                <div class="ai-avi">🤖</div>
+                <div>
+                  <div class="ai-badge">AI自動返信</div>
+                  <div class="bubble">こんにちは！😊<br>営業時間は以下の通りです。<br><br>🕐 月〜金：10:00〜18:00<br>🕐 土：10:00〜15:00<br>🚫 日・祝：定休日<br><br>お気軽にご連絡ください！</div>
+                  <div class="mtime">14:28</div>
+                </div>
+              </div>
+
+              <!-- ユーザー2 -->
+              <div class="msg-user">
+                <div class="mtime">14:30</div>
+                <div class="bubble">初回相談は無料ですか？</div>
+              </div>
+
+              <!-- AI返信2 -->
+              <div class="msg-ai">
+                <div class="ai-avi">🤖</div>
+                <div>
+                  <div class="ai-badge">AI自動返信</div>
+                  <div class="bubble">はい！初回のご相談は<br><b style="color:var(--green)">完全無料</b>でございます✨<br><br>オンライン・対面どちらも対応しており、所要時間は約60分です。ご都合の良い日時をお聞かせください。</div>
+                  <div class="mtime">14:30</div>
+                </div>
+              </div>
+
+              <!-- ユーザー3 -->
+              <div class="msg-user">
+                <div class="mtime">14:32</div>
+                <div class="bubble">来週の火曜日14時はいかがでしょうか？</div>
+              </div>
+
+              <!-- AI返信3 -->
+              <div class="msg-ai">
+                <div class="ai-avi">🤖</div>
+                <div>
+                  <div class="ai-badge">AI自動返信</div>
+                  <div class="bubble">来週火曜日（5/20）14:00、ご希望承りました！担当者より折り返しご確認のご連絡を差し上げます🙏<br><br>お名前とご連絡先（電話番号またはメール）をお教えいただけますか？</div>
+                  <div class="mtime">14:32</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="speed-badge">⚡ 平均応答時間: 0.3秒</div>
+
+            <div class="ph-input">
+              <div class="ph-inp-box">メッセージを入力...</div>
+              <div class="ph-send">▶</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-col">
+      <!-- FAQ登録 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">📚</div>
+          <div><div class="card-ht">FAQ登録パネル</div></div>
+          <span class="card-hsub">5件登録中</span>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q"><span class="fq-icon">Q</span>営業時間は何時から何時ですか？</div>
+          <div class="faq-a">月〜金 10:00〜18:00、土 10:00〜15:00（日祝定休）</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="fq-icon">Q</span>初回相談は無料ですか？</div>
+          <div class="faq-a">はい、初回相談は完全無料です。60分を目安にご対応します。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="fq-icon">Q</span>どんなツールを作ってもらえますか？</div>
+          <div class="faq-a">LINE自動応答・ダッシュボード・書類生成・補助金検索など多数対応しています。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="fq-icon">Q</span>費用の目安を教えてください</div>
+          <div class="faq-a">ツールの複雑さにより異なりますが、10万円〜50万円が一般的です。まずはお見積りを。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="fq-icon">Q</span>対応エリアはどこですか？</div>
+          <div class="faq-a">オンライン対応のため、全国どちらでもご対応可能です。</div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">📊</div>
+          <div><div class="card-ht">今月の自動応答実績</div></div>
+        </div>
+        <div class="stats-body">
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-lbl">自動応答件数</div>
+              <div class="stat-val">342<span>件</span></div>
+              <div class="stat-diff">▲ 12% 先月比</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">自動解決率</div>
+              <div class="stat-val">87<span>%</span></div>
+              <div class="stat-diff">▲ 5pt 先月比</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">平均応答時間</div>
+              <div class="stat-val">0.3<span>秒</span></div>
+              <div class="stat-diff" style="color:var(--indigo)">業界最速水準</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">節約工数</div>
+              <div class="stat-val">28<span>時間</span></div>
+              <div class="stat-diff">今月累計</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bar">
+  <a href="../ai-tools-catalog.html" class="cta-back">← カタログに戻る</a>
+  <a href="mailto:info@yumematch.co.jp?subject=自動応答ツールについて問い合わせ" id="js-cta" class="cta-main">このツールを依頼する →</a>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const toolName = params.get('name') || '自動応答ツール';
+document.title = toolName + ' | サンプル';
+document.getElementById('js-ttl').textContent = toolName;
+document.getElementById('js-htl').textContent = toolName;
+const cta = document.getElementById('js-cta');
+cta.href = `mailto:info@yumematch.co.jp?subject=${encodeURIComponent(toolName)}について問い合わせ`;
+</script>
+</body>
+</html>

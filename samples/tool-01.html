@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>助成金・補助金レーダー | サンプル</title>
+<style>
+:root{--indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--green:#059669;--green-lt:#ecfdf5;--amber:#92400e;--amber-lt:#fffbeb;--red:#e11d48;--red-lt:#fff1f2;--bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* ─── HEADER ─── */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 24px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back{font-size:11px;color:var(--mute);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:1px solid var(--bdr);transition:all .15s;}
+.back:hover{color:var(--indigo);border-color:rgba(79,70,229,.3);}
+.htag{font-size:9px;font-weight:600;letter-spacing:.15em;color:var(--indigo);background:var(--indigo-bg);padding:3px 9px;border-radius:20px;border:1px solid rgba(79,70,229,.18);}
+.htl{font-size:14px;font-weight:700;color:var(--ink);}
+.hbadge{margin-left:auto;font-size:10px;color:var(--mute);background:var(--bg);border:1px solid var(--bdr);padding:3px 10px;border-radius:20px;}
+
+/* ─── LAYOUT ─── */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 24px 80px;}
+.lead{margin-bottom:28px;}
+.lead-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;}
+.lead-ttl{font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--ink);margin-bottom:6px;}
+.lead-sub{font-size:13px;color:var(--sub);max-width:600px;line-height:1.7;}
+
+/* ─── 2カラム ─── */
+.cols{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;}
+
+/* ─── カード共通 ─── */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+.card-hd{padding:14px 18px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.card-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#dbeafe,#c7d2fe);flex-shrink:0;}
+.card-ht{font-size:12px;font-weight:700;color:var(--ink);}
+.card-hsub{font-size:10px;color:var(--mute);}
+.dot{width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:auto;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.18);}
+
+/* ─── 補助金リスト ─── */
+.grant-list{padding:4px 0;}
+.grant{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:background .12s;}
+.grant:last-child{border-bottom:none;}
+.grant:hover{background:#fafbff;}
+.grant.new{background:#fefbff;}
+.gnew{font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--indigo);background:var(--indigo-bg);padding:2px 6px;border-radius:20px;border:1px solid rgba(79,70,229,.18);flex-shrink:0;margin-top:2px;}
+.gbody{flex:1;min-width:0;}
+.gname{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.4;}
+.gmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+.gtag{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;}
+.gt-amt{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;}
+.gt-dl{background:#fff7ed;color:#9a3412;border:1px solid #fdba74;}
+.gt-cat{background:var(--bg);color:var(--sub);border:1px solid var(--bdr);}
+.gdesc{font-size:11px;color:var(--sub);line-height:1.55;}
+.gchev{color:var(--mute);font-size:14px;flex-shrink:0;padding-top:2px;}
+
+/* ─── アラート通知プレビュー（LINE風） ─── */
+.line-wrap{padding:16px;}
+.line-phone{background:#1a1a2e;border-radius:24px;overflow:hidden;border:6px solid #1a1a2e;box-shadow:0 8px 32px rgba(0,0,0,.35);}
+.lp-bar{background:#2d2d44;padding:8px 16px 6px;display:flex;align-items:center;justify-content:space-between;}
+.lp-time{font-size:11px;color:#aaa;font-weight:600;}
+.lp-icons{display:flex;gap:6px;font-size:10px;color:#aaa;}
+.lp-screen{background:#ebebeb;min-height:420px;}
+.lp-header{background:#4DB952;padding:10px 14px;display:flex;align-items:center;gap:8px;}
+.lp-avi{width:30px;height:30px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.lp-name{font-size:12px;font-weight:700;color:#fff;}
+.lp-status{font-size:9px;color:rgba(255,255,255,.75);}
+.lp-msgs{padding:12px 10px;display:flex;flex-direction:column;gap:10px;}
+.lmsg{display:flex;gap:6px;align-items:flex-end;}
+.lm-avi{width:24px;height:24px;border-radius:50%;background:#4DB952;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;align-self:flex-start;}
+.lm-body{background:#fff;border-radius:0 10px 10px 10px;padding:9px 11px;max-width:240px;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.lm-ttl{font-size:10px;font-weight:700;color:#1a1a2e;margin-bottom:5px;line-height:1.3;}
+.lm-item{font-size:9px;color:#333;padding:4px 0;border-bottom:1px solid #f0f0f0;line-height:1.45;}
+.lm-item:last-child{border-bottom:none;}
+.lm-item b{color:#e11d48;}
+.lm-item .amt{color:#059669;font-weight:700;}
+.lm-foot{font-size:9px;color:#888;margin-top:6px;}
+.lm-time{font-size:9px;color:#999;margin-left:4px;flex-shrink:0;}
+
+/* ─── 設定パネル ─── */
+.setting-body{padding:16px 18px;}
+.slabel{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.05em;margin-bottom:6px;margin-top:14px;}
+.slabel:first-child{margin-top:0;}
+.stags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
+.stag{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--bdr);background:var(--bg);color:var(--sub);display:flex;align-items:center;gap:4px;}
+.stag.on{background:var(--indigo-bg);border-color:rgba(79,70,229,.25);color:var(--indigo);font-weight:600;}
+.sinput{width:100%;padding:8px 10px;border-radius:7px;border:1px solid var(--bdr);font-size:11px;color:var(--ink);background:var(--bg);font-family:inherit;outline:none;}
+.sinput:focus{border-color:rgba(79,70,229,.4);background:var(--white);}
+.sbtn{margin-top:14px;width:100%;padding:9px;border-radius:8px;background:var(--indigo);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* ─── 週次レポート ─── */
+.report-body{padding:16px 18px;}
+.rweek{font-size:10px;color:var(--mute);margin-bottom:12px;}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.rstat{background:var(--bg);border-radius:8px;padding:10px 12px;text-align:center;}
+.rsv{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;}
+.rsl{font-size:9px;color:var(--mute);margin-top:3px;}
+.rsv.g{color:var(--green);}
+.rbar{margin-bottom:8px;}
+.rbrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.rbn{font-size:10px;color:var(--sub);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rbv{font-size:10px;font-weight:600;color:var(--ink);width:24px;text-align:right;flex-shrink:0;}
+.rbg{flex:2;height:5px;border-radius:3px;background:var(--bdr);overflow:hidden;}
+.rbg-fill{height:100%;border-radius:3px;background:var(--indigo);}
+
+/* ─── CTAバー ─── */
+.cta{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.cta-l{font-size:12px;color:rgba(255,255,255,.55);}
+.cta-l strong{color:#fff;font-size:13px;}
+.cta-btns{display:flex;gap:8px;}
+.btn-outline{font-size:11px;padding:8px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.65);cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-fill{font-size:12px;font-weight:700;padding:9px 20px;border-radius:8px;background:var(--indigo);border:none;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(79,70,229,.4);text-decoration:none;display:inline-flex;align-items:center;}
+
+@media(max-width:800px){.cols{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="../ai-tools-catalog.html" class="back">← カタログに戻る</a>
+  <div class="htag">情報収集</div>
+  <div class="htl">助成金・補助金レーダー</div>
+  <div class="hbadge">サンプルUI</div>
+</header>
+
+<div class="wrap">
+  <div class="lead">
+    <div class="lead-tag">Sample Demo — Tool #01</div>
+    <div class="lead-ttl">助成金・補助金レーダー</div>
+    <div class="lead-sub">毎週月曜日に、あなたの業種・地域に合った補助金・助成金候補をLINEで自動配信。申請件数が増えます。</div>
+  </div>
+
+  <div class="cols">
+    <!-- LEFT: メインコンテンツ -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- 今週の補助金リスト -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">🎯</div>
+          <div>
+            <div class="card-ht">今週の補助金・助成金レポート</div>
+            <div class="card-hsub">2026年5月13日（月）配信 ／ 業種：調剤薬局・医療</div>
+          </div>
+          <div class="dot"></div>
+        </div>
+        <div class="grant-list">
+          <div class="grant new">
+            <div class="gnew">NEW</div>
+            <div class="gbody">
+              <div class="gname">IT導入補助金2026（通常枠）</div>
+              <div class="gmeta">
+                <span class="gtag gt-amt">最大450万円</span>
+                <span class="gtag gt-dl">締切 6/30</span>
+                <span class="gtag gt-cat">全業種対象</span>
+              </div>
+              <div class="gdesc">ITツール・ソフトウェア導入費用を最大75%補助。レセコン更新・電子薬歴・予約管理システム等が対象になる可能性あり。</div>
+            </div>
+            <div class="gchev">›</div>
+          </div>
+          <div class="grant new">
+            <div class="gnew">NEW</div>
+            <div class="gbody">
+              <div class="gname">小規模事業者持続化補助金（第17回）</div>
+              <div class="gmeta">
+                <span class="gtag gt-amt">最大200万円</span>
+                <span class="gtag gt-dl">締切 7/31</span>
+                <span class="gtag gt-cat">小規模事業者</span>
+              </div>
+              <div class="gdesc">販路開拓・集客強化・HP制作・チラシ作成などの経費を補助。薬局の差別化・地域集客策に活用可。</div>
+            </div>
+            <div class="gchev">›</div>
+          </div>
+          <div class="grant">
+            <div style="width:34px;flex-shrink:0;"></div>
+            <div class="gbody">
+              <div class="gname">東京都 中小企業デジタル化支援事業</div>
+              <div class="gmeta">
+                <span class="gtag gt-amt">最大100万円</span>
+                <span class="gtag gt-dl">締切 8/15</span>
+                <span class="gtag gt-cat">都内事業者</span>
+              </div>
+              <div class="gdesc">クラウドシステム・AIツール導入費を補助。電子薬歴・調剤支援AI等が対象見込み。</div>
+            </div>
+            <div class="gchev">›</div>
+          </div>
+          <div class="grant">
+            <div style="width:34px;flex-shrink:0;"></div>
+            <div class="gbody">
+              <div class="gname">雇用調整助成金（特例措置）</div>
+              <div class="gmeta">
+                <span class="gtag gt-amt">1人/日 最大9,000円</span>
+                <span class="gtag gt-dl">随時申請</span>
+                <span class="gtag gt-cat">雇用維持</span>
+              </div>
+              <div class="gdesc">休業・教育訓練を実施した場合に従業員1人あたりの賃金を助成。スタッフ研修期間に活用可。</div>
+            </div>
+            <div class="gchev">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 週次統計 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">📊</div>
+          <div>
+            <div class="card-ht">申請実績サマリ</div>
+            <div class="card-hsub">2026年 累計</div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="rweek">1月〜5月の申請・採択状況</div>
+          <div class="rstats">
+            <div class="rstat"><div class="rsv">12</div><div class="rsl">通知件数</div></div>
+            <div class="rstat"><div class="rsv">4</div><div class="rsl">申請済み</div></div>
+            <div class="rstat"><div class="rsv g">3</div><div class="rsl">採択</div></div>
+          </div>
+          <div class="rbar">
+            <div class="rbrow"><div class="rbn">IT導入補助金</div><div class="rbv">3</div><div class="rbg"><div class="rbg-fill" style="width:100%"></div></div></div>
+            <div class="rbrow"><div class="rbn">持続化補助金</div><div class="rbv">2</div><div class="rbg"><div class="rbg-fill" style="width:66%"></div></div></div>
+            <div class="rbrow"><div class="rbn">都・自治体助成金</div><div class="rbv">4</div><div class="rbg"><div class="rbg-fill" style="width:133%;max-width:100%"></div></div></div>
+            <div class="rbrow"><div class="rbn">雇用・人材系</div><div class="rbv">3</div><div class="rbg"><div class="rbg-fill" style="width:100%"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: LINE通知プレビュー + 設定 -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- LINE通知イメージ -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">💬</div>
+          <div>
+            <div class="card-ht">LINE通知イメージ</div>
+            <div class="card-hsub">毎週月曜 AM7:00 自動配信</div>
+          </div>
+        </div>
+        <div class="line-wrap">
+          <div class="line-phone">
+            <div class="lp-bar">
+              <div class="lp-time">9:41</div>
+              <div class="lp-icons">▲ ◀ ●</div>
+            </div>
+            <div class="lp-screen">
+              <div class="lp-header">
+                <div class="lp-avi">🤖</div>
+                <div>
+                  <div class="lp-name">補助金レーダー</div>
+                  <div class="lp-status">● オンライン</div>
+                </div>
+              </div>
+              <div class="lp-msgs">
+                <div class="lmsg">
+                  <div class="lm-avi">🤖</div>
+                  <div>
+                    <div class="lm-body">
+                      <div class="lm-ttl">📋 今週の補助金情報（5/13）</div>
+                      <div class="lm-item">① IT導入補助金<br><span class="amt">最大450万円</span> ／ 締切 <b>6/30</b></div>
+                      <div class="lm-item">② 持続化補助金<br><span class="amt">最大200万円</span> ／ 締切 <b>7/31</b></div>
+                      <div class="lm-item">③ 東京都DX支援<br><span class="amt">最大100万円</span> ／ 締切 <b>8/15</b></div>
+                      <div class="lm-foot">詳細はこちら → [レポートを見る]</div>
+                    </div>
+                    <div class="lm-time">月 7:00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 設定パネル -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ico">⚙️</div>
+          <div>
+            <div class="card-ht">通知設定</div>
+            <div class="card-hsub">YUMEMATCH側で初期設定</div>
+          </div>
+        </div>
+        <div class="setting-body">
+          <div class="slabel">業種タグ</div>
+          <div class="stags">
+            <div class="stag on">💊 調剤薬局</div>
+            <div class="stag on">🏥 医療・クリニック</div>
+            <div class="stag">🍱 飲食</div>
+            <div class="stag">💼 コンサル</div>
+            <div class="stag">🏢 一般企業</div>
+          </div>
+          <div class="slabel">地域</div>
+          <div class="stags">
+            <div class="stag on">🗼 東京都</div>
+            <div class="stag">🌸 神奈川</div>
+            <div class="stag">🌊 大阪</div>
+          </div>
+          <div class="slabel">追加キーワード（任意）</div>
+          <input class="sinput" type="text" value="DX、電子薬歴、AI導入" placeholder="キーワードを入力">
+          <div class="slabel">通知先 LINE</div>
+          <input class="sinput" type="text" value="登録済み ✓" readonly style="color:var(--green);font-weight:600;">
+          <button class="sbtn">設定を保存する</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CTAバー -->
+<div class="cta">
+  <div class="cta-l">このツールを導入する → <strong>初期費用 ¥25,000〜 / 構築期間 約2週間</strong></div>
+  <div class="cta-btns">
+    <a href="../ai-tools-catalog.html" class="btn-outline">← カタログに戻る</a>
+    <a href="mailto:info@yumematch.co.jp?subject=助成金・補助金レーダーについて問い合わせ" class="btn-fill">このツールを依頼する →</a>
+  </div>
+</div>
+
+</body>
+</html>
