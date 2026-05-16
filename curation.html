@@ -10,7 +10,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .hdr{background:#1e1b4b;color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:100}
 .hdr-ttl{font-size:16px;font-weight:800;letter-spacing:-.03em}
 .hdr-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
-.hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
 .counter{background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;font-size:12px;display:flex;gap:12px}
 .cnt-item{text-align:center}
 .cnt-num{font-size:18px;font-weight:900;line-height:1}
@@ -18,6 +18,8 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .cnt-keep .cnt-num{color:#34d399}
 .cnt-mod .cnt-num{color:#fbbf24}
 .cnt-rm .cnt-num{color:#f87171}
+.cnt-new .cnt-num{color:#818cf8}
+.btn-add{background:#6366f1;border:none;color:#fff;font-size:12px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-export{background:#22c55e;border:none;color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-reset{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .main{max-width:900px;margin:0 auto;padding:24px 16px}
@@ -29,8 +31,13 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .tool-card.keep{border-color:#34d399;background:#f0fdf4}
 .tool-card.mod{border-color:#fbbf24;background:#fffbeb}
 .tool-card.rm{border-color:#fca5a5;background:#fff5f5;opacity:.7}
+.tool-card.isnew{border-color:#a5b4fc;background:#eef2ff}
+.tool-card.isnew.keep{border-color:#34d399;background:#f0fdf4}
+.tool-card.isnew.mod{border-color:#fbbf24;background:#fffbeb}
+.tool-card.isnew.rm{border-color:#fca5a5;background:#fff5f5;opacity:.7}
 .tool-top{display:flex;align-items:flex-start;gap:12px}
 .tool-id{font-size:10px;color:#94a3b8;font-weight:700;min-width:24px;padding-top:2px}
+.badge-new{display:inline-block;background:#6366f1;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
 .tool-info{flex:1;min-width:0}
 .tool-name{font-size:14px;font-weight:700;color:#0f172a;line-height:1.3}
 .tool-meta{font-size:11px;color:#64748b;margin-top:3px}
@@ -43,18 +50,33 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .btn-keep.active,.tool-card.keep .btn-keep{background:#22c55e;color:#fff;border-color:#22c55e}
 .btn-mod.active,.tool-card.mod .btn-mod{background:#f59e0b;color:#fff;border-color:#f59e0b}
 .btn-rm.active,.tool-card.rm .btn-rm{background:#ef4444;color:#fff;border-color:#ef4444}
+.btn-del{background:none;border:none;color:#cbd5e1;font-size:14px;cursor:pointer;padding:4px 6px;border-radius:4px;line-height:1;margin-left:2px}
+.btn-del:hover{color:#ef4444;background:#fef2f2}
 .tool-note{margin-top:8px;display:none}
 .tool-note.show{display:block}
 .tool-note textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:6px;padding:7px 10px;font-size:11px;font-family:inherit;color:#475569;resize:vertical;min-height:48px;outline:none}
 .tool-note textarea:focus{border-color:#818cf8}
+
+/* モーダル共通 */
 .modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal{background:#fff;border-radius:14px;padding:28px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto}
+.modal{background:#fff;border-radius:14px;padding:28px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto}
 .modal-ttl{font-size:17px;font-weight:800;color:#1e1b4b;margin-bottom:6px}
 .modal-sub{font-size:12px;color:#64748b;margin-bottom:20px;line-height:1.6}
 .modal-pre{background:#f1f5f9;border-radius:8px;padding:14px;font-size:11px;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow-y:auto;line-height:1.7;color:#334155}
 .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 .btn-copy{background:#4f46e5;border:none;color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:inherit}
 .btn-close{background:#f1f5f9;border:none;color:#64748b;font-size:13px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit}
+
+/* 新規追加フォーム */
+.add-form{display:flex;flex-direction:column;gap:12px}
+.add-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.add-field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px}
+.add-field input,.add-field select,.add-field textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:7px;padding:9px 11px;font-size:13px;font-family:inherit;color:#0f172a;outline:none;background:#fff}
+.add-field input:focus,.add-field select:focus,.add-field textarea:focus{border-color:#6366f1}
+.add-field textarea{min-height:64px;resize:vertical}
+.add-field.full{grid-column:1/-1}
+.btn-submit{background:#6366f1;border:none;color:#fff;font-size:13px;font-weight:700;padding:11px 24px;border-radius:8px;cursor:pointer;font-family:inherit}
+
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e1b4b;color:#fff;font-size:13px;font-weight:600;padding:11px 22px;border-radius:10px;z-index:300;animation:fdin .18s ease;pointer-events:none}
 @keyframes fdin{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .progress-bar{height:4px;background:#e2e8f0;position:sticky;top:64px;z-index:99}
@@ -66,14 +88,16 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 <div class="hdr">
   <div>
     <div class="hdr-ttl">カタログ精査シート</div>
-    <div class="hdr-sub">各ツールを「残す / 要修正 / 外す」で評価してください</div>
+    <div class="hdr-sub">各ツールを「残す / 要修正 / 外す」で評価 ＋ 新規追加もできます</div>
   </div>
   <div class="hdr-right">
     <div class="counter">
       <div class="cnt-item cnt-keep"><div class="cnt-num" id="cnt-keep">0</div><div class="cnt-lbl">残す</div></div>
       <div class="cnt-item cnt-mod"><div class="cnt-num" id="cnt-mod">0</div><div class="cnt-lbl">要修正</div></div>
       <div class="cnt-item cnt-rm"><div class="cnt-num" id="cnt-rm">0</div><div class="cnt-lbl">外す</div></div>
+      <div class="cnt-item cnt-new"><div class="cnt-num" id="cnt-new">0</div><div class="cnt-lbl">新規</div></div>
     </div>
+    <button class="btn-add" onclick="showAddModal()">＋ 新規追加</button>
     <button class="btn-reset" onclick="resetAll()">リセット</button>
     <button class="btn-export" onclick="showExport()">結果を出力 →</button>
   </div>
@@ -83,10 +107,61 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 
 <div class="main" id="main"></div>
 
-<div id="export-modal" class="modal-ov" style="display:none">
+<!-- 新規追加モーダル -->
+<div id="add-modal" class="modal-ov" style="display:none" onclick="if(event.target===this)closeAdd()">
+  <div class="modal">
+    <div class="modal-ttl">✨ 新規ツールを追加</div>
+    <div class="modal-sub">カタログに追加したいツールのアイデアを入力してください。<br>エクスポート時に「新規追加候補」としてまとめて出力されます。</div>
+    <div class="add-form">
+      <div class="add-row">
+        <div class="add-field">
+          <label>カテゴリ</label>
+          <select id="add-cat">
+            <option value="情報収集">情報収集</option>
+            <option value="議事録・文書">議事録・文書</option>
+            <option value="経営・財務">経営・財務</option>
+            <option value="採用・人事">採用・人事</option>
+            <option value="営業・マーケ">営業・マーケ</option>
+            <option value="業界特化">業界特化</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+        <div class="add-field">
+          <label>ツール名</label>
+          <input type="text" id="add-name" placeholder="例：契約書レビュー 自動化">
+        </div>
+      </div>
+      <div class="add-row">
+        <div class="add-field">
+          <label>目安価格</label>
+          <input type="text" id="add-price" placeholder="例：¥40,000〜">
+        </div>
+        <div class="add-field">
+          <label>工数</label>
+          <input type="text" id="add-period" placeholder="例：2〜3週間">
+        </div>
+      </div>
+      <div class="add-field full">
+        <label>困りごと（Before）— 入れると詳細ページにも反映されます</label>
+        <textarea id="add-bef" placeholder="例：契約書のチェックに毎回1〜2時間かかる。見落としが怖くて何度も読み直す"></textarea>
+      </div>
+      <div class="add-field full">
+        <label>メモ・補足</label>
+        <textarea id="add-note" placeholder="なぜ追加したいか・参考事例・競合ツールなど"></textarea>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-close" onclick="closeAdd()">キャンセル</button>
+      <button class="btn-submit" onclick="submitAdd()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 出力モーダル -->
+<div id="export-modal" class="modal-ov" style="display:none" onclick="if(event.target===this)document.getElementById('export-modal').style.display='none'">
   <div class="modal">
     <div class="modal-ttl">精査結果</div>
-    <div class="modal-sub">以下の内容をコピーして小池さんに共有するか、Claude Codeに貼り付けてカタログに反映できます。</div>
+    <div class="modal-sub">以下の内容をコピーして Claude Code に貼り付けるとカタログに反映できます。</div>
     <pre class="modal-pre" id="export-pre"></pre>
     <div class="modal-btns">
       <button class="btn-close" onclick="document.getElementById('export-modal').style.display='none'">閉じる</button>
@@ -149,104 +224,184 @@ const TOOLS=[
   {id:44,cat:'業界特化',name:'メニュー原価計算（飲食）',priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる'},
 ];
 
-const STATE = {};
-const CATS = [...new Set(TOOLS.map(t=>t.cat))];
+const STATE = {};  // {id: {status, note}}
+let NEW_TOOLS = []; // [{nid, cat, name, priceL, period, bef, note, status}]
+const ALL_CATS = [...new Set(TOOLS.map(t=>t.cat))];
 
 function load(){
-  const saved = localStorage.getItem('yumematch-curation-v1');
-  if(saved){Object.assign(STATE, JSON.parse(saved));}
+  const s = localStorage.getItem('yumematch-curation-v1');
+  if(s) Object.assign(STATE, JSON.parse(s));
+  const n = localStorage.getItem('yumematch-curation-new-v1');
+  if(n) NEW_TOOLS = JSON.parse(n);
 }
 function save(){
   localStorage.setItem('yumematch-curation-v1', JSON.stringify(STATE));
+  localStorage.setItem('yumematch-curation-new-v1', JSON.stringify(NEW_TOOLS));
   updateCounter();
   updateProgress();
 }
 
+function allTools(){
+  return [...TOOLS, ...NEW_TOOLS.map(n=>({...n, id:'n'+n.nid}))];
+}
+
+/* ── 既存ツール操作 ── */
 function setStatus(id, status){
-  if(!STATE[id]) STATE[id] = {};
-  STATE[id].status = STATE[id].status === status ? null : status;
+  if(!STATE[id]) STATE[id]={};
+  STATE[id].status = STATE[id].status===status ? null : status;
   const card = document.getElementById('card-'+id);
   card.classList.remove('keep','mod','rm');
   if(STATE[id].status) card.classList.add(STATE[id].status);
   ['keep','mod','rm'].forEach(s=>{
     card.querySelector('.btn-'+s).classList.toggle('active', STATE[id].status===s);
   });
-  const noteEl = card.querySelector('.tool-note');
-  noteEl.classList.toggle('show', STATE[id].status==='mod' || (STATE[id].note||'').length>0);
+  card.querySelector('.tool-note').classList.toggle('show',
+    STATE[id].status==='mod' || (STATE[id].note||'').length>0);
   save();
 }
-
 function setNote(id, val){
-  if(!STATE[id]) STATE[id] = {};
-  STATE[id].note = val;
-  save();
+  if(!STATE[id]) STATE[id]={};
+  STATE[id].note=val; save();
 }
 
+/* ── 新規ツール操作 ── */
+function setNewStatus(nid, status){
+  const t = NEW_TOOLS.find(x=>x.nid===nid);
+  if(!t) return;
+  t.status = t.status===status ? null : status;
+  const card = document.getElementById('card-n'+nid);
+  card.classList.remove('keep','mod','rm');
+  if(t.status) card.classList.add(t.status);
+  ['keep','mod','rm'].forEach(s=>{
+    card.querySelector('.btn-'+s).classList.toggle('active', t.status===s);
+  });
+  card.querySelector('.tool-note').classList.toggle('show',
+    t.status==='mod' || (t.note||'').length>0);
+  save();
+}
+function setNewNote(nid, val){
+  const t=NEW_TOOLS.find(x=>x.nid===nid); if(!t) return;
+  t.note=val; save();
+}
+function deleteNew(nid){
+  if(!confirm('削除しますか？')) return;
+  NEW_TOOLS=NEW_TOOLS.filter(x=>x.nid!==nid);
+  save(); render();
+}
+
+/* ── 新規追加モーダル ── */
+function showAddModal(){
+  ['add-name','add-price','add-period','add-bef','add-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('add-cat').value='情報収集';
+  document.getElementById('add-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('add-name').focus(),100);
+}
+function closeAdd(){ document.getElementById('add-modal').style.display='none'; }
+function submitAdd(){
+  const name=document.getElementById('add-name').value.trim();
+  if(!name){toast('ツール名を入力してください');return;}
+  const nid = Date.now();
+  NEW_TOOLS.push({
+    nid,
+    cat: document.getElementById('add-cat').value,
+    name,
+    priceL: document.getElementById('add-price').value.trim()||'未定',
+    period: document.getElementById('add-period').value.trim()||'未定',
+    bef:  document.getElementById('add-bef').value.trim(),
+    note: document.getElementById('add-note').value.trim(),
+    status: 'keep',
+  });
+  save(); render(); closeAdd();
+  toast('✨ 追加しました：'+name);
+}
+
+/* ── カウンター・プログレス ── */
 function updateCounter(){
   let keep=0,mod=0,rm=0;
   TOOLS.forEach(t=>{
-    const s = STATE[t.id]?.status;
-    if(s==='keep') keep++;
-    else if(s==='mod') mod++;
-    else if(s==='rm') rm++;
+    const s=STATE[t.id]?.status;
+    if(s==='keep') keep++; else if(s==='mod') mod++; else if(s==='rm') rm++;
+  });
+  NEW_TOOLS.forEach(t=>{
+    if(t.status==='keep') keep++; else if(t.status==='mod') mod++; else if(t.status==='rm') rm++;
   });
   document.getElementById('cnt-keep').textContent=keep;
   document.getElementById('cnt-mod').textContent=mod;
   document.getElementById('cnt-rm').textContent=rm;
+  document.getElementById('cnt-new').textContent=NEW_TOOLS.length;
+}
+function updateProgress(){
+  const existing = TOOLS.filter(t=>STATE[t.id]?.status).length;
+  const total = TOOLS.length;
+  document.getElementById('progress').style.width=(existing/total*100)+'%';
 }
 
-function updateProgress(){
-  const done = TOOLS.filter(t=>STATE[t.id]?.status).length;
-  document.getElementById('progress').style.width = (done/TOOLS.length*100)+'%';
+/* ── レンダリング ── */
+function renderCard(t, isNew=false){
+  const id = isNew ? 'n'+t.nid : t.id;
+  const s = isNew ? (t.status||'') : (STATE[t.id]?.status||'');
+  const note = isNew ? (t.note||'') : (STATE[t.id]?.note||'');
+  const showNote = s==='mod' || note.length>0;
+  const onStatus = isNew ? `setNewStatus(${t.nid},'STAT')` : `setStatus(${t.id},'STAT')`;
+  const onNote = isNew ? `setNewNote(${t.nid},this.value)` : `setNote(${t.id},this.value)`;
+  return`<div class="tool-card ${s}${isNew?' isnew':''}" id="card-${id}">
+    <div class="tool-top">
+      <div class="tool-id">${isNew?'NEW':'#'+t.id}</div>
+      <div class="tool-info">
+        <div class="tool-name">${t.name}${isNew?'<span class="badge-new">新規</span>':''}</div>
+        <div class="tool-meta">${t.priceL} ／ 工数 ${t.period}</div>
+        ${t.bef?`<div class="tool-bef">😓 ${t.bef}</div>`:''}
+      </div>
+      <div class="tool-actions">
+        <button class="btn-keep${s==='keep'?' active':''}" onclick="${onStatus.replace('STAT','keep')}">✅ 残す</button>
+        <button class="btn-mod${s==='mod'?' active':''}" onclick="${onStatus.replace('STAT','mod')}">✏️ 要修正</button>
+        <button class="btn-rm${s==='rm'?' active':''}" onclick="${onStatus.replace('STAT','rm')}">🗑️ 外す</button>
+        ${isNew?`<button class="btn-del" onclick="deleteNew(${t.nid})" title="削除">×</button>`:''}
+      </div>
+    </div>
+    <div class="tool-note${showNote?' show':''}">
+      <textarea placeholder="修正内容・補足メモなど..." onchange="${onNote}">${note}</textarea>
+    </div>
+  </div>`;
 }
 
 function render(){
-  const main = document.getElementById('main');
-  main.innerHTML = CATS.map(cat=>{
-    const tools = TOOLS.filter(t=>t.cat===cat);
+  const allCats = [...new Set([...ALL_CATS, ...NEW_TOOLS.map(n=>n.cat)])];
+  document.getElementById('main').innerHTML = allCats.map(cat=>{
+    const existing = TOOLS.filter(t=>t.cat===cat);
+    const added = NEW_TOOLS.filter(t=>t.cat===cat);
+    if(!existing.length && !added.length) return '';
     return`<div class="cat-block">
       <div class="cat-hdr">
         <span class="cat-name">${cat}</span>
-        <span class="cat-count">${tools.length}ツール</span>
+        <span class="cat-count">${existing.length+added.length}ツール${added.length?` (+${added.length}新規)`:''}</span>
       </div>
-      ${tools.map(t=>{
-        const s = STATE[t.id]?.status||'';
-        const note = STATE[t.id]?.note||'';
-        const showNote = s==='mod' || note.length>0;
-        return`<div class="tool-card ${s}" id="card-${t.id}">
-          <div class="tool-top">
-            <div class="tool-id">#${t.id}</div>
-            <div class="tool-info">
-              <div class="tool-name">${t.name}</div>
-              <div class="tool-meta">${t.priceL} ／ 工数 ${t.period}</div>
-              <div class="tool-bef">😓 ${t.bef}</div>
-            </div>
-            <div class="tool-actions">
-              <button class="btn-keep${s==='keep'?' active':''}" onclick="setStatus(${t.id},'keep')">✅ 残す</button>
-              <button class="btn-mod${s==='mod'?' active':''}" onclick="setStatus(${t.id},'mod')">✏️ 要修正</button>
-              <button class="btn-rm${s==='rm'?' active':''}" onclick="setStatus(${t.id},'rm')">🗑️ 外す</button>
-            </div>
-          </div>
-          <div class="tool-note${showNote?' show':''}">
-            <textarea placeholder="修正内容・代替案・コメントなど..." onchange="setNote(${t.id},this.value)">${note}</textarea>
-          </div>
-        </div>`;
-      }).join('')}
+      ${existing.map(t=>renderCard(t,false)).join('')}
+      ${added.map(t=>renderCard(t,true)).join('')}
     </div>`;
   }).join('');
 }
 
+/* ── エクスポート ── */
 function showExport(){
-  const keep=[],mod=[],rm=[];
+  const keep=[],mod=[],rm=[],undecided=[];
   TOOLS.forEach(t=>{
     const s=STATE[t.id]?.status;
-    if(s==='keep') keep.push(t);
-    else if(s==='mod') mod.push(t);
-    else if(s==='rm') rm.push(t);
+    if(s==='keep') keep.push({...t,note:STATE[t.id]?.note||''});
+    else if(s==='mod') mod.push({...t,note:STATE[t.id]?.note||''});
+    else if(s==='rm') rm.push({...t,note:STATE[t.id]?.note||''});
+    else undecided.push(t);
   });
+  const newKeep=[],newMod=[],newRm=[];
+  NEW_TOOLS.forEach(t=>{
+    if(t.status==='keep'||!t.status) newKeep.push(t);
+    else if(t.status==='mod') newMod.push(t);
+    else if(t.status==='rm') newRm.push(t);
+  });
+
   const lines=[];
   lines.push(`=== カタログ精査結果 ===`);
-  lines.push(`判断済み: ${keep.length+mod.length+rm.length} / ${TOOLS.length}ツール\n`);
+  lines.push(`判断済み: ${keep.length+mod.length+rm.length} / ${TOOLS.length}ツール  新規追加: ${NEW_TOOLS.length}本\n`);
   if(keep.length){
     lines.push(`【残す】 ${keep.length}本`);
     keep.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
@@ -254,10 +409,7 @@ function showExport(){
   }
   if(mod.length){
     lines.push(`【要修正】 ${mod.length}本`);
-    mod.forEach(t=>{
-      const note=STATE[t.id]?.note||'';
-      lines.push(`  #${t.id} ${t.name}${note?'\n    → '+note:''}`);
-    });
+    mod.forEach(t=>{lines.push(`  #${t.id} ${t.name}${t.note?'\n    → '+t.note:''}`)});
     lines.push('');
   }
   if(rm.length){
@@ -265,27 +417,38 @@ function showExport(){
     rm.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
     lines.push('');
   }
-  const undecided = TOOLS.filter(t=>!STATE[t.id]?.status);
   if(undecided.length){
     lines.push(`【未判断】 ${undecided.length}本`);
     undecided.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
+    lines.push('');
   }
-  document.getElementById('export-pre').textContent = lines.join('\n');
+  if(NEW_TOOLS.length){
+    lines.push(`【新規追加候補】 ${newKeep.length+newMod.length}本`);
+    [...newKeep,...newMod].forEach(t=>{
+      lines.push(`  [${t.cat}] ${t.name}`);
+      lines.push(`    価格: ${t.priceL} ／ 工数: ${t.period}`);
+      if(t.bef) lines.push(`    困りごと: ${t.bef}`);
+      if(t.note) lines.push(`    メモ: ${t.note}`);
+    });
+    if(newRm.length){
+      lines.push('');
+      lines.push(`  （見送り: ${newRm.map(t=>t.name).join('、')}）`);
+    }
+  }
+  document.getElementById('export-pre').textContent=lines.join('\n');
   document.getElementById('export-modal').style.display='flex';
 }
-
 function copyExport(){
-  const text = document.getElementById('export-pre').textContent;
-  navigator.clipboard.writeText(text).then(()=>toast('コピーしました'));
+  navigator.clipboard.writeText(document.getElementById('export-pre').textContent).then(()=>toast('コピーしました'));
 }
 
 function resetAll(){
-  if(!confirm('全ての評価をリセットしますか？')) return;
+  if(!confirm('全ての評価と新規追加をリセットしますか？')) return;
   Object.keys(STATE).forEach(k=>delete STATE[k]);
+  NEW_TOOLS=[];
   localStorage.removeItem('yumematch-curation-v1');
-  render();
-  updateCounter();
-  updateProgress();
+  localStorage.removeItem('yumematch-curation-new-v1');
+  render(); updateCounter(); updateProgress();
 }
 
 function toast(msg){
@@ -295,10 +458,7 @@ function toast(msg){
   setTimeout(()=>el.remove(),2000);
 }
 
-load();
-render();
-updateCounter();
-updateProgress();
+load(); render(); updateCounter(); updateProgress();
 </script>
 </body>
 </html>
