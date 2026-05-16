@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ツール詳細 | YUMEMATCH AI業務改善</title>
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--bdr-d:#c9d3e6;
+  --ink:#0f172a;--sub:#475569;--mute:#94a3b8;
+  --indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);
+  --green:#059669;--green-lt:#ecfdf5;
+  --red:#e11d48;--red-lt:#fff1f2;
+  --amber:#92400e;
+  --sh:0 1px 4px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-md:0 4px 16px rgba(15,23,42,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* ── Header ── */
+.hdr{height:52px;background:var(--white);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;}
+.hdr-in{max-width:1120px;margin:0 auto;padding:0 20px;height:100%;display:flex;align-items:center;gap:12px;}
+.back{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--mute);text-decoration:none;padding:6px 12px;border-radius:7px;border:1px solid var(--bdr);background:var(--white);transition:all .15s;white-space:nowrap;}
+.back:hover{color:var(--indigo);border-color:var(--indigo-bdr);}
+.hdr-name{font-size:14px;font-weight:700;color:var(--ink);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hdr-cta{padding:8px 16px;border-radius:7px;background:var(--green);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(5,150,105,.3);white-space:nowrap;}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 55%,#4338ca 100%);color:#fff;padding:52px 20px 44px;}
+.hero-in{max-width:1120px;margin:0 auto;}
+.hero-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.hero-cat{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.hero-sym{font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.9);}
+.hero-sym.s-super{background:rgba(225,29,72,.28);border-color:rgba(225,29,72,.45);}
+.hero-sym.s-high{background:rgba(251,191,36,.2);border-color:rgba(251,191,36,.38);color:#fde68a;}
+.hero-ttl{font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1.2;margin-bottom:14px;}
+.hero-sub{font-size:15px;opacity:.78;max-width:640px;line-height:1.75;margin-bottom:36px;}
+.metrics{display:flex;gap:14px;flex-wrap:wrap;}
+.metric{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:16px 22px;min-width:116px;}
+.metric-val{font-size:26px;font-weight:900;letter-spacing:-.05em;line-height:1;color:#fff;}
+.metric-lbl{font-size:11px;opacity:.62;margin-top:5px;}
+
+/* ── Content ── */
+.content{max-width:1120px;margin:0 auto;padding:40px 20px 96px;display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:start;}
+@media(max-width:920px){.content{grid-template-columns:1fr;}}
+
+/* ── BA Section ── */
+.ba-col{}
+.ba-box{border-radius:16px;padding:26px 30px;margin-bottom:6px;}
+.ba-box.before{background:var(--red-lt);border:1.5px solid rgba(225,29,72,.16);}
+.ba-box.after{background:var(--green-lt);border:1.5px solid rgba(5,150,105,.16);}
+.ba-label{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px;}
+.ba-label.lb{color:var(--red);}
+.ba-label.la{color:var(--green);}
+.ba-ico{font-size:17px;}
+.ba-pts{display:flex;flex-direction:column;gap:12px;}
+.ba-pt{display:flex;align-items:flex-start;gap:11px;}
+.ba-mk{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.before .ba-mk{background:rgba(225,29,72,.13);color:var(--red);}
+.after .ba-mk{background:rgba(5,150,105,.13);color:var(--green);}
+.ba-txt{font-size:13px;line-height:1.7;}
+.before .ba-txt{color:#64172a;}
+.after .ba-txt{color:#064e3b;font-weight:500;}
+
+.arrow-row{padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:12px;}
+.arrow-line{flex:1;height:1.5px;background:linear-gradient(90deg,transparent,var(--indigo),transparent);}
+.arrow-pill{font-size:12px;font-weight:700;color:var(--indigo);white-space:nowrap;padding:7px 16px;border:1.5px solid var(--indigo-bdr);border-radius:20px;background:var(--indigo-bg);}
+
+.info-chips{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;}
+.info-chip{display:flex;flex-direction:column;gap:3px;padding:10px 16px;border-radius:10px;background:var(--white);border:1px solid var(--bdr);box-shadow:var(--sh);}
+.info-chip-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);}
+.info-chip-val{font-size:13px;font-weight:700;color:var(--ink);}
+
+/* ── Mock Panel ── */
+.mock-col{position:sticky;top:72px;}
+.mock-wrap{background:var(--white);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;box-shadow:var(--sh-md);}
+.mock-bar{background:var(--bg);border-bottom:1px solid var(--bdr);padding:10px 14px;display:flex;align-items:center;gap:7px;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.mock-bar-title{font-size:11px;font-weight:600;color:var(--sub);margin-left:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mock-body{}
+
+/* ── CTA ── */
+.cta{background:linear-gradient(135deg,#1e1b4b,#4338ca);padding:72px 20px;text-align:center;}
+.cta-in{max-width:600px;margin:0 auto;}
+.cta-ttl{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:12px;}
+.cta-sub{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:32px;line-height:1.8;}
+.cta-btn{display:inline-flex;align-items:center;gap:9px;padding:16px 38px;border-radius:12px;background:var(--green);border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(5,150,105,.4);transition:all .2s;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(5,150,105,.5);}
+.cta-note{font-size:11px;color:rgba(255,255,255,.45);margin-top:12px;}
+
+/* ─────────────────────────────────────
+   MOCK UI COMPONENTS
+───────────────────────────────────── */
+
+/* -- Notification List -- */
+.m-list{padding:10px 0;}
+.m-list-hdr{padding:4px 16px 8px;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);}
+.m-item{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:background .12s;}
+.m-item:hover{background:var(--bg);}
+.m-item:last-child{border-bottom:none;}
+.m-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.m-body{flex:1;min-width:0;}
+.m-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px;}
+.m-name{font-size:12px;font-weight:700;color:var(--ink);line-height:1.3;}
+.m-sub{font-size:11px;color:var(--mute);line-height:1.5;}
+.m-act{margin-top:5px;font-size:10px;font-weight:700;color:var(--indigo);}
+.badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.b-red{background:var(--red-lt);color:var(--red);border:1px solid rgba(225,29,72,.2);}
+.b-green{background:var(--green-lt);color:var(--green);border:1px solid rgba(5,150,105,.2);}
+.b-amber{background:#fffbeb;color:var(--amber);border:1px solid rgba(146,64,14,.18);}
+.b-indigo{background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
+
+/* -- Dashboard -- */
+.m-dash{padding:14px 16px 16px;}
+.m-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.m-kpi{background:var(--bg);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--bdr);}
+.m-kpi-val{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-.04em;}
+.m-kpi-lbl{font-size:9px;color:var(--mute);margin-top:2px;}
+.m-kpi-trend{font-size:9px;margin-top:3px;font-weight:700;}
+.t-up{color:var(--green);}
+.t-dn{color:var(--red);}
+.m-chart-lbl{font-size:9px;font-weight:700;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.m-bars{display:flex;gap:3px;align-items:flex-end;height:56px;}
+.m-bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:.55;min-height:4px;}
+.m-bar.cur{opacity:1;background:linear-gradient(180deg,var(--indigo),#7c3aed);}
+.m-ml{display:flex;gap:3px;margin-top:3px;}
+.m-ml div{flex:1;font-size:8px;text-align:center;color:var(--mute);}
+
+/* -- Document -- */
+.m-doc{padding:16px 18px;}
+.m-doc-hdr{border-bottom:2px solid var(--indigo);padding-bottom:11px;margin-bottom:14px;}
+.m-doc-title{font-size:13px;font-weight:800;color:var(--ink);}
+.m-doc-meta{font-size:10px;color:var(--mute);margin-top:3px;}
+.m-sec{margin-bottom:12px;}
+.m-sec-title{font-size:9px;font-weight:800;color:var(--sub);letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:var(--bg);border-radius:4px;display:inline-block;margin-bottom:5px;}
+.m-sec-body{font-size:11px;color:var(--sub);line-height:1.75;}
+.m-tag{display:inline-flex;align-items:center;gap:4px;margin:2px 2px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;}
+.m-tag.done{background:var(--green-lt);color:var(--green);}
+.m-tag.todo{background:#fef3c7;color:var(--amber);}
+
+/* -- Chat -- */
+.m-chat{padding:12px 14px;display:flex;flex-direction:column;gap:9px;max-height:300px;overflow-y:auto;}
+.msg{display:flex;gap:7px;}
+.msg.user{flex-direction:row-reverse;}
+.msg-av{width:26px;height:26px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.msg-bbl{max-width:78%;padding:8px 12px;border-radius:12px;font-size:11px;line-height:1.6;}
+.msg.bot .msg-bbl{background:var(--bg);border:1px solid var(--bdr);color:var(--ink);border-bottom-left-radius:4px;}
+.msg.user .msg-bbl{background:var(--indigo);color:#fff;border-bottom-right-radius:4px;}
+
+/* -- Table -- */
+.m-tw{overflow-x:auto;}
+.m-tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.m-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:7px 12px;background:var(--bg);text-align:left;border-bottom:1.5px solid var(--bdr);white-space:nowrap;}
+.m-tbl td{padding:8px 12px;border-bottom:1px solid var(--bdr);color:var(--ink);vertical-align:middle;}
+.m-tbl tr:last-child td{border-bottom:none;}
+.m-tbl tr:hover td{background:#fafbff;}
+.st{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;}
+.st-done{background:var(--green-lt);color:var(--green);}
+.st-pend{background:#fffbeb;color:var(--amber);}
+.st-alert{background:var(--red-lt);color:var(--red);}
+
+/* -- Calendar -- */
+.m-cal{padding:14px 16px;}
+.m-cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.m-cal-month{font-size:13px;font-weight:700;color:var(--ink);}
+.m-cal-nav{width:24px;height:24px;border-radius:6px;border:1px solid var(--bdr);background:var(--white);cursor:pointer;font-size:11px;color:var(--mute);display:flex;align-items:center;justify-content:center;}
+.m-cg{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;text-align:center;margin-bottom:12px;}
+.m-dow{font-size:8px;font-weight:700;color:var(--mute);padding:3px 0;}
+.m-day{font-size:11px;padding:5px 2px;border-radius:6px;color:var(--mute);}
+.m-day.av{color:var(--ink);font-weight:600;cursor:pointer;}
+.m-day.av:hover{background:var(--indigo-bg);color:var(--indigo);}
+.m-day.sel{background:var(--indigo);color:#fff;font-weight:700;}
+.m-slots-ttl{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.06em;margin-bottom:7px;}
+.m-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.m-slot{padding:7px 4px;text-align:center;border-radius:7px;border:1.5px solid var(--bdr);cursor:pointer;font-size:11px;font-weight:700;color:var(--sub);transition:all .12s;}
+.m-slot.sel{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.m-slot:hover:not(.sel){border-color:var(--indigo);color:var(--indigo);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp .4s ease;}
+.content{animation:fadeUp .5s ease .1s both;}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="back" href="ai-tools-catalog.html">← カタログに戻る</a>
+    <span class="hdr-name" id="hdrName"></span>
+    <button class="hdr-cta" onclick="goApo()">📅 無料相談を予約</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-tags">
+      <span class="hero-cat" id="heroCat"></span>
+      <span class="hero-sym" id="heroSym"></span>
+    </div>
+    <h1 class="hero-ttl" id="heroTtl"></h1>
+    <p class="hero-sub" id="heroSub"></p>
+    <div class="metrics" id="heroMetrics"></div>
+  </div>
+</section>
+
+<div class="content">
+  <div class="ba-col" id="baCol"></div>
+  <div class="mock-col">
+    <div class="mock-wrap">
+      <div class="mock-bar">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#febc2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        <span class="mock-bar-title" id="mockBarTitle">プレビュー</span>
+      </div>
+      <div class="mock-body" id="mockBody"></div>
+    </div>
+  </div>
+</div>
+
+<section class="cta">
+  <div class="cta-in">
+    <h2 class="cta-ttl">このツールを導入してみませんか？</h2>
+    <p class="cta-sub">導入期間は最短1週間。まずは30分の無料相談で現状をお聞きします。<br>費用・スケジュール・カスタマイズ範囲もこの場でご確認いただけます。</p>
+    <button class="cta-btn" onclick="goApo()">📅 無料相談を予約する（30分・完全無料）</button>
+    <p class="cta-note">料金・事例・期間など、なんでもご質問ください</p>
+  </div>
+</section>
+
+<script>
+const APO_URL = 'https://apo-automation.surge.sh/';
+function goApo(){ window.open(APO_URL,'_blank'); }
+
+/* ══════════════════════════════════════════
+   TOOL DATA — 50 tools
+══════════════════════════════════════════ */
+const TOOLS = [
+  { id:1, cat:'info', catL:'情報収集', name:'助成金・補助金レーダー', sym:'super',
+    priceL:'¥25,000〜', period:'2週間',
+    aft:'毎週月曜、使える補助金候補がリストで届く。申請件数が増えた',
+    metrics:[{v:'80%↓',l:'情報収集時間'},{v:'年+5件',l:'申請件数増'},{v:'3週前',l:'締切アラート'}],
+    befP:[
+      '「また締切が昨日だった」が年に数回繰り返される。気づくたびに悔しさが残る',
+      'どの補助金が使えるか調べるだけで半日かかる。検索しても関係ない情報ばかり出てくる',
+      '申請できる補助金を把握しきれていない。もらえるものをもらえていない感覚がずっとある',
+      '締切直前に気づいても準備が間に合わず毎回断念。チャンスを何度も逃している',
+    ],
+    aftP:[
+      '毎週月曜朝に自社に適した補助金候補がリストで自動配信。情報収集作業がゼロになった',
+      '業種・規模・用途でフィルタリングされた情報だけが届くので無駄読みがなくなった',
+      '締切3週間前に自動リマインダーが届くので余裕を持って準備できる',
+      '年間申請件数が平均2〜3件から7〜8件に増えた。もらえるものをもらえるようになった',
+    ],
+    mockT:'list', mockD:{
+      title:'補助金アラート（今週の配信）',
+      items:[
+        {ico:'🔔',bg:'#fef3c7',name:'IT導入補助金2025（通常枠）',sub:'申請期限: 2025/12/15 | 上限450万円',badge:'締切3週間前',bc:'b-amber',act:'申請書を作成'},
+        {ico:'✅',bg:'#ecfdf5',name:'ものづくり・商業・サービス補助金',sub:'新規公募開始 | 上限750万円',badge:'新規公募',bc:'b-green',act:'詳細を確認'},
+        {ico:'📌',bg:'#eef2ff',name:'小規模事業者持続化補助金',sub:'2/3補助 | 上限50万円 | 自社に適合',badge:'適合可能性あり',bc:'b-indigo',act:'チェックリスト'},
+      ]
+    }
+  },
+  { id:2, cat:'info', catL:'情報収集', name:'Googleレビュー監視＋返信下書き', sym:'high',
+    priceL:'¥30,000〜', period:'2週間',
+    aft:'口コミの瞬間に通知。返信案が自動で作られて確認するだけ',
+    metrics:[{v:'即時',l:'通知スピード'},{v:'30分→2分',l:'返信作業時間'},{v:'100%',l:'見逃しゼロ'}],
+    befP:[
+      'スタッフから「悪い口コミが入ってましたよ」と翌日に報告が来る。その間にも他の人が読んでいる',
+      '返信文を考えるのに毎回30分以上かかる。なんと書けばいいか正解がわからない',
+      '複数店舗の口コミを毎日チェックする時間が物理的になく、気づいたら放置になっている',
+      '感情的な低評価レビューへの返信が怖くて後回しにしてしまい、さらに悪化することがある',
+    ],
+    aftP:[
+      '口コミが投稿された瞬間にLINEへ通知が届く。業務中でもすぐに把握できる',
+      '返信下書きが自動生成され確認・微調整してボタン1つで送信。2分以内に完了',
+      '全店舗の口コミが1画面で一覧管理できる。巡回チェック作業がゼロになった',
+      '星1〜2の低評価にも適切なトーンの返信案が用意され、感情的になることなく対応できる',
+    ],
+    mockT:'chat', mockD:{
+      title:'レビュー返信アシスタント',
+      messages:[
+        {from:'bot',text:'⭐⭐ 新しい口コミが届きました\n「対応が遅く、説明も不十分でした」\n—— 田中様（昨日 23:14）'},
+        {from:'user',text:'返信案を作成して'},
+        {from:'bot',text:'【返信下書き】\n田中様、この度はご不便をおかけし誠に申し訳ございません。ご指摘を真摯に受け止め、対応品質の改善に取り組んでまいります。ぜひ改めてご来店いただければ幸いです。'},
+        {from:'user',text:'✅ 送信しました（所要時間: 1分48秒）'},
+      ]
+    }
+  },
+  { id:3, cat:'info', catL:'情報収集', name:'競合・市場モニタリング', sym:'mid',
+    priceL:'¥30,000〜', period:'2〜3週間',
+    aft:'競合の動きが毎朝まとめて届く。先手を打てるようになった',
+    metrics:[{v:'毎朝',l:'情報更新'},{v:'80%↓',l:'調査時間'},{v:'先手',l:'対応スピード'}],
+    befP:[
+      '競合が新サービスを始めたことをお客様から教えてもらって初めて知る。いつも後手に回る',
+      '競合サイトを毎日チェックする時間がなく情報収集が後手になり続けている',
+      '市場トレンドの変化に気づくのが遅れて、気づいたころには自社が取り残されていた',
+      '追いかけるべき競合が複数あって、全部をフォローするのが物理的に不可能な状況',
+    ],
+    aftP:[
+      '毎朝8時に競合の新着情報・価格変更・採用動向がまとめて届く。情報収集作業がゼロに',
+      '自社業界の市場トレンドを毎日5分で把握できる。会議でも根拠のある話ができる',
+      '競合の動きを知ってから1週間以内に対応策を打てるスピードになった',
+      '設定したキーワードとドメインを自動監視。重要な変化だけをアラートで受け取れる',
+    ],
+    mockT:'list', mockD:{
+      title:'競合モニタリング（本日の更新）',
+      items:[
+        {ico:'🏢',bg:'#eef2ff',name:'A社が新プランを発表',sub:'「月額9,800円→6,800円に値下げ」競合の価格戦略が変化',badge:'要対応',bc:'b-red',act:'分析レポートを見る'},
+        {ico:'📣',bg:'#fffbeb',name:'B社が新機能をリリース',sub:'「AI予約機能」を追加——自社との差別化要因を再確認',badge:'注目',bc:'b-amber',act:'詳細を確認'},
+        {ico:'📰',bg:'#ecfdf5',name:'業界トレンド：リピート率向上施策',sub:'複数社が同一施策を開始。業界標準化の兆しあり',badge:'市場動向',bc:'b-indigo',act:'全文を読む'},
+      ]
+    }
+  },
+  { id:4, cat:'info', catL:'情報収集', name:'自分専用新聞', sym:'mid',
+    priceL:'¥20,000〜', period:'1〜2週間',
+    aft:'毎朝7時、自分の業界に絞ったニュースがLINEに届く。5分で完了',
+    metrics:[{v:'毎朝7時',l:'自動配信'},{v:'5分',l:'情報収集時間'},{v:'6カテゴリ',l:'自動分類'}],
+    befP:[
+      'ニュースを読もうとすると気づいたらSNSや関係ない記事に流れて1時間経っている',
+      '自分の業界に関係するニュースだけを効率よく集める方法が見つからない',
+      '情報収集の質にムラがあり、大事なニュースを見逃して後から後悔することがある',
+      '毎朝の情報収集が習慣化できず後回しにしているうちに気づいたら夜になっている',
+    ],
+    aftP:[
+      '毎朝7時にLINEへ自動配信。通勤中の5分で業界情報をキャッチアップできる',
+      '自社業界・競合・市場・法改正・補助金の6カテゴリに自動分類されて読みやすい',
+      '重要度でソートされ「今日読むべき記事」から表示される。無駄な時間がなくなった',
+      '半年分のアーカイブが自動保存。「あの記事どこだっけ」がすぐ探せる',
+    ],
+    mockT:'list', mockD:{
+      title:'NewGo Timez（本日 7:00配信）',
+      items:[
+        {ico:'📊',bg:'#eef2ff',name:'【業界】介護報酬改定の詳細が発表',sub:'2026年4月施行——処遇改善加算の算定要件が変更',badge:'最重要',bc:'b-red',act:'全文を読む'},
+        {ico:'💡',bg:'#fffbeb',name:'【補助金】IT導入補助金2025の申請が開始',sub:'今期から対象範囲が拡大。最大450万円',badge:'要確認',bc:'b-amber',act:'申請要件を確認'},
+        {ico:'🤝',bg:'#ecfdf5',name:'【市場】AI採用ツール導入が急拡大',sub:'中小企業の採用コスト30%削減の事例が増加中',badge:'トレンド',bc:'b-indigo',act:'事例を見る'},
+      ]
+    }
+  },
+  { id:5, cat:'doc', catL:'議事録・文書', name:'MTG議事録 自動化', sym:'high',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'会議中に録音するだけ。3分後に整形済みの議事録が届く',
+    metrics:[{v:'95%↓',l:'議事録作業時間'},{v:'3分',l:'生成スピード'},{v:'自動配信',l:'関係者へ送信'}],
+    befP:[
+      '会議が終わった後に30〜40分の議事録作成が毎回始まる。会議が終わっても仕事が終わらない',
+      '書きながら内容を思い出すので記憶が抜けていることがある。正確性に不安が残る',
+      '誰がTODOを持つのか整理するのに毎回10〜15分かかる。その間に他の仕事が後回しになる',
+      '議事録の送付が翌日になることがあり「あの会議の内容って何でしたっけ？」が起きる',
+    ],
+    aftP:[
+      '会議中にスマホで録音するだけ。会議後3分で整形済みの議事録が届く',
+      '決定事項・TODO・次回アジェンダが自動で分類されて見やすく整理される',
+      '担当者名・期限付きのTODOリストが自動生成。誰が何をいつまでにやるかが明確になる',
+      '指定のSlack/LINE/メールへ会議終了直後に自動送信。情報共有の遅延がゼロになった',
+    ],
+    mockT:'doc', mockD:{
+      title:'定例MTG議事録（自動生成）',
+      meta:'2025年5月16日（木）14:00〜15:00 | 参加者: 4名 | 生成: 15:03',
+      sections:[
+        {title:'決定事項',body:'・Q3の目標を前月比120%に設定（全員合意）\n・採用計画書を5/23までに確定する'},
+        {title:'TODO',tags:[{l:'小池 → 採用面接設定 5/20 まで',t:'todo'},{l:'田中 → 見積書送付 5/17 まで',t:'todo'},{l:'鈴木 → 先月資料の更新 ✓ 完了',t:'done'}]},
+        {title:'次回アジェンダ',body:'・Q3進捗確認\n・新規顧客の受入体制について議論'},
+      ]
+    }
+  },
+  { id:6, cat:'doc', catL:'議事録・文書', name:'事業計画書 ワンクリック生成', sym:'high',
+    priceL:'¥50,000〜', period:'2〜3週間',
+    aft:'売上・コスト・ビジョンを入力するだけで13章の計画書が完成',
+    metrics:[{v:'13章',l:'自動生成'},{v:'数日→30分',l:'作成時間'},{v:'融資採択率UP',l:'品質向上'}],
+    befP:[
+      '融資申請のたびに事業計画書を一から書き直している。毎回ゼロスタートのつらさがある',
+      'どのような構成・内容にすれば審査が通りやすいか正直わからない',
+      '数字の根拠を整理するだけで丸1日かかる。本来の経営の時間が消えていく',
+      '毎回3〜5日かかって業務が止まる。「計画書のために経営ができない」本末転倒な状態',
+    ],
+    aftP:[
+      '売上実績・コスト構造・ビジョンを入力するだけで13章構成の事業計画書が30分で完成',
+      '融資審査で重視される数値根拠・市場分析・リスク対策が自動で盛り込まれる',
+      '過去の採択事例のパターンを学習したAIが審査官の視点で文章を生成する',
+      '記載漏れがないかの自動チェック機能で提出前の安心感が格段に上がった',
+    ],
+    mockT:'doc', mockD:{
+      title:'事業計画書（令和7年度 融資申請用）',
+      meta:'自動生成 — 2025/05/16 | 全13章 | 38ページ | 記載漏れチェック: 完了',
+      sections:[
+        {title:'第1章 事業概要',body:'事業の目的・背景・強みが整理されたサマリが自動生成されます'},
+        {title:'第4章 市場分析',body:'業界規模・成長率・競合分析が市場データをもとに自動記述されます'},
+        {title:'第8章 収支計画',body:'売上・原価・利益の3年予測が入力値から自動計算・グラフ化されます'},
+      ]
+    }
+  },
+  { id:7, cat:'doc', catL:'議事録・文書', name:'見積書・請求書 自動生成', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'顧客名と金額を入力するだけでPDF請求書が自動生成・送付まで完結',
+    metrics:[{v:'3時間→5分',l:'月次請求時間'},{v:'0件',l:'フォーマットずれ'},{v:'自動送付',l:'PDF送信'}],
+    befP:[
+      '毎月の請求業務に2〜3時間かかっている。月末になると請求作業のために他の仕事が止まる',
+      '担当者によってフォーマットがバラバラで管理が大変。後から見返すと統一感がない',
+      '送付漏れや金額ミスが過去に発生したことがあり毎回確認が不安で時間がかかる',
+      '見積から請求への番号管理が手動で煩雑。どの請求書がいくつあるかわからなくなる',
+    ],
+    aftP:[
+      '顧客名・項目・金額を入力するだけで統一フォーマットのPDFが自動生成される',
+      'メールへの自動添付・送付まで完結。送付漏れが完全になくなった',
+      '見積→発注→請求の番号が自動採番されて管理が一元化される',
+      '支払期限のリマインダーが自動で送られ未払いの確認作業も不要になった',
+    ],
+    mockT:'doc', mockD:{
+      title:'請求書 #INV-2025-0523',
+      meta:'請求先: 株式会社〇〇 | 支払期限: 2025/06/30 | 自動送付完了',
+      sections:[
+        {title:'請求内容',body:'AI業務改善ツール 初期構築費 ¥240,000\nシステム設定・テスト費込み | 保守費 ¥0'},
+        {title:'お支払い合計',body:'小計 ¥240,000\n消費税（10%） ¥24,000\n合計 ¥264,000'},
+        {title:'振込先',body:'〇〇銀行 〇〇支店 普通 1234567\nYUMEMATCH株式会社'},
+      ]
+    }
+  },
+  { id:8, cat:'doc', catL:'議事録・文書', name:'雇用契約書・入社書類 一括生成', sym:'mid',
+    priceL:'¥35,000〜', period:'1〜2週間',
+    aft:'氏名・条件を入力するだけで5種類の書類が5分で揃う',
+    metrics:[{v:'5書類',l:'一括生成'},{v:'5分',l:'生成時間'},{v:'0件',l:'記載漏れ'}],
+    befP:[
+      '採用のたびに前回の契約書をコピペして手直しする。毎回「これで合ってるかな」と不安',
+      '雇用契約書・労働条件通知書・誓約書など種類が多くて全部作るのが大変',
+      '法改正でひな形を確認し直す作業が都度発生する。最新版かどうか自信がない',
+      '記載漏れがあると後からトラブルになるリスクがあり、確認作業に毎回時間がかかる',
+    ],
+    aftP:[
+      '氏名・雇用形態・給与・勤務時間を入力するだけで5種類の書類が5分で生成される',
+      '雇用契約書・労働条件通知書・誓約書・個人情報同意書・マイナンバー収集同意書が揃う',
+      '最新の法令に準拠したひな形が常に自動更新されているので古い書式を使う心配がない',
+      '記載必須項目のチェックリストが自動実行されて漏れゼロを保証してくれる',
+    ],
+    mockT:'doc', mockD:{
+      title:'入社書類一括生成（田中 花子 様）',
+      meta:'生成完了 — 2025/05/16 | 5種類のPDFを出力済み',
+      sections:[
+        {title:'生成された書類',tags:[{l:'✅ 雇用契約書',t:'done'},{l:'✅ 労働条件通知書',t:'done'},{l:'✅ 秘密保持誓約書',t:'done'},{l:'✅ 個人情報同意書',t:'done'},{l:'✅ マイナンバー収集同意書',t:'done'}]},
+        {title:'自動チェック結果',body:'必須記載事項: 全項目OK ✓\n法令適合チェック: 問題なし ✓\n署名欄: 全書類に設置済み ✓'},
+      ]
+    }
+  },
+  { id:9, cat:'doc', catL:'議事録・文書', name:'業務マニュアル 自動生成', sym:'high',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'業務動画を撮るだけで手順書・チェックリストが自動生成される',
+    metrics:[{v:'3年→2週間',l:'マニュアル整備'},{v:'動画→文書',l:'自動変換'},{v:'研修時間50%↓',l:'新人育成効率'}],
+    befP:[
+      '「マニュアルを作らないと」と思い続けて気づいたら3年が経過している',
+      'スタッフが退職するたびに同じ業務を一から説明している。毎回1〜2週間の教育コストがかかる',
+      'マニュアルを作っても更新されず情報が古いままになる。使い物にならないものが増えていく',
+      '新人研修に3〜4週間かかっていて生産性に影響が出ている',
+    ],
+    aftP:[
+      '業務をスマホで動画撮影するだけでテキスト手順書が自動生成される',
+      'チェックリスト・注意事項・FAQが動画内容から自動抽出されて実用的なマニュアルになる',
+      '業務変更時は動画を再撮影するだけでマニュアルが自動更新される',
+      '新人研修期間が平均4週間から2週間に短縮された事例あり',
+    ],
+    mockT:'doc', mockD:{
+      title:'レジ締め業務マニュアル（自動生成）',
+      meta:'元動画: 08:32 | チェック項目: 12項目 | 生成: 5/16 17:30',
+      sections:[
+        {title:'手順（自動抽出）',body:'1. レジドロワーの現金を集計する\n2. POSシステムで当日売上を確認する\n3. 差異がある場合は当日中に管理者に報告する'},
+        {title:'注意事項',body:'・差異が1,000円以上の場合は必ず当日中に報告\n・集計は必ず2名で実施する（内部統制）'},
+        {title:'チェックリスト',tags:[{l:'現金集計 完了',t:'done'},{l:'POS照合 完了',t:'done'},{l:'管理者報告',t:'todo'}]},
+      ]
+    }
+  },
+  { id:10, cat:'doc', catL:'議事録・文書', name:'月次経営会議資料 自動生成', sym:'high',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'データ連携するだけで自動更新。会議当日は数字を見ることに集中できる',
+    metrics:[{v:'3日→ゼロ',l:'資料作成日数'},{v:'自動更新',l:'データ連携'},{v:'会議の質UP',l:'議論時間増加'}],
+    befP:[
+      '毎月末にスタッフが2〜3日かけて会議資料を作り続けている。本来やるべき業務が止まる',
+      '会議直前まで数字の修正が続きスタッフが疲弊している。資料作成のための残業が常態化',
+      'グラフや表の作成に時間がかかり肝心の分析や考察が浅くなってしまっている',
+      '資料が担当者の主観に左右されてしまい客観性が保てないことがある',
+    ],
+    aftP:[
+      '会計・売上・在庫システムと連携しデータが自動集計・グラフ化される',
+      '毎月1日の朝9時に前月度の経営資料が自動生成されてメールで届く',
+      '会議は「資料作成」ではなく「意思決定と議論」に100%集中できるようになった',
+      '前月比・前年比・予算比が自動で計算されて比較が一目でわかる',
+    ],
+    mockT:'dash', mockD:{
+      title:'月次経営レポート（2025年4月度）',
+      kpis:[{label:'月間売上',val:'¥23.4M',trend:'+8.2%',up:true},{label:'粗利率',val:'38.2%',trend:'+1.4pt',up:true},{label:'月間経費',val:'¥8.9M',trend:'-3.1%',up:false}],
+      chart:[65,70,58,80,72,88,85,92],
+      months:['10月','11月','12月','1月','2月','3月','4月','5月']
+    }
+  },
+  { id:11, cat:'finance', catL:'経営・財務', name:'経営ダッシュボード', sym:'high',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'売上・コスト・利益がリアルタイムで一画面に。毎朝30秒で把握できる',
+    metrics:[{v:'リアルタイム',l:'数字の更新'},{v:'30秒',l:'毎朝の把握時間'},{v:'3システム',l:'自動連携'}],
+    befP:[
+      '「今月の利益はいくらか」と聞かれても即座に答えられない。把握していないことへの後ろめたさがある',
+      '売上・経費・利益がExcel複数ファイルに散らばっていて全体像が掴めない',
+      'PLを出すだけで半日〜1日かかる。経営判断をしたいのに数字を出すだけで時間が消える',
+      '数字の正確性が不安で意思決定に自信が持てず「なんとなく」で判断してしまう',
+    ],
+    aftP:[
+      '売上・コスト・利益がリアルタイムで一画面に集約される',
+      '会計ソフト・POSシステム・銀行口座と自動連携して常に最新数値が表示される',
+      '毎朝30秒でビジネス全体の健康状態が把握できる。数字に自信を持って経営できる',
+      '予算対比・前月比・前年比が色分けで即座に判断できる',
+    ],
+    mockT:'dash', mockD:{
+      title:'経営ダッシュボード（リアルタイム）',
+      kpis:[{label:'今月売上',val:'¥23.4M',trend:'+12%',up:true},{label:'粗利率',val:'38.2%',trend:'+1.4pt',up:true},{label:'今月経費',val:'¥8.9M',trend:'-3%',up:false}],
+      chart:[60,75,55,80,70,90,85,95],
+      months:['10月','11月','12月','1月','2月','3月','4月','5月']
+    }
+  },
+  { id:12, cat:'finance', catL:'経営・財務', name:'売上予実管理・アラート', sym:'super',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'予算との乖離が週次でアラート通知。手を打てる時間が生まれた',
+    metrics:[{v:'週次',l:'アラート通知'},{v:'月末→週中',l:'問題発見タイミング'},{v:'達成率UP',l:'目標管理精度'}],
+    befP:[
+      '月末に数字を集計して初めて「達成できていない」とわかる。毎月「また手遅れだった」',
+      '問題が発覚してから月末まで1週間もなく対策を打つ時間がない',
+      '予算と実績の差異分析を毎月手作業で行っていて月末が地獄のように忙しい',
+      '現場スタッフが予算に対する意識を持ちにくく、管理職だけが焦っている状況',
+    ],
+    aftP:[
+      '予算対実績の乖離が週次で自動計算されLINEにアラートが届く',
+      '月の半ばで「このままだと未達」とわかり対策を打つ時間が生まれた',
+      '商品別・担当者別・拠点別の予実が一画面で確認でき全体像が掴みやすくなった',
+      '週次アラートがスタッフ全員の目標意識を自然に高めてくれる',
+    ],
+    mockT:'dash', mockD:{
+      title:'売上予実管理（2025年5月）',
+      kpis:[{label:'予算達成率',val:'73.2%',trend:'残22日',up:true},{label:'予算残',val:'¥6.82M',trend:'要追加受注',up:false},{label:'週次ペース',val:'¥1.2M',trend:'予算比-18%',up:false}],
+      chart:[85,92,78,95,88,70,73,0],
+      months:['W1予','W1実','W2予','W2実','W3予','W3実','今週予','今週実']
+    }
+  },
+  { id:13, cat:'finance', catL:'経営・財務', name:'確定申告・経費仕分けサポート', sym:'super',
+    priceL:'¥50,000〜', period:'3〜4週間',
+    aft:'月次でレシートを撮るだけ。2月は確認して提出するだけの状態に',
+    metrics:[{v:'月次',l:'継続的に整理'},{v:'数日→半日',l:'申告準備時間'},{v:'税理士費用↓',l:'コスト削減'}],
+    befP:[
+      '毎年2月に1年分の領収書を一気に仕分けする。毎年来るのに毎年しんどい',
+      '経費か私費か判断に迷うものが多く税理士に都度確認が必要でコストがかかる',
+      'カード明細・現金・電子マネーが混在して集計が大変。どこから手をつけるか毎回迷う',
+      '期限ギリギリで焦って計上漏れやミスが発生したことがある',
+    ],
+    aftP:[
+      '月次でレシートをスマホで撮影するだけで勘定科目が自動分類される',
+      'AIが経費・私費の判断を学習してほぼ自動で仕分けが完了する',
+      '2月は仕分け済みデータの最終確認と提出だけで半日で終わる',
+      '顧問税理士への相談工数が年間で50%削減された',
+    ],
+    mockT:'table', mockD:{
+      title:'経費仕分け管理（2025年5月）',
+      headers:['日付','内容','金額','勘定科目','確信度'],
+      rows:[
+        ['5/14','会議室レンタル','¥8,800','会議費','99% ✅ 確定'],
+        ['5/15','交通費（東京-大阪）','¥13,640','旅費交通費','99% ✅ 確定'],
+        ['5/16','クライアント接待','¥24,200','交際費','⚡ 52% 要確認'],
+        ['5/16','PCサプライ','¥4,400','消耗品費','98% ✅ 確定'],
+      ]
+    }
+  },
+  { id:14, cat:'finance', catL:'経営・財務', name:'クレカ・銀行明細→自動仕訳', sym:'super',
+    priceL:'¥45,000〜', period:'3週間',
+    aft:'CSV取り込みで自動仕訳。5分で終わって転記ミスもゼロに',
+    metrics:[{v:'2時間→5分',l:'毎月の仕訳時間'},{v:'0件',l:'転記ミス'},{v:'CSV対応',l:'主要銀行・カード'}],
+    befP:[
+      'クレジットカードと銀行の明細を会計ソフトに毎月手入力している。月末が憂鬱',
+      '転記ミスが不安で二重チェックが必要になり余計な時間がかかる',
+      '複数のカード・銀行口座があると集計に2〜3時間かかる',
+      '月末・月初の集計タイミングに他の業務が重なって毎月バタバタになる',
+    ],
+    aftP:[
+      '主要銀行・カードのCSVを取り込むだけで勘定科目が自動マッチングされる',
+      '学習機能で徐々に精度が上がり最終的に99%の自動仕訳が完了する',
+      '毎月の仕訳作業が2〜3時間から5分以内に短縮される',
+      'freee・マネーフォワードと直接連携でさらにシームレスになる',
+    ],
+    mockT:'table', mockD:{
+      title:'自動仕訳結果（三井住友カード 5月分）',
+      headers:['日付','取引内容','金額','自動仕訳科目','確信度'],
+      rows:[
+        ['5/1','Amazon（AWS）','¥15,400','通信費','99% ✅ 確定'],
+        ['5/3','高島屋（接待）','¥38,500','交際費','94% ✅ 確定'],
+        ['5/8','〇〇薬局','¥2,800','？ 未分類','⚡ 52% 要確認'],
+        ['5/10','コメダ珈琲','¥1,540','会議費','98% ✅ 確定'],
+      ]
+    }
+  },
+  { id:15, cat:'finance', catL:'経営・財務', name:'インボイス対応 請求書チェッカー', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'PDFをアップするだけでインボイス番号・記載要件を自動チェック',
+    metrics:[{v:'1枚15秒',l:'チェック時間'},{v:'100%',l:'適合確認精度'},{v:'0件',l:'申告ミスリスク'}],
+    befP:[
+      '受け取った請求書のインボイス番号をe-TAXサイトで1枚ずつ検索して確認している',
+      '記載要件（税率・税額の明記など）が満たされているか毎回不安になる',
+      '月に50枚以上の請求書チェックに1〜2時間かかる',
+      'インボイス不備の請求書を見落として仕入税額控除できなくなるリスクがある',
+    ],
+    aftP:[
+      'PDFをアップロードするだけでインボイス番号の有効性を自動確認できる',
+      '記載必須項目（発行日・税率・税額・登録番号）が全て揃っているか自動チェックされる',
+      '1枚あたり15秒以内に完了。月50枚を12分で処理できるようになる',
+      '不備のある請求書は自動でフラグが立ち差し戻し文面の下書きも生成される',
+    ],
+    mockT:'table', mockD:{
+      title:'インボイスチェック結果（2025年5月受領分）',
+      headers:['取引先','番号確認','記載要件','判定'],
+      rows:[
+        ['A商事','T1234567890123 ✅','全項目OK ✅','✅ 適合'],
+        ['B株式会社','T9876543210987 ✅','税額記載なし','⚡ 要確認'],
+        ['C合同会社','T5432109876543 ✅','全項目OK ✅','✅ 適合'],
+        ['D個人事業','登録番号なし ❌','—','❌ 非適合'],
+      ]
+    }
+  },
+  { id:16, cat:'finance', catL:'経営・財務', name:'不動産CFシミュレーター', sym:'mid',
+    priceL:'¥20,000〜', period:'1週間',
+    aft:'物件情報を入力するだけで利回り・CF・ROIが即計算。複数比較も一瞬',
+    metrics:[{v:'30分→1分',l:'シミュレーション時間'},{v:'複数比較',l:'一画面で確認'},{v:'諸経費込み',l:'精緻な計算'}],
+    befP:[
+      '物件を見るたびにExcelを開いて数字を入力するだけで30分消える',
+      '表面利回りしか見ていないので実際のキャッシュフローが把握できていない',
+      '複数物件を比較する場合は横並びにするのが大変で直感的に判断できない',
+      '税金・管理費・修繕積立金などの諸経費を忘れがちで計算が甘くなる',
+    ],
+    aftP:[
+      '物件価格・家賃収入・諸経費を入力するだけで実質利回り・CF・ROIが即計算される',
+      '管理費・修繕積立金・税金・ローン返済が全て考慮された実態ベースの数値が出る',
+      '複数物件を並べて比較するビューが自動生成される',
+      '5年・10年・20年のシミュレーションと出口戦略も算出できる',
+    ],
+    mockT:'dash', mockD:{
+      title:'不動産CFシミュレーター',
+      kpis:[{label:'実質利回り',val:'6.8%',trend:'表面8.2%',up:true},{label:'月次CF',val:'+¥48,200',trend:'ローン後',up:true},{label:'投資回収',val:'14.7年',trend:'ROI 6.8%',up:true}],
+      chart:[48,52,55,58,60,63,68,72],
+      months:['1年','2年','3年','4年','5年','6年','7年','8年']
+    }
+  },
+  { id:17, cat:'finance', catL:'経営・財務', name:'保険契約 一覧管理ツール', sym:'mid',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'全契約が一覧で見えて更新3ヶ月前に自動アラートが届く',
+    metrics:[{v:'3ヶ月前',l:'更新アラート'},{v:'一覧管理',l:'全契約を可視化'},{v:'0件',l:'更新見落とし'}],
+    befP:[
+      'どの保険がいくつあるか把握できていない。聞かれると自信を持って答えられない',
+      '更新時期が来ても気づかずそのまま自動更新になっていることがある',
+      '契約書が引き出しや段ボールに入っていてすぐに出てこない',
+      '保険の内容が重複しているかムダがあるか確認したいが時間がなくて放置している',
+    ],
+    aftP:[
+      '全ての保険契約が一覧化されて種類・保険料・満期日が一目でわかる',
+      '更新3ヶ月前に「見直しをご検討ください」とアラートが届く',
+      '毎年の保険料合計と保障内容のサマリが自動でレポートされる',
+      '重複保障・過不足のある保障がハイライトで表示される',
+    ],
+    mockT:'list', mockD:{
+      title:'保険契約一覧',
+      items:[
+        {ico:'🛡️',bg:'#eef2ff',name:'生命保険（〇〇生命）',sub:'月額保険料: ¥23,400 | 満期: 2030/03',badge:'5年後満期',bc:'b-indigo',act:'内容を確認'},
+        {ico:'🏥',bg:'#ecfdf5',name:'医療保険（△△生命）',sub:'月額保険料: ¥8,200 | 更新: 2025/11',badge:'更新6ヶ月前',bc:'b-amber',act:'更新を検討'},
+        {ico:'🏢',bg:'#fffbeb',name:'事務所火災保険',sub:'年払い: ¥45,000 | 更新: 2025/09',badge:'更新3ヶ月前 ⚡',bc:'b-red',act:'今すぐ確認'},
+      ]
+    }
+  },
+  { id:18, cat:'hr', catL:'採用・人事', name:'採用面接記録→DB 自動登録', sym:'mid',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'面接後に音声メモを録るだけ。テキスト化・DB登録・評価コメント付きで保存',
+    metrics:[{v:'音声→DB',l:'自動登録'},{v:'0件',l:'記録漏れ'},{v:'即時',l:'評価コメント生成'}],
+    befP:[
+      '面接後に評価シートを思い出しながら手入力している。思い出しながら書くと抜けが出る',
+      '時間が経つと面接の印象が薄れて評価の質が下がる。「あの人どんな感じだったっけ」',
+      '評価シートのフォーマットが統一されておらず後で比較が難しい',
+      '複数の面接官の評価を集約するのに連絡や集計作業が発生して時間がかかる',
+    ],
+    aftP:[
+      '面接後30秒間スマホに話すだけで記録が完了する',
+      '音声がテキスト化され評価DBに自動登録。面接官ごとに管理される',
+      'AIが音声内容から候補者の強み・懸念点を整理したコメントを生成する',
+      '複数面接官の評価が自動集計されてサマリが見られる',
+    ],
+    mockT:'table', mockD:{
+      title:'採用候補者DB（2025年5月）',
+      headers:['氏名','応募職種','評価','面接日','ステータス'],
+      rows:[
+        ['山田 太郎','営業マネージャー','A評価 ⭐⭐⭐⭐','5/10','✅ 二次面接へ'],
+        ['田中 花子','事務スタッフ','B+評価 ⭐⭐⭐','5/14','⏳ 二次面接待ち'],
+        ['鈴木 一郎','エンジニア','S評価 ⭐⭐⭐⭐⭐','5/15','⚡ 内定承諾待ち'],
+      ]
+    }
+  },
+  { id:19, cat:'hr', catL:'採用・人事', name:'求人票・採用LP 自動生成', sym:'high',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'業種・条件・強みを入力するだけで求人票とLP下書きが当日完成',
+    metrics:[{v:'当日完成',l:'求人票+LP'},{v:'3〜5日→0日',l:'外注待ち期間'},{v:'応募数2倍',l:'訴求力向上事例'}],
+    befP:[
+      '求人を出すたびに求人票を一から書き直している。毎回同じことをやっている感覚',
+      '採用LPを外注すると完成まで3〜5日かかって採用機会を逃すことがある',
+      'どんな言葉が候補者に刺さるかわからず文章が月並みになって埋もれてしまう',
+      '複数の求人媒体ごとに文字数・フォーマットを変える作業が都度発生して大変',
+    ],
+    aftP:[
+      '業種・雇用形態・給与・仕事内容・強みを入力するだけで当日中に完成する',
+      'Indeed・ハローワーク・求人ボックス向けに文字数最適化されたテキストが自動生成される',
+      '採用ランディングページのHTML下書きが同時に生成される',
+      '候補者の「刺さる言葉」をAIが職種別に選定して訴求力が上がる',
+    ],
+    mockT:'doc', mockD:{
+      title:'採用LP下書き（介護スタッフ 正社員）',
+      meta:'自動生成 — 2025/05/16 | 求人票+LPセット | 当日完成',
+      sections:[
+        {title:'キャッチコピー（AI提案）',body:'「残業ほぼゼロ。でも、やりがいは100%。\nスタッフが笑顔で働ける介護施設を一緒に作りませんか」'},
+        {title:'仕事内容',body:'入居者様の日常生活サポート、レクリエーション企画、記録業務など。一人ひとりの「その人らしい生活」を大切にしています。'},
+        {title:'訴求ポイント（AI提案）',tags:[{l:'✅ 月9〜10日休み',t:'done'},{l:'✅ 夜勤なし選択可',t:'done'},{l:'✅ 未経験者歓迎',t:'done'}]},
+      ]
+    }
+  },
+  { id:20, cat:'hr', catL:'採用・人事', name:'スタッフ育成カルテ', sym:'mid',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'全スタッフの目標・課題・進捗が一画面で見える。フォローすべき人がわかる',
+    metrics:[{v:'一画面',l:'全スタッフ把握'},{v:'自動更新',l:'進捗トラッキング'},{v:'離職率↓',l:'エンゲージメント向上'}],
+    befP:[
+      '面談で設定した目標を次の面談まで忘れている。3ヶ月後に「あれどうなった？」になる',
+      'スタッフそれぞれの成長状況を誰も把握できていない。場当たり的な対応になってしまう',
+      '特定のスタッフの不満に気づかず突然退職されることがある。いつも後から後悔する',
+      '評価の根拠が曖昧で昇給・昇格の判断に自信が持てない',
+    ],
+    aftP:[
+      '全スタッフの目標・スキル・課題・進捗が一画面でカード表示される',
+      '面談記録が自動でカルテに蓄積されて成長の軌跡が見える',
+      'モチベーション低下のサインをAIが検知してアラートを出してくれる',
+      '評価の根拠が記録として残り公平な人事考課ができるようになった',
+    ],
+    mockT:'list', mockD:{
+      title:'スタッフ育成カルテ',
+      items:[
+        {ico:'👩',bg:'#eef2ff',name:'田中 花子（入社3年目）',sub:'今期目標: リーダー昇格 | 進捗: 75% | 面談: 4/28',badge:'順調 ↗',bc:'b-green',act:'カルテを見る'},
+        {ico:'👨',bg:'#fffbeb',name:'鈴木 一郎（入社1年目）',sub:'今期目標: 独り立ち完了 | 進捗: 45% | 遅れあり',badge:'要フォロー ⚡',bc:'b-amber',act:'面談を設定'},
+        {ico:'👩',bg:'#fff1f2',name:'山田 美咲（入社5年目）',sub:'エンゲージメントスコア低下を検知（先月比-18%）',badge:'要注目 ⚠',bc:'b-red',act:'1on1を実施'},
+      ]
+    }
+  },
+  { id:21, cat:'hr', catL:'採用・人事', name:'シフト管理・勤怠 自動集計', sym:'super',
+    priceL:'¥45,000〜', period:'3週間',
+    aft:'希望をフォームで集めてシフト案が自動生成。確認するだけで済むように',
+    metrics:[{v:'2〜3日→30分',l:'シフト作成時間'},{v:'フォーム収集',l:'希望集め自動化'},{v:'勤怠自動集計',l:'給与計算連携'}],
+    befP:[
+      'LINEでシフト希望を集めるだけで数日かかる。見逃しや未返信の催促が大変',
+      '希望を集めてからシフト表を作るのにさらに2〜3日かかる。毎月このループが辛い',
+      '「シフト作業で本来の業務ができない」と感じている',
+      'シフトミスや連絡漏れが発生してスタッフとのトラブルになることがある',
+    ],
+    aftP:[
+      '希望収集フォームのURLをLINEで送るだけ。締切日に希望が自動集計される',
+      'スタッフのスキル・希望・法定労働時間を考慮したシフト案が自動生成される',
+      '管理者は確認・微調整だけ。作成時間が2〜3日から30分に短縮された',
+      '勤怠実績が自動集計されて給与計算ソフトに連携される',
+    ],
+    mockT:'cal', mockD:{
+      title:'5月シフト管理',
+      month:'2025年5月',
+      selectedDate:'5/22(木)',
+      slots:['A:小池','B:田中','C:鈴木','早番:山田','遅番:佐藤','夜勤:木村'],
+      selectedSlot:'B:田中'
+    }
+  },
+  { id:22, cat:'hr', catL:'採用・人事', name:'日報・週報 自動集計', sym:'high',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'毎週月曜、全スタッフの日報がカテゴリ別にまとまって届く',
+    metrics:[{v:'毎週月曜',l:'自動サマリ配信'},{v:'5分',l:'週次確認時間'},{v:'課題自動抽出',l:'AI分析機能'}],
+    befP:[
+      'スタッフの日報が毎日届くが読む時間がなく未読が積み上がっている',
+      '個別の日報から全体像を掴むのが難しい。読んでも活かせていない情報の山',
+      '重要な気づきや課題が報告の中に埋もれていて見落としてしまう',
+      '日報を読んで返信するだけで30〜40分かかる。読む気力が失われていく',
+    ],
+    aftP:[
+      '毎週月曜朝に全スタッフの日報がカテゴリ別（課題・成果・改善提案）でまとまって届く',
+      '「今週の重要報告TOP3」がAIによって自動でピックアップされる',
+      '繰り返し報告されている課題を自動検知して優先度が表示される',
+      '週次サマリの確認が5分以内に終わりスタッフへの返信も一括対応できる',
+    ],
+    mockT:'list', mockD:{
+      title:'週次日報サマリ（5/13〜5/17）',
+      items:[
+        {ico:'🚨',bg:'#fff1f2',name:'【要対応】Aクライアントから苦情3件',sub:'田中・鈴木・山田 3名の日報で言及。今週中に対応が必要',badge:'緊急',bc:'b-red',act:'詳細を確認'},
+        {ico:'💡',bg:'#fffbeb',name:'【提案】受付手順の改善アイデア（鈴木）',sub:'「記録用紙を変えると15分短縮できる」と報告あり',badge:'改善提案',bc:'b-amber',act:'内容を見る'},
+        {ico:'🌟',bg:'#ecfdf5',name:'【成果】Bクライアントから高評価メール',sub:'田中のサポートがお客様から絶賛。全社共有を推奨',badge:'good news',bc:'b-green',act:'共有する'},
+      ]
+    }
+  },
+  { id:23, cat:'marketing', catL:'営業・マーケ', name:'マーケティング戦略 提案書', sym:'high',
+    priceL:'¥50,000〜', period:'2〜3週間',
+    aft:'現状・強み・ターゲットを入力するだけで整理された提案書が完成',
+    metrics:[{v:'数日→4時間',l:'戦略立案時間'},{v:'競合分析込み',l:'市場調査自動化'},{v:'即実行可能',l:'アクションプラン'}],
+    befP:[
+      '「どう集客すればいい？」の答えが出ず何日も調べ続けて結局また振り出しになる',
+      '競合調査・ターゲット分析・施策検討を全部自分でやると数週間かかって疲弊する',
+      'コンサルタントに依頼すると50〜100万円かかる。気軽に頼めない',
+      '方針が決まらないまま「なんとなくSNSをやる」という曖昧な状態が続いている',
+    ],
+    aftP:[
+      '現状・強み・ターゲット・予算を入力するだけで30ページのマーケ提案書が完成する',
+      '競合比較・ターゲット分析・施策ロードマップが全て自動で生成される',
+      '3ヶ月・6ヶ月・1年のアクションプランが優先度付きで整理される',
+      '業種別の成功事例とKPIベンチマークが自動で盛り込まれる',
+    ],
+    mockT:'doc', mockD:{
+      title:'マーケティング戦略提案書（2025年度）',
+      meta:'自動生成 — 業種: 整体院 | 競合分析: 完了',
+      sections:[
+        {title:'現状分析',body:'月間新規顧客: 8名 | 紹介比率: 12% | SNSフォロワー: 340名\n→ 紹介と口コミが弱点。Instagram強化で2倍の新規獲得が狙える'},
+        {title:'推奨施策TOP3',body:'① Instagramリール投稿（週3回）→ 見込み客+15名/月\n② 紹介カードの導入 → 紹介比率 12%→25%目標\n③ LINE公式で既存顧客リピート促進 → 客単価+8,000円'},
+        {title:'KPI目標（3ヶ月後）',body:'月間新規: 8名→20名 | リピート率: 45%→60%'},
+      ]
+    }
+  },
+  { id:24, cat:'marketing', catL:'営業・マーケ', name:'SNS投稿文・広告コピー 自動生成', sym:'super',
+    priceL:'¥40,000〜', period:'2週間',
+    aft:'キーワードとトーンを指定するだけで量産できる。1ヶ月分を一気に作れる',
+    metrics:[{v:'1ヶ月分',l:'一括生成'},{v:'1時間→5分',l:'投稿文作成時間'},{v:'エンゲージ率UP',l:'訴求力向上'}],
+    befP:[
+      '毎日「今日何を投稿しようか」と考えるだけで1時間消える。いつも同じ悩みを繰り返す',
+      'ネタ切れになって投稿が途絶えることがある。途絶えるとフォロワーが減っていく',
+      '専門的な内容をわかりやすく伝える文章が書けない。読んでもらえない投稿になる',
+      '投稿の一貫性がなくブランドイメージがぶれてしまっている',
+    ],
+    aftP:[
+      'キーワードとトーン（親しみやすい/専門的/共感系）を選ぶだけで投稿文が生成される',
+      '1ヶ月分30本の投稿カレンダーを一気に作成できる。毎日悩む必要がなくなった',
+      'Instagram・X・Facebook・LINEの文字数に合わせて自動最適化される',
+      'ハッシュタグも自動提案で検索流入が増加する',
+    ],
+    mockT:'chat', mockD:{
+      title:'SNS投稿文 ジェネレーター',
+      messages:[
+        {from:'user',text:'テーマ: 腸活・便秘改善\nトーン: 親しみやすい・共感系\nInstagram用（300文字以内）で作って'},
+        {from:'bot',text:'「最近、なんとなくお腹の調子が悪い…」\nそんな方、実は腸に原因があるかも。\n\n✅ 毎朝の白湯\n✅ 発酵食品を1品加える\n✅ 夜10時以降は食べない\n\nたったこれだけで、1週間後には変化を感じる方が続出中🌿\n\n#腸活 #便秘解消 #ウェルネス #腸内環境'},
+        {from:'user',text:'✅ 採用。次はもっとキャッチーなバリエーションを'},
+      ]
+    }
+  },
+  { id:25, cat:'marketing', catL:'営業・マーケ', name:'イベント・セミナーLP＋申込管理', sym:'high',
+    priceL:'¥35,000〜', period:'1〜2週間',
+    aft:'開催情報を入力するだけで当日中にLP公開。申込通知・管理も自動化',
+    metrics:[{v:'当日公開',l:'LP制作時間'},{v:'外注費ゼロ',l:'コスト削減'},{v:'申込→DB',l:'自動管理'}],
+    befP:[
+      'イベントのたびにデザイナーにLP制作を依頼して3〜5日待つ。その間に集客機会を逃す',
+      '外注費が1回5〜15万円かかって頻繁に開催できない',
+      '申込はGoogleフォームで受け取りExcelで管理していて手間と誤りが発生する',
+      'キャンセル対応・リマインダー送付を手動でやっていて地味に時間がかかる',
+    ],
+    aftP:[
+      'イベント名・日時・場所・内容を入力するだけで当日中にLP完成・公開できる',
+      'デザインはYUMEMATCHブランドに準拠したテンプレートが自動適用される',
+      '申込があると即座に通知が届き申込者DBに自動登録される',
+      '開催前日のリマインダー・当日のZoomURL送付も全自動になる',
+    ],
+    mockT:'doc', mockD:{
+      title:'セミナーLP（自動生成）',
+      meta:'AI業務改善セミナー | 2025/06/15 14:00〜 | Zoom開催 | 申込23名/定員30名',
+      sections:[
+        {title:'LP構成（自動生成済み）',tags:[{l:'✅ ヘッダービジュアル',t:'done'},{l:'✅ 開催概要セクション',t:'done'},{l:'✅ 講師プロフィール',t:'done'},{l:'✅ 申込フォーム連携',t:'done'},{l:'✅ よくある質問',t:'done'}]},
+        {title:'申込状況（リアルタイム）',body:'申込者: 23名 / 定員30名 | 残席: 7名 | キャンセル: 2名'},
+      ]
+    }
+  },
+  { id:26, cat:'marketing', catL:'営業・マーケ', name:'顧客管理（CRM）Notion連携', sym:'high',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'全顧客の情報・履歴・次のアクションが一箇所に。フォロー漏れがゼロに',
+    metrics:[{v:'0件',l:'フォロー漏れ'},{v:'一元管理',l:'顧客情報統合'},{v:'次アクション',l:'自動提案'}],
+    befP:[
+      '顧客情報がLINE・メール・Excel・紙のメモにバラバラに存在している',
+      'フォロー漏れが発生して「しばらく連絡していない顧客」が増え続けている',
+      '「この方先月何を話したっけ」と毎回思い出すのに時間がかかる',
+      '見込み客の温度感を把握できずアプローチのタイミングを逃し続けている',
+    ],
+    aftP:[
+      '全顧客の基本情報・相談履歴・メモ・次のアクションが一画面で管理できる',
+      'フォローすべき顧客が「アクション期限別」で自動ソートされて表示される',
+      '顧客との会話ログがタイムライン形式で記録されて文脈を即把握できる',
+      '「3ヶ月連絡していない顧客」を自動検出してアラートが届く',
+    ],
+    mockT:'table', mockD:{
+      title:'顧客管理DB（フォロー優先度順）',
+      headers:['顧客名','最終接触','温度感','次のアクション'],
+      rows:[
+        ['A社 田中様','3日前','🔥 高','⏳ 提案書を送付'],
+        ['B社 鈴木様','2週間前','🌡️ 中','📞 定期連絡を入れる'],
+        ['C社 山田様','3ヶ月前','❄️ 低','⚡ 要フォロー'],
+      ]
+    }
+  },
+  { id:27, cat:'marketing', catL:'営業・マーケ', name:'AIポートフォリオ・実績サイト', sym:'mid',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'Notionに書いた実績が自動でサイトに反映。常に最新状態を見せられる',
+    metrics:[{v:'常に最新',l:'自動サイト更新'},{v:'Notion連携',l:'管理が簡単'},{v:'商談質UP',l:'信頼感向上'}],
+    befP:[
+      '「実績を見せてほしい」と言われても古いPDFしかない。いつも後から後悔する',
+      'サイト更新の方法がわからず気づいたら2年前の情報が掲載されている',
+      '商談時に実績をうまく見せられず信頼感が出ない',
+      'デザイナーに依頼する時間もお金もなく放置するしかない状況',
+    ],
+    aftP:[
+      'Notionのデータベースに実績を書くだけでリアルタイムにサイトへ反映される',
+      '専用URL（yourname.surge.sh など）でクライアントにシェアできる',
+      'デザインはYUMEMATCHの洗練されたテンプレートが自動適用される',
+      'アクセス数・閲覧時間がダッシュボードで確認できて商談フォローに活かせる',
+    ],
+    mockT:'list', mockD:{
+      title:'実績ポートフォリオ',
+      items:[
+        {ico:'🏆',bg:'#fffbeb',name:'AI議事録自動化 導入事例（A社）',sub:'作業時間95%削減 | 導入2週間 | 月額ゼロ運用',badge:'最新事例',bc:'b-indigo',act:'詳細を見る'},
+        {ico:'📊',bg:'#eef2ff',name:'経営ダッシュボード構築（B社）',sub:'意思決定スピード3倍向上 | 経営者満足度100%',badge:'2025年5月',bc:'b-green',act:'詳細を見る'},
+        {ico:'🎯',bg:'#ecfdf5',name:'採用LP自動生成（C社）',sub:'応募数2倍、採用コスト60%削減',badge:'実績多数',bc:'b-amber',act:'詳細を見る'},
+      ]
+    }
+  },
+  { id:28, cat:'marketing', catL:'営業・マーケ', name:'名刺管理→人脈マップ 可視化', sym:'high',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'名刺を撮るだけでDB化。業種・地域・関係性でつながりが見渡せる',
+    metrics:[{v:'名刺→DB',l:'撮影で即登録'},{v:'人脈マップ',l:'関係性の可視化'},{v:'再接触率UP',l:'眠れる人脈活用'}],
+    befP:[
+      '名刺が山積みでどこに誰の名刺があるか分からない',
+      '「あの人に連絡したい」と思っても名刺が見つからず諦めてしまう',
+      '誰に紹介してもらった人なのか繋がりが分からなくなっている',
+      '名刺の管理に時間をかけたくないが放置している。どんどん山が高くなる',
+    ],
+    aftP:[
+      '名刺をスマホで撮影するだけで氏名・会社・役職・連絡先が自動でDBに登録される',
+      '業種・地域・会った日・紹介者でフィルタリング・検索ができる',
+      '「〇〇業界の人を紹介して」という場面でリストを即出力できる',
+      '年1回「1年以上連絡していない人」のリストが自動生成される',
+    ],
+    mockT:'table', mockD:{
+      title:'人脈データベース（245名）',
+      headers:['氏名','会社','業種','最終接触','紹介元'],
+      rows:[
+        ['田中 太郎','A株式会社','IT','3日前','直接'],
+        ['山田 花子','B社','医療・福祉','2ヶ月前','直接'],
+        ['鈴木 一郎','Cコンサル','コンサル','⚡ 1年前'],
+      ]
+    }
+  },
+  { id:29, cat:'marketing', catL:'営業・マーケ', name:'メール返信下書き 自動化', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'メールを開いたら返信案が既に作られている。確認して送るだけで30秒',
+    metrics:[{v:'30秒',l:'返信完了時間'},{v:'午前中→1時間',l:'メール処理時間'},{v:'自動学習',l:'文体・スタイル継承'}],
+    befP:[
+      'メールの返信を考えるだけで午前中が終わることが週2〜3回ある',
+      '気を遣う相手へのメールは文章を何度も書き直している。1通に30分かかることも',
+      '返信が遅れると相手からフォローの電話がかかってきて余計な時間が消える',
+      '「また後で返信しよう」と後回しにしてそのまま忘れることがある',
+    ],
+    aftP:[
+      'メールを開いた瞬間に文脈を読んだ返信案が自動生成される',
+      '過去のメールパターンを学習して自分の文体・スタイルで返信案が作られる',
+      '確認して「送信」を押すだけで30秒以内に完了する',
+      'Gmailとの連携で受信したメールに自動タグ・優先度付けもされる',
+    ],
+    mockT:'chat', mockD:{
+      title:'メール返信アシスタント',
+      messages:[
+        {from:'bot',text:'📨 新着メール\n差出人: 田中様（A社）\n「先日の提案について、導入コストとスケジュールを教えていただけますか？」'},
+        {from:'user',text:'返信案を作成して（丁寧な文体で）'},
+        {from:'bot',text:'【返信案】\n田中様\n\nお問い合わせありがとうございます。\n初期費用: ¥xxx,000〜\n標準スケジュール: 約2〜3週間\n\n詳細はお打ち合わせにてご説明できればと存じます。30分ほどお時間いただけますでしょうか。\n\nよろしくお願いいたします。'},
+      ]
+    }
+  },
+  { id:30, cat:'marketing', catL:'営業・マーケ', name:'LINE公式 FAQ自動応答', sym:'mid',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'24時間よくある質問に自動で即回答。夜中でも「すぐ返ってきた」と好印象',
+    metrics:[{v:'24時間',l:'自動応答'},{v:'即時',l:'返信スピード'},{v:'対応工数70%↓',l:'スタッフ負担軽減'}],
+    befP:[
+      '営業時間外のLINEに翌朝まとめて返信している。お客様を何時間も待たせているのがストレス',
+      '同じ質問（営業時間・料金・場所）を毎日何度も手動で返信している',
+      'LINEの対応に毎日1〜2時間かかっていてスタッフの負担になっている',
+      '返信が遅いと「対応が悪い」と口コミに書かれたことがある',
+    ],
+    aftP:[
+      'よくある質問（営業時間・料金・予約方法・場所）に24時間即自動返信できる',
+      'AIがメッセージの意図を読み取って最適な返答を生成する',
+      '複雑な質問はスタッフに転送して対応を依頼する仕組みも自動化される',
+      '対応工数が70%削減され、スタッフは本来の業務に集中できる',
+    ],
+    mockT:'chat', mockD:{
+      title:'LINE公式アカウント（自動応答）',
+      messages:[
+        {from:'user',text:'営業時間を教えてください（深夜1:23）'},
+        {from:'bot',text:'✅ 自動応答（即時）\n\n営業時間は以下の通りです。\n【月〜金】9:00〜19:00\n【土】10:00〜17:00\n【日・祝】定休日\n\nご予約はこちら → bit.ly/xxx\nお気軽にどうぞ😊'},
+        {from:'user',text:'料金はいくらですか？'},
+        {from:'bot',text:'✅ 自動応答（即時）\n\n料金プランはこちら↓\n初回 ¥5,500（60分）\n通常 ¥8,800（60分）\n月額 ¥24,000（月4回）'},
+      ]
+    }
+  },
+  { id:31, cat:'industry', catL:'業界特化', name:'食品ラベル（栄養成分表示）自動生成', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'レシピを入力するだけで栄養計算が完了。そのまま印刷用データで出力',
+    metrics:[{v:'1時間→5分',l:'ラベル作成時間'},{v:'印刷用データ',l:'そのまま出力'},{v:'法令適合',l:'自動チェック'}],
+    befP:[
+      'レシピが変わるたびに栄養計算を一からやり直している。1商品1時間以上かかる',
+      '食品表示の法令要件が複雑で専門家への確認が必要なことがあり外部費用がかかる',
+      'ラベルのデザイン・レイアウト作成に毎回時間がかかる',
+      '「アレルゲン漏れがないか」の確認作業が心理的にとても重い',
+    ],
+    aftP:[
+      '食材名と分量を入力するだけで熱量・たんぱく質・脂質・炭水化物・食塩相当量が自動計算される',
+      '食品表示基準の法令要件に準拠したラベルデータが即生成される',
+      'アレルゲン（28品目）の含有確認が自動でチェックされる',
+      'A-oneシール・印刷用PDFで即出力。そのまま印刷できる',
+    ],
+    mockT:'doc', mockD:{
+      title:'栄養成分表示ラベル（抹茶マドレーヌ）',
+      meta:'1個あたり(45g) | 自動計算済み | 印刷用PDF出力完了',
+      sections:[
+        {title:'栄養成分表示',body:'熱量: 189kcal\nたんぱく質: 3.2g\n脂質: 8.4g\n炭水化物: 26.1g\n食塩相当量: 0.18g'},
+        {title:'アレルゲン確認（28品目チェック）',tags:[{l:'✅ 小麦（含む）',t:'done'},{l:'✅ 卵（含む）',t:'done'},{l:'✅ 乳（含む）',t:'done'},{l:'✅ ナッツ類（不含）',t:'todo'}]},
+        {title:'法令適合チェック',body:'食品表示基準 全項目適合 ✓\nアレルゲン表示: OK ✓\n印刷用PDF出力: 完了'},
+      ]
+    }
+  },
+  { id:32, cat:'industry', catL:'業界特化', name:'FP実績管理 ダッシュボード', sym:'mid',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'スクショをアップするだけで自動集計。グラフ付きで月次推移まで一発確認',
+    metrics:[{v:'30分→ゼロ',l:'月次集計時間'},{v:'自動OCR',l:'スクショ読取'},{v:'推移グラフ',l:'可視化機能'}],
+    befP:[
+      'FPシステムのスクショから手動で件数・コミッションを転記している。毎月の地味な作業',
+      '月次集計だけで30分かかっていてもったいない',
+      '過去数ヶ月の推移を確認しようとすると表がバラバラで大変',
+      '目標に対して進捗が何%かが一目で分からない',
+    ],
+    aftP:[
+      'スクショをアップロードするだけでAIが自動で数値を読み取り集計する',
+      '月次・四半期・年次の実績が自動でグラフ化される',
+      '目標対実績の進捗率が常にリアルタイムで確認できる',
+      'GitHub Pagesで公開されURLを共有すれば誰でも閲覧できる',
+    ],
+    mockT:'dash', mockD:{
+      title:'FP実績ダッシュボード（2025年）',
+      kpis:[{label:'今月コミッション',val:'¥342,000',trend:'+18%',up:true},{label:'今月本数',val:'8本',trend:'+2本',up:true},{label:'年間累計',val:'¥2.84M',trend:'目標78%',up:true}],
+      chart:[62,70,78,65,82,88,92,85],
+      months:['10月','11月','12月','1月','2月','3月','4月','5月']
+    }
+  },
+  { id:33, cat:'industry', catL:'業界特化', name:'福祉事業所 給付費・工賃 自動集計', sym:'super',
+    priceL:'¥50,000〜', period:'3〜4週間',
+    aft:'PDFをアップするだけで自動集計・チェックまで完了。3分で終わるように',
+    metrics:[{v:'2時間→3分',l:'月次集計時間'},{v:'PDF→自動',l:'OCR読取'},{v:'0件',l:'転記ミス'}],
+    befP:[
+      '毎月の給付費PDFを1ページずつ開いて手動で転記している。毎月来るのに毎月つらい',
+      '利用者が多いと集計だけで2時間かかっている',
+      '転記ミスが発生して後から修正することがある。チェックに更に時間がかかる',
+      '工賃計算も別途手作業で行っており毎月の事務作業が重い',
+    ],
+    aftP:[
+      'knowbeの業務支援PDFをアップするだけで全利用者分が自動集計される',
+      '利用日数・単価・加算が自動で読み取られてExcel/Notionに出力される',
+      '転記ミスがゼロになり後からの修正作業がなくなった',
+      '工賃計算も連動して自動計算。確認して承認するだけで完了する',
+    ],
+    mockT:'table', mockD:{
+      title:'給付費集計（2025年5月）',
+      headers:['利用者','利用日数','単価','加算Ⅱ','月額給付費'],
+      rows:[
+        ['田中 〇〇','20日','¥5,400','35単位','¥108,000'],
+        ['山田 △△','18日','¥5,400','35単位','¥97,200'],
+        ['鈴木 ××','15日','¥5,400','0単位','¥81,000'],
+      ]
+    }
+  },
+  { id:34, cat:'marketing', catL:'営業・マーケ', name:'面談・アポ 自動予約ツール', sym:'super',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'予約リンクを送るだけ。相手が空き枠を選んでその場で確定。やり取りゼロ',
+    metrics:[{v:'やり取りゼロ',l:'日程調整'},{v:'30秒',l:'予約完了時間'},{v:'24時間',l:'いつでも予約可'}],
+    befP:[
+      '「来週のご都合はいかがでしょうか」から始まるメールが3〜5往復続く。毎回消耗する',
+      '日程調整だけで2日かかって商談機会を逃すことがある',
+      '空き時間を教えるたびにカレンダーを確認する手間がかかる',
+      '夜や休日に「明日空いていますか？」とメッセージが来て困る',
+    ],
+    aftP:[
+      '予約ページのURLを送るだけで相手が自分で空き枠を選んで確定する',
+      'Googleカレンダーと同期しているので重複予約が絶対に起きない',
+      '予約・変更・キャンセルが全て相手側で完結してやり取りゼロになった',
+      '予約前・当日のリマインダーが自動送信されて無断キャンセルが激減した',
+    ],
+    mockT:'cal', mockD:{
+      title:'面談予約（自動連携）',
+      month:'2025年5月',
+      selectedDate:'5/22(木)',
+      slots:['10:00','11:00','13:00','14:00','15:00','16:00'],
+      selectedSlot:'14:00'
+    }
+  },
+  { id:35, cat:'hr', catL:'採用・人事', name:'営業ログ 音声自動記録', sym:'high',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'商談後すぐスマホに話すだけ。自動テキスト化・DB登録まで完結',
+    metrics:[{v:'商談直後',l:'記録のタイミング'},{v:'音声→DB',l:'自動登録'},{v:'記録率100%',l:'漏れゼロ'}],
+    befP:[
+      '商談後に「CRMに入力しよう」と思いながら後回しにして忘れる。記録がスカスカになる',
+      '思い出せる内容が減って記録の質が低下している。次の商談前に確認できる情報がない',
+      '移動中にスマホでCRMを開いて入力するのが面倒',
+      '記録が不完全なため次の商談で前回の話の続きができない',
+    ],
+    aftP:[
+      '商談後すぐにスマホに向かって話すだけで記録が完成する',
+      '音声がテキスト化され顧客名・課題・提案内容・ネクストアクションが自動分類される',
+      'CRMに自動登録されて次の商談前に前回内容を1秒で確認できる',
+      '記録漏れがゼロになり商談の質と継続率が向上した',
+    ],
+    mockT:'chat', mockD:{
+      title:'営業ログ 音声記録（自動変換）',
+      messages:[
+        {from:'user',text:'🎤 音声入力（30秒）\n「今日A社の田中さんと面談。課題は経費管理の手間。来月から新システム検討中。次回は見積書を持って来週木曜に訪問予定」'},
+        {from:'bot',text:'✅ 自動登録完了\n\n【顧客】A社 田中様\n【課題】経費管理の工数削減\n【温度感】高（来月導入検討中）\n【ネクスト】見積書持参 → 5/23(木)訪問\n\nCRMに登録しました'},
+      ]
+    }
+  },
+  { id:36, cat:'marketing', catL:'営業・マーケ', name:'LINEステップ配信 自動構築', sym:'high',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'目的とターゲットを伝えるだけで30日間の配信シナリオが自動完成',
+    metrics:[{v:'30日間',l:'シナリオ自動設計'},{v:'開封率UP',l:'パーソナライズ配信'},{v:'成約率3倍',l:'ナーチャリング効果'}],
+    befP:[
+      'LINE公式に登録してもらっても「何を送ればいいか」が分からず放置している',
+      'ステップ配信を設計しようとすると何十通分のメッセージを考える必要があって途方に暮れる',
+      '過去に作ったシナリオが古くなっていても改善する時間がない',
+      '配信内容がセールス一辺倒になりがちでブロックされやすい',
+    ],
+    aftP:[
+      '目的（見込み客育成/既存顧客リピート）とターゲットを入力するだけで30日分のシナリオが完成する',
+      '教育・共感・信頼構築・オファーのバランスが自動で設計される',
+      '登録から1日後・3日後・7日後など最適なタイミングで配信スケジュールが組まれる',
+      '開封率・クリック率を見てAIが自動でシナリオを最適化する',
+    ],
+    mockT:'list', mockD:{
+      title:'LINEステップ配信シナリオ',
+      items:[
+        {ico:'📱',bg:'#ecfdf5',name:'Day1: ウェルカムメッセージ',sub:'「ご登録ありがとうございます！」+ 自己紹介と価値提供',badge:'配信済み ✅',bc:'b-green',act:'内容を確認'},
+        {ico:'💡',bg:'#eef2ff',name:'Day3: 教育コンテンツ',sub:'「知らないと損する〇〇の3つのポイント」',badge:'配信済み ✅',bc:'b-green',act:'内容を確認'},
+        {ico:'🎯',bg:'#fffbeb',name:'Day7: 事例紹介＋ソフトオファー',sub:'「〇〇社では〇〇日で〇〇%改善しました」',badge:'予定 5/20',bc:'b-amber',act:'内容を編集'},
+      ]
+    }
+  },
+  { id:37, cat:'marketing', catL:'営業・マーケ', name:'広告クリエイティブ 自動生成', sym:'high',
+    priceL:'¥40,000〜', period:'2週間',
+    aft:'商品情報とターゲットを入れるだけで複数パターンのバナーが当日中に完成',
+    metrics:[{v:'当日完成',l:'バナー制作時間'},{v:'外注費ゼロ',l:'コスト削減'},{v:'複数パターン',l:'A/Bテスト対応'}],
+    befP:[
+      '広告バナーが必要なたびにデザイナーに依頼して3〜5日待つ',
+      '1枚あたり3〜5万円のデザイン費がかかる',
+      'A/Bテストのために複数パターンを作りたいが費用が倍になる',
+      '修正依頼のやり取りで時間がさらにかかる',
+    ],
+    aftP:[
+      '商品情報・ターゲット・訴求ポイントを入力するだけで当日中に10パターン生成される',
+      'Instagram・Facebook・Google広告の各サイズに自動リサイズされる',
+      'A/Bテスト用に訴求軸を変えた複数パターンが同時生成される',
+      'デザイン費がゼロになり広告予算を全て媒体費に充てられる',
+    ],
+    mockT:'list', mockD:{
+      title:'広告クリエイティブ（自動生成）',
+      items:[
+        {ico:'🎨',bg:'#eef2ff',name:'パターンA: 課題訴求型',sub:'「毎月の経費処理に3時間かけていませんか？」訴求',badge:'CTR予測 3.2%',bc:'b-green',act:'使用する'},
+        {ico:'🎨',bg:'#fffbeb',name:'パターンB: ビフォーアフター型',sub:'「3時間→5分！AI経費管理の導入事例」訴求',badge:'CTR予測 2.8%',bc:'b-indigo',act:'使用する'},
+        {ico:'🎨',bg:'#fff1f2',name:'パターンC: 数字インパクト型',sub:'「導入30社・平均4.2時間/月削減」実績訴求',badge:'CTR予測 3.5%',bc:'b-amber',act:'使用する'},
+      ]
+    }
+  },
+  { id:38, cat:'finance', catL:'経営・財務', name:'月次決算サマリ 自動送信', sym:'high',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'自動で集計・整形されたサマリが関係者に自動送信。月末作業がゼロに',
+    metrics:[{v:'2〜3時間→ゼロ',l:'月末作業時間'},{v:'自動送信',l:'関係者へ配信'},{v:'即日共有',l:'翌月1日に届く'}],
+    befP:[
+      '毎月末にExcelでPLをまとめてメールで送付する作業に2〜3時間かかる',
+      'グラフや前月比の作成が手作業で毎回大変',
+      '資料を送り忘れたりフォーマットがバラバラになることがある',
+      'スタッフ・顧問・銀行担当者など送付先が多くて管理が大変',
+    ],
+    aftP:[
+      '会計システムと連携して月末の数字が自動集計される',
+      '前月比・前年比・グラフが自動で整形されたレポートが生成される',
+      '毎月1日の朝9時に関係者全員へ自動でメール送付される',
+      '送付履歴が記録されていて誰に送ったか確認できる',
+    ],
+    mockT:'doc', mockD:{
+      title:'月次決算サマリ（2025年4月度）',
+      meta:'自動配信 — 2025/05/01 09:00 | 配信先: 5名',
+      sections:[
+        {title:'売上実績',body:'4月売上: ¥23,400,000（前月比 +8.2% ↑）\n年度累計: ¥89,200,000（年度予算比 74.3%）'},
+        {title:'費用・利益',body:'4月経費: ¥8,900,000（前月比 -3.1% ↓ 改善）\n4月営業利益: ¥14,500,000（利益率 62.0%）'},
+        {title:'配信完了',tags:[{l:'✅ 代表 小池様',t:'done'},{l:'✅ 顧問税理士 山田先生',t:'done'},{l:'✅ 銀行担当 田中様',t:'done'}]},
+      ]
+    }
+  },
+  { id:39, cat:'hr', catL:'採用・人事', name:'採用フロー 一元管理', sym:'mid',
+    priceL:'¥35,000〜', period:'2週間',
+    aft:'全応募者の選考状況がワンビューで見える。連絡漏れがなくなった',
+    metrics:[{v:'0件',l:'連絡漏れ'},{v:'一画面',l:'全応募者把握'},{v:'自動通知',l:'ステータス更新'}],
+    befP:[
+      '応募者ごとの選考ステータスがメモ・スプレッドシート・メールにバラバラ',
+      '「あの人今どの段階？」を確認するたびに複数のファイルを見る必要がある',
+      '連絡すべきタイミングを忘れて応募者を待たせてしまうことがある',
+      '選考を担当する面接官と情報共有がうまくできていない',
+    ],
+    aftP:[
+      '全応募者の選考ステータスが書類→一次面接→二次面接→内定のカンバンで一覧管理される',
+      'ステータス変更時に担当者へ自動通知が届く',
+      '「3日以上連絡していない応募者」をAIが検出してアラートを出す',
+      '面接官コメントが候補者カードに紐付いて全員で情報共有できる',
+    ],
+    mockT:'table', mockD:{
+      title:'採用管理ボード（2025年5月）',
+      headers:['氏名','ポジション','選考フェーズ','最終更新'],
+      rows:[
+        ['田中 花子','事務スタッフ','⏳ 二次面接待ち','今日'],
+        ['山田 太郎','営業','⚡ 内定通知待ち 要対応','3日前'],
+        ['鈴木 一郎','エンジニア','🆕 書類選考中','今日'],
+      ]
+    }
+  },
+  { id:40, cat:'industry', catL:'業界特化', name:'支援記録・個別支援計画 自動作成', sym:'super',
+    priceL:'¥50,000〜', period:'3週間',
+    aft:'音声メモを残すだけ。記録と計画書の下書きが自動生成。残業がなくなった',
+    metrics:[{v:'音声→文書',l:'記録自動変換'},{v:'残業ゼロ',l:'スタッフ負担軽減'},{v:'計画書も自動',l:'個別支援計画'}],
+    befP:[
+      '支援記録を書くために毎日30〜60分の残業が続いている',
+      '記録の質がスタッフによってばらつきがある。新人ほど書くのが苦手で負担が大きい',
+      '個別支援計画書の作成に1人あたり数時間かかる',
+      '「記録のための支援」になっていて本来の支援に集中できていない',
+    ],
+    aftP:[
+      '支援後すぐに音声メモを録るだけで記録が自動生成される',
+      '支援内容・変化・気づきが構造化されて記録の質が均一化される',
+      '過去の記録から個別支援計画書の下書きがAIで自動生成される',
+      'スタッフの残業がほぼゼロになり職場満足度が向上した',
+    ],
+    mockT:'doc', mockD:{
+      title:'支援記録（自動生成）',
+      meta:'利用者: 田中 〇〇様 | 2025/05/16 14:30 | 担当: 芝山',
+      sections:[
+        {title:'本日の支援内容',body:'木工作業（ペン立て製作）に従事。集中力が継続し最後まで完成させた。'},
+        {title:'気づき・変化',body:'先週と比べて作業の正確さが向上。「もっと作りたい」と意欲的な発言あり。'},
+        {title:'次回への引き継ぎ',tags:[{l:'✅ 作業継続',t:'done'},{l:'ペース調整 確認',t:'todo'},{l:'保護者への共有',t:'todo'}]},
+      ]
+    }
+  },
+  { id:41, cat:'industry', catL:'業界特化', name:'予約管理ツール', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'24時間ネット予約が可能になり電話対応が激減。2重予約もゼロになった',
+    metrics:[{v:'24時間',l:'ネット予約受付'},{v:'0件',l:'2重予約'},{v:'電話対応70%↓',l:'スタッフ負担軽減'}],
+    befP:[
+      '電話が鳴り続ける時間帯があってスタッフが本来の業務に集中できない',
+      '手書きの予約台帳で2重予約が起きてお客様に迷惑をかけたことがある',
+      '営業時間外の予約は取れずビジネス機会を逃している',
+      'キャンセルの連絡が直前になってスタッフのシフト調整が大変',
+    ],
+    aftP:[
+      '24時間365日ネット予約が可能になり電話対応が70%削減された',
+      '予約データがリアルタイムで管理されて2重予約がゼロになった',
+      '前日・3時間前のリマインダー自動送信でキャンセル率が40%削減された',
+      '空き状況が自動でリアルタイム反映されて予約管理の手間がなくなった',
+    ],
+    mockT:'cal', mockD:{
+      title:'予約管理システム',
+      month:'2025年5月',
+      selectedDate:'5/22(木)',
+      slots:['9:00','10:00','11:00','13:00','14:00','15:00'],
+      selectedSlot:'10:00'
+    }
+  },
+  { id:42, cat:'industry', catL:'業界特化', name:'カルテ・施術記録 管理', sym:'high',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'名前を入力するだけで前回の施術内容・メモが1秒で表示される',
+    metrics:[{v:'1秒',l:'カルテ検索時間'},{v:'デジタル管理',l:'紙カルテ不要'},{v:'顧客満足度UP',l:'記憶力で信頼感'}],
+    befP:[
+      '施術前に紙カルテを探すのに時間がかかって開始が遅れることがある',
+      '「前回どこが気になるって言ってたっけ」と思い出せないことがある',
+      'カルテが増えるほど管理スペースと時間が増える',
+      '担当者が変わると前回の情報が引き継がれないことがある',
+    ],
+    aftP:[
+      '名前を入力するだけで前回の施術内容・要望・メモが1秒で表示される',
+      '来店履歴・アレルギー・好みが全て記録されて誰が担当しても対応できる',
+      '「前回おっしゃっていた〇〇ですが」と言えるようになってリピート率が上がった',
+      'カルテの検索・管理・共有が全てデジタルで完結して紙が不要になった',
+    ],
+    mockT:'list', mockD:{
+      title:'カルテ管理（田中 花子様）',
+      items:[
+        {ico:'💆',bg:'#eef2ff',name:'前回施術（2025/05/02）',sub:'肩こり重点。左肩甲骨周りが特にこっていた。60分コース',badge:'3回目来店',bc:'b-indigo',act:'詳細を見る'},
+        {ico:'⚠️',bg:'#fffbeb',name:'アレルギー・注意事項',sub:'ラベンダー系オイル使用不可（肌荒れ歴あり）',badge:'要注意',bc:'b-amber',act:'確認済み'},
+        {ico:'💬',bg:'#ecfdf5',name:'前回の要望メモ',sub:'「次回は首のストレッチも入れてほしい」',badge:'今日対応予定',bc:'b-green',act:'対応する'},
+      ]
+    }
+  },
+  { id:43, cat:'industry', catL:'業界特化', name:'生徒管理・保護者連絡ツール', sym:'high',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'対象者を選んで一斉送信。既読・未読も確認できて連絡漏れがゼロに',
+    metrics:[{v:'一斉送信',l:'30名→30秒'},{v:'既読確認',l:'受信確認機能'},{v:'0件',l:'連絡漏れ'}],
+    befP:[
+      '保護者への連絡をLINEで1人ずつ手動送信していて30分かかる',
+      '送った・送っていないの管理がわからなくなることがある',
+      'イベント案内のたびに全員に個別でメッセージを送るのが大変',
+      '保護者からの返信を集計するのが面倒',
+    ],
+    aftP:[
+      '保護者をグループ・学年・クラスでフィルタリングして一括送信できる',
+      '既読・未読が一覧で確認できて連絡漏れがゼロになった',
+      '出欠確認フォームを一括送信して回答が自動集計される',
+      '緊急連絡も全員に30秒以内で届けられる',
+    ],
+    mockT:'table', mockD:{
+      title:'保護者連絡管理（運動会のご案内）',
+      headers:['保護者名','生徒名','送信状況','既読','回答'],
+      rows:[
+        ['田中 様','田中 太郎（5年）','送信済 ✅','既読 ✅','✅ 参加'],
+        ['山田 様','山田 花子（3年）','送信済 ✅','⏳ 未読','—'],
+        ['鈴木 様','鈴木 一郎（1年）','送信済 ✅','既読 ✅','❌ 欠席'],
+      ]
+    }
+  },
+  { id:44, cat:'industry', catL:'業界特化', name:'メニュー原価計算（飲食）', sym:'high',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される',
+    metrics:[{v:'感覚→数値',l:'原価管理の変革'},{v:'目標原価率',l:'自動逆算機能'},{v:'値上げ判断',l:'データ根拠で決断'}],
+    befP:[
+      '「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まっている',
+      '原価率が高いメニューと低いメニューが混在していてどれが稼ぎ頭かわからない',
+      '食材費が変動しても値段を変えるタイミングが分からず放置してしまっている',
+      '利益を出すためにはいくらで売ればいいのか計算できていない',
+    ],
+    aftP:[
+      '食材名・数量・仕入れ単価を入力するだけで原価・原価率・推奨売価が自動計算される',
+      '「目標原価率30%で売価を逆算する」機能で値付けの根拠が明確になる',
+      '仕入れ値が変動した際に利益への影響が即座にシミュレーションできる',
+      '全メニューの原価率が一覧表示されて改善ポイントが一目でわかる',
+    ],
+    mockT:'dash', mockD:{
+      title:'メニュー原価計算ダッシュボード',
+      kpis:[{label:'平均原価率',val:'28.4%',trend:'目標30% ✓',up:true},{label:'最高利益メニュー',val:'鶏もも炭火焼',trend:'利益率78%',up:true},{label:'要見直し',val:'3品目',trend:'原価率35%超',up:false}],
+      chart:[22,25,30,28,35,32,28,29],
+      months:['パスタ','リゾット','ステーキ','サラダ','ピザ','スープ','デザート','ドリンク']
+    }
+  },
+  { id:45, cat:'finance', catL:'経営・財務', name:'経費精算 自動化', sym:'super',
+    priceL:'¥40,000〜', period:'2〜3週間',
+    aft:'その場でスマホ撮影→自動集計・仕分け。月末の地獄がなくなった',
+    metrics:[{v:'その場で完了',l:'経費申請タイミング'},{v:'月末→ゼロ',l:'集計作業時間'},{v:'不明経費ゼロ',l:'「何のお金?」がなくなる'}],
+    befP:[
+      '月末にスタッフから大量の領収書を集めて集計する作業がある。毎月来るのに毎月しんどい',
+      '「この領収書何のお金？」が毎回あってスタッフへの確認作業が発生する',
+      '経費申請の形式がスタッフによってバラバラで集計が大変',
+      '月末の集計に毎回3〜4時間かかっていて他の業務を圧迫している',
+    ],
+    aftP:[
+      'スタッフがその場でスマホで領収書を撮影。自動でOCR読取・分類される',
+      '用途を音声メモで一言入れるだけで仕分けと申請が完了する',
+      '管理者は月末に「承認するだけ」の状態になる',
+      '給与計算システムと連携して精算が自動反映される',
+    ],
+    mockT:'table', mockD:{
+      title:'経費精算一覧（2025年5月）',
+      headers:['申請者','日付','用途','金額','ステータス'],
+      rows:[
+        ['田中（スタッフ）','5/14','クライアント交通費','¥2,640','⏳ 承認待ち'],
+        ['山田（スタッフ）','5/15','業務用消耗品','¥3,850','✅ 承認済み'],
+        ['鈴木（スタッフ）','5/16','？ 不明','¥5,280','⚡ 要確認'],
+      ]
+    }
+  },
+  { id:46, cat:'finance', catL:'経営・財務', name:'在庫・発注管理ツール', sym:'high',
+    priceL:'¥45,000〜', period:'2〜3週間',
+    aft:'在庫が閾値を下回ると自動アラート。欠品と過剰在庫が同時に解消された',
+    metrics:[{v:'自動アラート',l:'在庫閾値通知'},{v:'0件',l:'欠品・過剰在庫'},{v:'発注書自動生成',l:'作業ゼロ化'}],
+    befP:[
+      '気づいたら在庫が切れていて急いで発注することがある。クライアントへの迷惑が怖い',
+      '逆に頼みすぎて余らせてキャッシュフローを圧迫することもある',
+      '発注のタイミングが担当者の感覚任せになっていて属人化している',
+      '複数の商品・仕入れ先を管理するのが複雑で見落としが出る',
+    ],
+    aftP:[
+      '在庫が設定した閾値を下回ると自動でLINE・メールにアラートが届く',
+      '過去の消費ペースから最適な発注量を自動提案する機能がある',
+      '発注書が自動生成されてサプライヤーへの送付まで自動化できる',
+      '欠品ゼロ・過剰在庫ゼロを同時に実現した事業者が続出している',
+    ],
+    mockT:'table', mockD:{
+      title:'在庫管理（2025年5月16日）',
+      headers:['商品名','在庫数','閾値','発注状況'],
+      rows:[
+        ['商品A（主力）','45個','50個以上','✅ 自動発注済み'],
+        ['商品B','12個','20個以上','⚡ 要発注（閾値以下）'],
+        ['商品C','8個','10個以上','⚡ 緊急発注（欠品間近）'],
+      ]
+    }
+  },
+  { id:47, cat:'doc', catL:'議事録・文書', name:'提案書・プレゼン 自動生成', sym:'high',
+    priceL:'¥40,000〜', period:'2週間',
+    aft:'課題・提案・効果を入れるだけでデザイン済みの提案書が30分で完成',
+    metrics:[{v:'半日→30分',l:'提案書作成時間'},{v:'デザイン付き',l:'プロ品質で出力'},{v:'受注率UP',l:'説得力が向上'}],
+    befP:[
+      '提案書を一から書くたびに半日〜1日の時間が消える。提案するほど自分の時間が消える',
+      'デザインを気にし始めるとキリがなく時間を消費してしまう',
+      '提案書の構成が毎回バラバラで説得力にムラがある',
+      '量が多くて提案できない案件があり機会損失になっている',
+    ],
+    aftP:[
+      '顧客の課題・自社の提案内容・期待効果を入力するだけで30分で完成する',
+      'YUMEMATCHブランドのプロ仕様デザインが自動適用される',
+      '課題→原因→解決策→ROI→スケジュールの黄金構成で自動生成される',
+      'PowerPoint/PDF/HTML の3形式で出力可能',
+    ],
+    mockT:'doc', mockD:{
+      title:'業務効率化提案書（A社様向け）',
+      meta:'自動生成 — 2025/05/16 | PowerPoint / PDF出力済み',
+      sections:[
+        {title:'現状課題（整理）',body:'・月次集計に毎回3〜4時間かかっている\n・ヒューマンエラーによる修正対応が月2〜3件発生\n・担当者の負荷が高く残業につながっている'},
+        {title:'提案内容',body:'AI経費精算システムの導入により上記3課題を一括解決します。\n導入期間: 2〜3週間 | 初期費用: ¥40,000〜'},
+        {title:'期待効果',tags:[{l:'✅ 作業時間95%削減',t:'done'},{l:'✅ エラーゼロ化',t:'done'},{l:'✅ ROI 6ヶ月で回収',t:'done'}]},
+      ]
+    }
+  },
+  { id:48, cat:'doc', catL:'議事録・文書', name:'補助金申請書 自動作成', sym:'super',
+    priceL:'¥50,000〜', period:'3週間',
+    aft:'Webで質問に答えるだけで申請書の下書きが完成。確認して提出するだけ',
+    metrics:[{v:'1週間→2時間',l:'申請書作成時間'},{v:'採択率向上',l:'審査官に刺さる文章'},{v:'0円',l:'行政書士費不要'}],
+    befP:[
+      '申請書の書き方がわからなくてスタートを切れないまま1週間経っている',
+      '申請書の要件を読み解くだけで数時間かかる',
+      '審査官に評価される書き方がわからず自信が持てない',
+      '行政書士に依頼すると5〜10万円かかる',
+    ],
+    aftP:[
+      'Webの質問フォームに答えるだけで申請書の下書きが2時間以内に完成する',
+      '過去の採択事例を学習したAIが審査官に刺さる文章を自動生成する',
+      '採択率を高めるための「審査官チェックポイント」が自動で確認される',
+      '行政書士費用が不要になり申請費用がゼロになった',
+    ],
+    mockT:'doc', mockD:{
+      title:'IT導入補助金 申請書（下書き）',
+      meta:'自動生成 — 2025/05/16 | 採択率チェック: 実施済み',
+      sections:[
+        {title:'事業計画（自動生成）',body:'当社は〇〇業において〇〇という課題を抱えており、AI業務管理システムの導入により年間XXX時間の業務削減と〇〇万円のコスト削減を見込みます。'},
+        {title:'採択率チェック',tags:[{l:'✅ 課題の具体性: OK',t:'done'},{l:'✅ 数値根拠: OK',t:'done'},{l:'✅ 実施体制: OK',t:'done'},{l:'追記推奨: 競合優位性',t:'todo'}]},
+        {title:'提出前確認',body:'必須添付書類: 確定申告書・履歴事項全部証明書\n提出方法: jGrants電子申請\n締切: 2025/12/15'},
+      ]
+    }
+  },
+  { id:49, cat:'marketing', catL:'営業・マーケ', name:'ヒアリングシート 自動生成', sym:'high',
+    priceL:'¥25,000〜', period:'1週間',
+    aft:'業種を選ぶだけでその業界特有の質問が盛り込まれたシートが自動生成',
+    metrics:[{v:'即時生成',l:'ヒアリングシート'},{v:'聞き漏れゼロ',l:'業種特有の質問'},{v:'成約率UP',l:'ヒアリング精度向上'}],
+    befP:[
+      '毎回の面談前にヒアリングシートを手直ししている。同じことを毎回やっている',
+      '「あの質問を聞き忘れた」が後から気づいて後悔することがある',
+      '業種によって聞くべきことが違うのにテンプレートが1種類しかない',
+      'ヒアリング内容がバラバラで提案の質にムラがある',
+    ],
+    aftP:[
+      '業種・サービス内容を選ぶだけで業界特有の質問が盛り込まれたシートが即生成される',
+      '「この業種なら必ず確認すべき」質問が自動で追加される',
+      '面談後に回答を入力すると提案書の骨子が自動生成される',
+      'ヒアリングの精度が上がり成約率が平均1.4倍向上した事例あり',
+    ],
+    mockT:'doc', mockD:{
+      title:'ヒアリングシート（整体院向け）',
+      meta:'自動生成 — 業種: 整体院・整骨院 | 質問数: 18問',
+      sections:[
+        {title:'基本情報',body:'店舗数・スタッフ数・月間来店数\n現在の集客チャネル・客単価・リピート率'},
+        {title:'業種特有の質問（AI追加）',body:'・施術メニューの種類と人気TOP3は？\n・新規とリピートの比率は？\n・今最も改善したい業務は？（予約/集客/記録）'},
+        {title:'ペイン確認',tags:[{l:'集客不足',t:'todo'},{l:'記録・事務作業',t:'todo'},{l:'スタッフ管理',t:'todo'},{l:'財務管理',t:'todo'}]},
+      ]
+    }
+  },
+  { id:50, cat:'marketing', catL:'営業・マーケ', name:'口コミ・紹介 管理ツール', sym:'mid',
+    priceL:'¥30,000〜', period:'1〜2週間',
+    aft:'紹介者・経路が記録されてお礼タイミングでアラートが来る。紹介が増えた',
+    metrics:[{v:'お礼漏れゼロ',l:'紹介へのお礼管理'},{v:'紹介数+40%',l:'紹介が増える仕組み'},{v:'経路可視化',l:'どこから来るか把握'}],
+    befP:[
+      '「〇〇さんに紹介してもらいました」という来客のお礼を忘れることがある',
+      '誰が誰を紹介してくれたか追跡できていない',
+      '紹介してくれた人に感謝を伝えられないと次の紹介が来なくなる',
+      'どの集客チャネルが最も良い顧客を連れてくるか分からない',
+    ],
+    aftP:[
+      '新規顧客の紹介元を入力するだけで紹介者DBに自動登録される',
+      '紹介から7日以内に「お礼を伝えましょう」のリマインダーが届く',
+      '紹介者別の紹介件数・売上貢献が可視化されて上位紹介者が分かる',
+      '紹介経路の分析から「最も効果的な紹介元」が特定できる',
+    ],
+    mockT:'list', mockD:{
+      title:'紹介・口コミ管理ダッシュボード',
+      items:[
+        {ico:'🌟',bg:'#fffbeb',name:'田中様（最多紹介者 年間8件）',sub:'最新紹介: 5/14 山田様 → お礼: ⚡ 未送付',badge:'お礼が必要',bc:'b-red',act:'お礼メッセージ'},
+        {ico:'💬',bg:'#ecfdf5',name:'Googleレビュー（★4.8）',sub:'先月比+3件のレビュー。業界平均の2倍のペース',badge:'good trend',bc:'b-green',act:'返信を確認'},
+        {ico:'📊',bg:'#eef2ff',name:'紹介経路TOP: Instagram DM',sub:'先月の新規12名中5名がInstagram経由（42%）',badge:'注力チャネル',bc:'b-indigo',act:'分析を見る'},
+      ]
+    }
+  },
+];
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const params = new URLSearchParams(location.search);
+const tool = TOOLS.find(t => t.id === parseInt(params.get('id')));
+
+if (!tool) {
+  document.body.innerHTML = '<div style="padding:80px;text-align:center;"><h2 style="margin-bottom:16px;">ツールが見つかりません</h2><a href="ai-tools-catalog.html" style="color:#4f46e5;">← カタログに戻る</a></div>';
+} else {
+  renderPage(tool);
+}
+
+function renderPage(t) {
+  document.title = t.name + ' | YUMEMATCH AI業務改善';
+  document.getElementById('hdrName').textContent = t.name;
+
+  // Hero
+  document.getElementById('heroCat').textContent = t.catL;
+  const symEl = document.getElementById('heroSym');
+  const symMap = {super:{lbl:'🔥 超人気',cls:'s-super'},high:{lbl:'⭐ 人気',cls:'s-high'},mid:{lbl:'✨ 注目',cls:''}};
+  const sm = symMap[t.sym]||symMap.mid;
+  symEl.textContent = sm.lbl;
+  if(sm.cls) symEl.classList.add(sm.cls);
+  document.getElementById('heroTtl').textContent = t.name;
+  document.getElementById('heroSub').textContent = t.aft;
+  document.getElementById('heroMetrics').innerHTML = t.metrics.map(m =>
+    `<div class="metric"><div class="metric-val">${m.v}</div><div class="metric-lbl">${m.l}</div></div>`
+  ).join('');
+
+  // Before / After
+  document.getElementById('baCol').innerHTML = `
+    <div class="ba-box before">
+      <div class="ba-label lb"><span class="ba-ico">📉</span>BEFORE — 今の課題</div>
+      <div class="ba-pts">${t.befP.map(p=>`<div class="ba-pt"><div class="ba-mk">✕</div><div class="ba-txt">${p}</div></div>`).join('')}</div>
+    </div>
+    <div class="arrow-row">
+      <div class="arrow-line"></div>
+      <div class="arrow-pill">✨ AIで自動化すると…</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="ba-box after">
+      <div class="ba-label la"><span class="ba-ico">✨</span>AFTER — 導入後の変化</div>
+      <div class="ba-pts">${t.aftP.map(p=>`<div class="ba-pt"><div class="ba-mk">✓</div><div class="ba-txt">${p}</div></div>`).join('')}</div>
+    </div>
+    <div class="info-chips">
+      <div class="info-chip"><div class="info-chip-lbl">実装期間</div><div class="info-chip-val">約${t.period}</div></div>
+      <div class="info-chip"><div class="info-chip-lbl">初期費用</div><div class="info-chip-val">${t.priceL}</div></div>
+      <div class="info-chip"><div class="info-chip-lbl">月額費用</div><div class="info-chip-val">¥0（保守なし）</div></div>
+    </div>
+  `;
+
+  // Mock
+  document.getElementById('mockBarTitle').textContent = t.mockD.title || 'プレビュー';
+  document.getElementById('mockBody').innerHTML = renderMock(t.mockT, t.mockD);
+}
+
+/* ══════════════════════════════════════════
+   MOCK UI COMPONENTS
+══════════════════════════════════════════ */
+function renderMock(type, d) {
+  if(type==='list')  return renderList(d);
+  if(type==='dash')  return renderDash(d);
+  if(type==='doc')   return renderDoc(d);
+  if(type==='chat')  return renderChat(d);
+  if(type==='table') return renderTable(d);
+  if(type==='cal')   return renderCal(d);
+  return '<div style="padding:32px;text-align:center;color:#94a3b8;">プレビュー準備中</div>';
+}
+
+function renderList(d) {
+  return `<div class="m-list">
+    <div class="m-list-hdr">TODAY</div>
+    ${d.items.map(item=>`
+      <div class="m-item">
+        <div class="m-ico" style="background:${item.bg}">${item.ico}</div>
+        <div class="m-body">
+          <div class="m-top">
+            <span class="m-name">${item.name}</span>
+            <span class="badge ${item.bc}">${item.badge}</span>
+          </div>
+          <div class="m-sub">${item.sub}</div>
+          <div class="m-act">${item.act} →</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderDash(d) {
+  const mx = Math.max(...d.chart);
+  const bars = d.chart.map((v,i)=>{
+    const h = Math.max(4,Math.round((v/mx)*52));
+    const cur = i>=d.chart.length-2;
+    return `<div class="m-bar${cur?' cur':''}" style="height:${h}px"></div>`;
+  }).join('');
+  const mls = (d.months||[]).map(m=>`<div>${m}</div>`).join('');
+  return `<div class="m-dash">
+    <div class="m-kpis">${d.kpis.map(k=>`
+      <div class="m-kpi">
+        <div class="m-kpi-val">${k.val}</div>
+        <div class="m-kpi-lbl">${k.label}</div>
+        <div class="m-kpi-trend ${k.up?'t-up':'t-dn'}">${k.trend}</div>
+      </div>`).join('')}
+    </div>
+    <div class="m-chart-lbl">推移グラフ</div>
+    <div class="m-bars">${bars}</div>
+    <div class="m-ml">${mls}</div>
+  </div>`;
+}
+
+function renderDoc(d) {
+  const secs = d.sections.map(s=>{
+    const body = s.tags
+      ? s.tags.map(tag=>`<span class="m-tag ${tag.t}">${tag.l}</span>`).join('')
+      : `<div class="m-sec-body">${(s.body||'').replace(/\n/g,'<br>')}</div>`;
+    return `<div class="m-sec"><div class="m-sec-title">${s.title}</div>${body}</div>`;
+  }).join('');
+  return `<div class="m-doc">
+    <div class="m-doc-hdr">
+      <div class="m-doc-title">📄 ${d.title}</div>
+      <div class="m-doc-meta">${d.meta||''}</div>
+    </div>
+    ${secs}
+  </div>`;
+}
+
+function renderChat(d) {
+  return `<div class="m-chat">${d.messages.map(m=>`
+    <div class="msg ${m.from}">
+      <div class="msg-av">${m.from==='user'?'👤':'🤖'}</div>
+      <div class="msg-bbl">${m.text.replace(/\n/g,'<br>')}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderTable(d) {
+  const ths = d.headers.map(h=>`<th>${h}</th>`).join('');
+  const trs = d.rows.map(row=>{
+    const tds = row.map(cell=>{
+      const s = typeof cell==='string';
+      let cls='';
+      if(s&&(cell.includes('✅')||cell.includes('適合')||cell.includes('完了')||cell.includes('確定')||cell.includes('承認済')||cell.includes('済み'))) cls='st-done';
+      else if(s&&(cell.includes('⚡')||cell.includes('要確認')||cell.includes('要対応')||cell.includes('承認待')||cell.includes('待ち')||cell.includes('待機'))) cls='st-pend';
+      else if(s&&(cell.includes('❌')||cell.includes('非適合')||cell.includes('緊急')||cell.includes('間近')||cell.includes('閾値以下')||cell.includes('不明'))) cls='st-alert';
+      return cls?`<td><span class="st ${cls}">${cell}</span></td>`:`<td>${cell}</td>`;
+    }).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+  return `<div class="m-tw"><table class="m-tbl"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+}
+
+function renderCal(d) {
+  const dows = ['日','月','火','水','木','金','土'].map(w=>`<div class="m-dow">${w}</div>`).join('');
+  const avails = new Set([7,8,9,13,14,15,16,20,21,22,23,27,28,29,30]);
+  let days = '<div></div><div></div><div></div><div></div>'; // May 1 = Thu
+  for(let n=1;n<=31;n++){
+    const av=avails.has(n), sel=n===22;
+    days+=`<div class="m-day${av?' av':''}${sel?' sel':''}">${n}</div>`;
+  }
+  const slots = (d.slots||['10:00','11:00','13:00','14:00','15:00','16:00']).map(s=>
+    `<div class="m-slot${s===d.selectedSlot?' sel':''}">${s}</div>`
+  ).join('');
+  return `<div class="m-cal">
+    <div class="m-cal-hdr">
+      <div class="m-cal-month">${d.month||'2025年5月'}</div>
+      <div style="display:flex;gap:4px;">
+        <button class="m-cal-nav">‹</button>
+        <button class="m-cal-nav">›</button>
+      </div>
+    </div>
+    <div class="m-cg">${dows}${days}</div>
+    <div class="m-slots-ttl">空き時間（${d.selectedDate||'5/22 木曜'}）</div>
+    <div class="m-slots">${slots}</div>
+  </div>`;
+}
+</script>
+</body>
+</html>

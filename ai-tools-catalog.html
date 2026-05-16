@@ -724,6 +724,7 @@ function renderT(){
     <div class="tc-pd">工数 ${t.period}　${MAINT_FREE.has(t.id)?'<span class="mn-badge">保守なし</span>':'保守 ¥'+mf(t).toLocaleString()+'〜/月'}</div>
   </div>
   <div style="display:flex;gap:6px;align-items:center;">
+    <a class="tc-demo" href="tool-detail.html?id=${t.id}" onclick="event.stopPropagation()">詳細 →</a>
     <a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>
     <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'✓ 選択中':'+ 見積もりに追加'}</button>
   </div>
