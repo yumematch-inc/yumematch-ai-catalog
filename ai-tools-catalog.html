@@ -966,7 +966,7 @@ function confirmApo(){
 }
 // ─────────────────────────────────────────────────
 
-// URL共有でカートを復元
+// URL共有でカートを復元 / #apo でモーダルを開く
 (function(){
   const h=location.hash;
   if(h.startsWith('#c=')){
@@ -974,6 +974,7 @@ function confirmApo(){
     ids.forEach(id=>{const t=T.find(x=>x.id===id);if(t)S.cart.set(id,t);});
     if(ids.length)setTimeout(()=>{updBar();renderT();showToast(ids.length+'本のツールを復元しました');},300);
   }
+  if(h==='#apo') setTimeout(showApo,300);
 })();
 
 function renderW(){
