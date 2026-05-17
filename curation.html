@@ -38,6 +38,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .tool-top{display:flex;align-items:flex-start;gap:12px}
 .tool-id{font-size:10px;color:#94a3b8;font-weight:700;min-width:24px;padding-top:2px}
 .badge-new{display:inline-block;background:#6366f1;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
+.badge-dup{display:inline-block;background:#f59e0b;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
 .tool-info{flex:1;min-width:0}
 .tool-name{font-size:14px;font-weight:700;color:#0f172a;line-height:1.3}
 .tool-meta{font-size:11px;color:#64748b;margin-top:3px}
@@ -184,23 +185,23 @@ const TOOLS=[
   {id:10,cat:'議事録・文書',name:'月次経営会議資料 自動生成',priceL:'¥45,000〜',period:'2〜3週間',bef:'毎月スタッフが2〜3日かけて資料を作る。会議直前まで修正が続く'},
   {id:47,cat:'議事録・文書',name:'提案書・プレゼン 自動生成',priceL:'¥40,000〜',period:'2週間',bef:'提案書を一から作るたびに半日〜1日消える。デザインを気にし始めると止まらない'},
   {id:48,cat:'議事録・文書',name:'補助金申請書 自動作成',priceL:'¥50,000〜',period:'3週間',bef:'補助金に申請したいが書類が難しくて書き始めるまでに1週間かかる'},
-  {id:11,cat:'経営・財務',name:'経営ダッシュボード',priceL:'¥40,000〜',period:'2〜3週間',bef:'「今月の利益っていくらだっけ」。ExcelがバラバラでPLを出すだけで1日かかる'},
-  {id:12,cat:'経営・財務',name:'売上予実管理・アラート',priceL:'¥45,000〜',period:'2〜3週間',bef:'月末に数字を集めて初めて達成できてないとわかる。毎月手遅れ感がある'},
-  {id:13,cat:'経営・財務',name:'確定申告・経費仕分けサポート',priceL:'¥50,000〜',period:'3〜4週間',bef:'確定申告の時期が来るたびに数日間の地獄。1年分の領収書を一気に仕分け'},
-  {id:14,cat:'経営・財務',name:'クレカ・銀行明細→自動仕訳',priceL:'¥45,000〜',period:'3週間',bef:'カード明細を会計ソフトに手入力。毎月2〜3時間かかる上に転記ミスが怖い'},
+  {id:11,cat:'経営・財務',name:'経営ダッシュボード',priceL:'¥40,000〜',period:'2〜3週間',bef:'「今月の利益っていくらだっけ」。ExcelがバラバラでPLを出すだけで1日かかる',dup:'ダッシュボード系'},
+  {id:12,cat:'経営・財務',name:'売上予実管理・アラート',priceL:'¥45,000〜',period:'2〜3週間',bef:'月末に数字を集めて初めて達成できてないとわかる。毎月手遅れ感がある',dup:'ダッシュボード系'},
+  {id:13,cat:'経営・財務',name:'確定申告・経費仕分けサポート',priceL:'¥50,000〜',period:'3〜4週間',bef:'確定申告の時期が来るたびに数日間の地獄。1年分の領収書を一気に仕分け',dup:'経費系'},
+  {id:14,cat:'経営・財務',name:'クレカ・銀行明細→自動仕訳',priceL:'¥45,000〜',period:'3週間',bef:'カード明細を会計ソフトに手入力。毎月2〜3時間かかる上に転記ミスが怖い',dup:'経費系'},
   {id:15,cat:'経営・財務',name:'インボイス対応 請求書チェッカー',priceL:'¥40,000〜',period:'2〜3週間',bef:'受け取った請求書のインボイス番号を1枚ずつ検索して確認。毎回不安になる'},
   {id:16,cat:'経営・財務',name:'不動産CFシミュレーター',priceL:'¥20,000〜',period:'1週間',bef:'物件を見るたびにExcelを開いてシミュレーション。数字入力だけで30分消える'},
   {id:17,cat:'経営・財務',name:'保険契約 一覧管理ツール',priceL:'¥30,000〜',period:'1〜2週間',bef:'「あの保険の更新いつだっけ」。契約書を引っ張り出して毎回確認が大変'},
-  {id:38,cat:'経営・財務',name:'月次決算サマリ 自動送信',priceL:'¥30,000〜',period:'1〜2週間',bef:'毎月PLをまとめてメール送付。スタッフ・顧問への連絡に2〜3時間かかる'},
-  {id:45,cat:'経営・財務',name:'経費精算 自動化',priceL:'¥40,000〜',period:'2〜3週間',bef:'月末にスタッフから領収書を集めて集計。「これ何のお金だっけ」が毎回起きる'},
+  {id:38,cat:'経営・財務',name:'月次決算サマリ 自動送信',priceL:'¥30,000〜',period:'1〜2週間',bef:'毎月PLをまとめてメール送付。スタッフ・顧問への連絡に2〜3時間かかる',dup:'ダッシュボード系'},
+  {id:45,cat:'経営・財務',name:'経費精算 自動化',priceL:'¥40,000〜',period:'2〜3週間',bef:'月末にスタッフから領収書を集めて集計。「これ何のお金だっけ」が毎回起きる',dup:'経費系'},
   {id:46,cat:'経営・財務',name:'在庫・発注管理ツール',priceL:'¥45,000〜',period:'2〜3週間',bef:'気づいたら欠品または注文しすぎて余った。発注タイミングが常に感覚任せ'},
-  {id:18,cat:'採用・人事',name:'採用面接記録→DB 自動登録',priceL:'¥30,000〜',period:'1〜2週間',bef:'面接後に評価シートを手入力。「この人どんな人だったっけ」が後から起きる'},
+  {id:18,cat:'採用・人事',name:'採用面接記録→DB 自動登録',priceL:'¥30,000〜',period:'1〜2週間',bef:'面接後に評価シートを手入力。「この人どんな人だったっけ」が後から起きる',dup:'採用系'},
   {id:19,cat:'採用・人事',name:'求人票・採用LP 自動生成',priceL:'¥35,000〜',period:'2週間',bef:'求人を出すたびに求人票を一から書いてLPを外注。完成まで3〜5日かかる'},
   {id:20,cat:'採用・人事',name:'スタッフ育成カルテ',priceL:'¥40,000〜',period:'2〜3週間',bef:'「あのスタッフの目標、何だったっけ」。個人の成長状況を誰も把握できていない'},
   {id:21,cat:'採用・人事',name:'シフト管理・勤怠 自動集計',priceL:'¥45,000〜',period:'3週間',bef:'LINEでシフト希望を集めて手作業で調整。毎月この作業だけで2〜3日消える'},
   {id:22,cat:'採用・人事',name:'日報・週報 自動集計',priceL:'¥35,000〜',period:'2週間',bef:'スタッフの日報が毎日届くが読む時間がなくて貯まる。活かせない情報の山'},
   {id:35,cat:'採用・人事',name:'営業ログ 音声自動記録',priceL:'¥35,000〜',period:'2週間',bef:'「あとでCRMに入力しよう」と思ってそのまま忘れる。記録が不完全になりがち'},
-  {id:39,cat:'採用・人事',name:'採用フロー 一元管理',priceL:'¥35,000〜',period:'2週間',bef:'書類・面接・内定の状況がバラバラ。「あの人今どの段階？」がしょっちゅう起きる'},
+  {id:39,cat:'採用・人事',name:'採用フロー 一元管理',priceL:'¥35,000〜',period:'2週間',bef:'書類・面接・内定の状況がバラバラ。「あの人今どの段階？」がしょっちゅう起きる',dup:'採用系'},
   {id:23,cat:'営業・マーケ',name:'マーケティング戦略 提案書',priceL:'¥50,000〜',period:'2〜3週間',bef:'「どう集客すればいい？」の答えを探して何日も調べ続け、方針が決まらない'},
   {id:24,cat:'営業・マーケ',name:'SNS投稿文・広告コピー 自動生成',priceL:'¥40,000〜',period:'2週間',bef:'「今日何を投稿しよう」と毎日悩む。文章を考えるだけで1時間消える'},
   {id:25,cat:'営業・マーケ',name:'イベント・セミナーLP＋申込管理',priceL:'¥35,000〜',period:'1〜2週間',bef:'イベントのたびにLPを外注して3〜5日かかる。申込管理はExcelで手作業'},
@@ -228,11 +229,27 @@ const STATE = {};  // {id: {status, note}}
 let NEW_TOOLS = []; // [{nid, cat, name, priceL, period, bef, note, status}]
 const ALL_CATS = [...new Set(TOOLS.map(t=>t.cat))];
 
+const PRESET_NEW=[
+  {nid:1000000001,cat:'組織マネジメント',name:'社内情報共有・理念浸透ポータル',priceL:'¥60,000〜',period:'3〜4週間',
+   bef:'連絡がチャットで流れ、理念や目標が浸透しない。「また聞いてなかった」が繰り返される',
+   note:'Gemini BEST10 #1。社内SNS・自動情報配信・KPI可視化を1つに統合。経営者の分身ツール',status:'keep'},
+  {nid:1000000002,cat:'議事録・文書',name:'書類スキャン→即時生成システム',priceL:'¥40,000〜',period:'2〜3週間',
+   bef:'書類を作るたびにPCを開いて過去ファイルを探してゼロから編集。スマホでできればいいのに',
+   note:'Gemini BEST10 #3。送付状・報告書・契約書など、スマホ写真1枚から書類を自動生成する汎用システム',status:'keep'},
+  {nid:1000000003,cat:'営業・マーケ',name:'AI業務改善 ROIシミュレーター',priceL:'¥25,000〜',period:'1週間',
+   bef:'「どれくらい楽になるか」がイメージできず、顧客がAI導入に踏み切れない',
+   note:'Gemini BEST10 #4。質問に答えるだけで削減時間・コスト削減額・投資回収期間を可視化。商談ツールとして使える',status:'keep'},
+];
+
 function load(){
   const s = localStorage.getItem('yumematch-curation-v1');
   if(s) Object.assign(STATE, JSON.parse(s));
   const n = localStorage.getItem('yumematch-curation-new-v1');
-  if(n) NEW_TOOLS = JSON.parse(n);
+  if(n){
+    NEW_TOOLS = JSON.parse(n);
+  } else {
+    NEW_TOOLS = PRESET_NEW.map(t=>({...t}));
+  }
 }
 function save(){
   localStorage.setItem('yumematch-curation-v1', JSON.stringify(STATE));
@@ -348,7 +365,7 @@ function renderCard(t, isNew=false){
     <div class="tool-top">
       <div class="tool-id">${isNew?'NEW':'#'+t.id}</div>
       <div class="tool-info">
-        <div class="tool-name">${t.name}${isNew?'<span class="badge-new">新規</span>':''}</div>
+        <div class="tool-name">${t.name}${isNew?'<span class="badge-new">新規</span>':''}${t.dup?`<span class="badge-dup">⚠️ ${t.dup}</span>`:''}</div>
         <div class="tool-meta">${t.priceL} ／ 工数 ${t.period}</div>
         ${t.bef?`<div class="tool-bef">😓 ${t.bef}</div>`:''}
       </div>
