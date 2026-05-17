@@ -6,59 +6,71 @@
 <title>カタログ精査シート｜YUMEMATCH</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px}
-.hdr{background:#1e1b4b;color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:100}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.hdr{background:#1e1b4b;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .hdr-ttl{font-size:16px;font-weight:800;letter-spacing:-.03em}
 .hdr-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
 .hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap}
-.counter{background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;font-size:12px;display:flex;gap:12px}
+.counter{background:rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;font-size:12px;display:flex;gap:10px}
 .cnt-item{text-align:center}
-.cnt-num{font-size:18px;font-weight:900;line-height:1}
+.cnt-num{font-size:16px;font-weight:900;line-height:1}
 .cnt-lbl{font-size:9px;color:rgba(255,255,255,.6);margin-top:2px}
+.cnt-pend .cnt-num{color:#94a3b8}
 .cnt-keep .cnt-num{color:#34d399}
 .cnt-mod .cnt-num{color:#fbbf24}
 .cnt-rm .cnt-num{color:#f87171}
 .cnt-new .cnt-num{color:#818cf8}
-.btn-add{background:#6366f1;border:none;color:#fff;font-size:12px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.btn-export{background:#22c55e;border:none;color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.btn-reset{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.main{max-width:900px;margin:0 auto;padding:24px 16px}
-.cat-block{margin-bottom:32px}
-.cat-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}
-.cat-name{font-size:15px;font-weight:800;color:#1e1b4b}
-.cat-count{font-size:11px;color:#94a3b8;font-weight:600}
-.tool-card{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;border:2px solid transparent;transition:border-color .15s,background .15s}
-.tool-card.keep{border-color:#34d399;background:#f0fdf4}
-.tool-card.mod{border-color:#fbbf24;background:#fffbeb}
-.tool-card.rm{border-color:#fca5a5;background:#fff5f5;opacity:.7}
-.tool-card.isnew{border-color:#a5b4fc;background:#eef2ff}
-.tool-card.isnew.keep{border-color:#34d399;background:#f0fdf4}
-.tool-card.isnew.mod{border-color:#fbbf24;background:#fffbeb}
-.tool-card.isnew.rm{border-color:#fca5a5;background:#fff5f5;opacity:.7}
-.tool-top{display:flex;align-items:flex-start;gap:12px}
-.tool-id{font-size:10px;color:#94a3b8;font-weight:700;min-width:24px;padding-top:2px}
-.badge-new{display:inline-block;background:#6366f1;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
-.badge-dup{display:inline-block;background:#f59e0b;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
-.tool-info{flex:1;min-width:0}
-.tool-name{font-size:14px;font-weight:700;color:#0f172a;line-height:1.3}
-.tool-meta{font-size:11px;color:#64748b;margin-top:3px}
-.tool-bef{font-size:11px;color:#64748b;margin-top:6px;line-height:1.5;background:#f8fafc;border-radius:6px;padding:6px 10px;border-left:3px solid #e2e8f0}
-.tool-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-start;padding-top:1px}
-.btn-keep,.btn-mod,.btn-rm{border:none;border-radius:7px;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap}
-.btn-keep{background:#f0fdf4;color:#15803d;border:1.5px solid #86efac}
-.btn-mod{background:#fffbeb;color:#b45309;border:1.5px solid #fcd34d}
-.btn-rm{background:#fff5f5;color:#dc2626;border:1.5px solid #fca5a5}
-.btn-keep.active,.tool-card.keep .btn-keep{background:#22c55e;color:#fff;border-color:#22c55e}
-.btn-mod.active,.tool-card.mod .btn-mod{background:#f59e0b;color:#fff;border-color:#f59e0b}
-.btn-rm.active,.tool-card.rm .btn-rm{background:#ef4444;color:#fff;border-color:#ef4444}
-.btn-del{background:none;border:none;color:#cbd5e1;font-size:14px;cursor:pointer;padding:4px 6px;border-radius:4px;line-height:1;margin-left:2px}
-.btn-del:hover{color:#ef4444;background:#fef2f2}
-.tool-note{margin-top:8px;display:none}
-.tool-note.show{display:block}
-.tool-note textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:6px;padding:7px 10px;font-size:11px;font-family:inherit;color:#475569;resize:vertical;min-height:48px;outline:none}
-.tool-note textarea:focus{border-color:#818cf8}
-
-/* モーダル共通 */
+.btn-add{background:#6366f1;border:none;color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-export{background:#22c55e;border:none;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-reset{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.progress-bar{height:3px;background:#334155;flex-shrink:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#22c55e);transition:width .3s}
+/* Board */
+.board{flex:1;display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:12px 16px;min-height:0}
+.column{display:flex;flex-direction:column;min-width:250px;flex:1;border-radius:10px;overflow:hidden;min-height:0}
+.col-hdr{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.col-pend .col-hdr{background:#cbd5e1}
+.col-keep .col-hdr{background:#bbf7d0}
+.col-mod .col-hdr{background:#fde68a}
+.col-rm .col-hdr{background:#fecaca}
+.col-hdr-name{font-size:13px;font-weight:800;color:#1e293b}
+.col-count{background:rgba(0,0,0,.15);border-radius:8px;font-size:11px;font-weight:800;padding:2px 8px;color:#1e293b}
+.col-body{flex:1;overflow-y:auto;padding:8px;min-height:80px;transition:background .12s}
+.col-body.drag-over{outline:2px dashed #818cf8;outline-offset:-3px;border-radius:6px}
+.col-pend .col-body{background:#e2e8f0}
+.col-keep .col-body{background:#f0fdf4}
+.col-mod .col-body{background:#fffbeb}
+.col-rm .col-body{background:#fff5f5}
+.col-pend .col-body.drag-over{background:#dde4ed}
+.col-keep .col-body.drag-over{background:#dcfce7}
+.col-mod .col-body.drag-over{background:#fef9c3}
+.col-rm .col-body.drag-over{background:#fee2e2}
+/* Cards */
+.kcard{background:#fff;border-radius:8px;padding:10px 11px;margin-bottom:6px;cursor:grab;border:1.5px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .12s,opacity .15s,transform .1s;position:relative;-webkit-user-select:none;user-select:none}
+.kcard:hover{box-shadow:0 3px 10px rgba(0,0,0,.1);transform:translateY(-1px)}
+.kcard:active{cursor:grabbing}
+.kcard.dragging{opacity:.25;transform:scale(.96)}
+.col-keep .kcard{border-color:#86efac}
+.col-mod .kcard{border-color:#fcd34d}
+.col-rm .kcard{border-color:#fca5a5;opacity:.8}
+.kcard.isnew{background:#f5f3ff;border-color:#c4b5fd}
+.col-keep .kcard.isnew{border-color:#6ee7b7}
+.col-mod .kcard.isnew{border-color:#fcd34d}
+.col-rm .kcard.isnew{border-color:#fca5a5}
+.kcard-hd{display:flex;align-items:flex-start;gap:5px;margin-bottom:3px}
+.kcard-id{font-size:9px;color:#94a3b8;font-weight:700;flex-shrink:0;padding-top:2px;min-width:22px}
+.kcard-name{font-size:12px;font-weight:700;color:#0f172a;line-height:1.35;flex:1}
+.kcard-del{background:none;border:none;color:#d1d5db;font-size:13px;cursor:pointer;padding:0 3px;line-height:1;flex-shrink:0;margin-top:1px}
+.kcard-del:hover{color:#ef4444}
+.kcard-cat{display:inline-block;font-size:9px;font-weight:700;color:#4f46e5;background:#eef2ff;padding:1px 6px;border-radius:3px;margin-bottom:4px}
+.kcard-meta{font-size:10px;color:#64748b;margin-bottom:4px}
+.kcard-bef{font-size:10px;color:#64748b;background:#f8fafc;border-radius:4px;padding:4px 7px;border-left:2px solid #cbd5e1;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badge-new{display:inline-block;background:#6366f1;color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;letter-spacing:.03em}
+.badge-dup{display:inline-block;background:#f59e0b;color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;letter-spacing:.03em}
+.kcard-note{margin-top:6px}
+.kcard-note textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:5px;padding:5px 8px;font-size:10px;font-family:inherit;color:#475569;resize:vertical;min-height:40px;outline:none;cursor:text;-webkit-user-select:text;user-select:text}
+.kcard-note textarea:focus{border-color:#818cf8}
+/* Modals */
 .modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal{background:#fff;border-radius:14px;padding:28px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto}
 .modal-ttl{font-size:17px;font-weight:800;color:#1e1b4b;margin-bottom:6px}
@@ -67,8 +79,6 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 .btn-copy{background:#4f46e5;border:none;color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:inherit}
 .btn-close{background:#f1f5f9;border:none;color:#64748b;font-size:13px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit}
-
-/* 新規追加フォーム */
 .add-form{display:flex;flex-direction:column;gap:12px}
 .add-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .add-field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px}
@@ -77,11 +87,8 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 .add-field textarea{min-height:64px;resize:vertical}
 .add-field.full{grid-column:1/-1}
 .btn-submit{background:#6366f1;border:none;color:#fff;font-size:13px;font-weight:700;padding:11px 24px;border-radius:8px;cursor:pointer;font-family:inherit}
-
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e1b4b;color:#fff;font-size:13px;font-weight:600;padding:11px 22px;border-radius:10px;z-index:300;animation:fdin .18s ease;pointer-events:none}
 @keyframes fdin{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.progress-bar{height:4px;background:#e2e8f0;position:sticky;top:64px;z-index:99}
-.progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#22c55e);transition:width .3s}
 </style>
 </head>
 <body>
@@ -89,10 +96,11 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 <div class="hdr">
   <div>
     <div class="hdr-ttl">カタログ精査シート</div>
-    <div class="hdr-sub">各ツールを「残す / 要修正 / 外す」で評価 ＋ 新規追加もできます</div>
+    <div class="hdr-sub">カードをドラッグして「残す / 要修正 / 外す」に振り分けてください</div>
   </div>
   <div class="hdr-right">
     <div class="counter">
+      <div class="cnt-item cnt-pend"><div class="cnt-num" id="cnt-pend">0</div><div class="cnt-lbl">未評価</div></div>
       <div class="cnt-item cnt-keep"><div class="cnt-num" id="cnt-keep">0</div><div class="cnt-lbl">残す</div></div>
       <div class="cnt-item cnt-mod"><div class="cnt-num" id="cnt-mod">0</div><div class="cnt-lbl">要修正</div></div>
       <div class="cnt-item cnt-rm"><div class="cnt-num" id="cnt-rm">0</div><div class="cnt-lbl">外す</div></div>
@@ -106,7 +114,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
 
 <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
 
-<div class="main" id="main"></div>
+<div class="board" id="board"></div>
 
 <!-- 新規追加モーダル -->
 <div id="add-modal" class="modal-ov" style="display:none" onclick="if(event.target===this)closeAdd()">
@@ -124,6 +132,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
             <option value="採用・人事">採用・人事</option>
             <option value="営業・マーケ">営業・マーケ</option>
             <option value="業界特化">業界特化</option>
+            <option value="組織マネジメント">組織マネジメント</option>
             <option value="その他">その他</option>
           </select>
         </div>
@@ -143,7 +152,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;backgrou
         </div>
       </div>
       <div class="add-field full">
-        <label>困りごと（Before）— 入れると詳細ページにも反映されます</label>
+        <label>困りごと（Before）</label>
         <textarea id="add-bef" placeholder="例：契約書のチェックに毎回1〜2時間かかる。見落としが怖くて何度も読み直す"></textarea>
       </div>
       <div class="add-field full">
@@ -225,9 +234,8 @@ const TOOLS=[
   {id:44,cat:'業界特化',name:'メニュー原価計算（飲食）',priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる'},
 ];
 
-const STATE = {};  // {id: {status, note}}
-let NEW_TOOLS = []; // [{nid, cat, name, priceL, period, bef, note, status}]
-const ALL_CATS = [...new Set(TOOLS.map(t=>t.cat))];
+const STATE = {};
+let NEW_TOOLS = [];
 
 const PRESET_NEW=[
   {nid:1000000001,cat:'組織マネジメント',name:'社内情報共有・理念浸透ポータル',priceL:'¥60,000〜',period:'3〜4週間',
@@ -241,15 +249,58 @@ const PRESET_NEW=[
    note:'Gemini BEST10 #4。質問に答えるだけで削減時間・コスト削減額・投資回収期間を可視化。商談ツールとして使える',status:'keep'},
 ];
 
+/* ── ドラッグ状態 ── */
+let _dragId = null;
+let _dragIsNew = false;
+let _dragging = false;
+
+function dragStart(e, id, isNew) {
+  _dragId = id;
+  _dragIsNew = isNew;
+  _dragging = true;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => {
+    const card = document.getElementById('card-' + (isNew ? 'n'+id : id));
+    if (card) card.classList.add('dragging');
+  }, 0);
+}
+function dragEnd(e, id, isNew) {
+  const card = document.getElementById('card-' + (isNew ? 'n'+id : id));
+  if (card) card.classList.remove('dragging');
+  _dragging = false;
+}
+function dragOver(e, el) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  el.classList.add('drag-over');
+}
+function dragLeave(e, el) {
+  if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+  el.classList.remove('drag-over');
+}
+function drop(e, el, status) {
+  e.preventDefault();
+  el.classList.remove('drag-over');
+  if (!_dragging) return;
+  _dragging = false;
+  const newStatus = status || null;
+  if (_dragIsNew) {
+    const t = NEW_TOOLS.find(x => x.nid === _dragId);
+    if (t) t.status = newStatus;
+  } else {
+    if (!STATE[_dragId]) STATE[_dragId] = {};
+    STATE[_dragId].status = newStatus;
+  }
+  save();
+  renderBoard();
+}
+
+/* ── 永続化 ── */
 function load(){
   const s = localStorage.getItem('yumematch-curation-v1');
-  if(s) Object.assign(STATE, JSON.parse(s));
+  if (s) Object.assign(STATE, JSON.parse(s));
   const n = localStorage.getItem('yumematch-curation-new-v1');
-  if(n){
-    NEW_TOOLS = JSON.parse(n);
-  } else {
-    NEW_TOOLS = PRESET_NEW.map(t=>({...t}));
-  }
+  if (n) { NEW_TOOLS = JSON.parse(n); } else { NEW_TOOLS = PRESET_NEW.map(t=>({...t})); }
 }
 function save(){
   localStorage.setItem('yumematch-curation-v1', JSON.stringify(STATE));
@@ -258,224 +309,205 @@ function save(){
   updateProgress();
 }
 
-function allTools(){
-  return [...TOOLS, ...NEW_TOOLS.map(n=>({...n, id:'n'+n.nid}))];
-}
-
-/* ── 既存ツール操作 ── */
-function setStatus(id, status){
-  if(!STATE[id]) STATE[id]={};
-  STATE[id].status = STATE[id].status===status ? null : status;
-  const card = document.getElementById('card-'+id);
-  card.classList.remove('keep','mod','rm');
-  if(STATE[id].status) card.classList.add(STATE[id].status);
-  ['keep','mod','rm'].forEach(s=>{
-    card.querySelector('.btn-'+s).classList.toggle('active', STATE[id].status===s);
-  });
-  card.querySelector('.tool-note').classList.toggle('show',
-    STATE[id].status==='mod' || (STATE[id].note||'').length>0);
-  save();
-}
+/* ── メモ保存（再レンダリングなし） ── */
 function setNote(id, val){
-  if(!STATE[id]) STATE[id]={};
-  STATE[id].note=val; save();
-}
-
-/* ── 新規ツール操作 ── */
-function setNewStatus(nid, status){
-  const t = NEW_TOOLS.find(x=>x.nid===nid);
-  if(!t) return;
-  t.status = t.status===status ? null : status;
-  const card = document.getElementById('card-n'+nid);
-  card.classList.remove('keep','mod','rm');
-  if(t.status) card.classList.add(t.status);
-  ['keep','mod','rm'].forEach(s=>{
-    card.querySelector('.btn-'+s).classList.toggle('active', t.status===s);
-  });
-  card.querySelector('.tool-note').classList.toggle('show',
-    t.status==='mod' || (t.note||'').length>0);
-  save();
+  if (!STATE[id]) STATE[id] = {};
+  STATE[id].note = val; save();
 }
 function setNewNote(nid, val){
-  const t=NEW_TOOLS.find(x=>x.nid===nid); if(!t) return;
-  t.note=val; save();
+  const t = NEW_TOOLS.find(x => x.nid === nid);
+  if (t) { t.note = val; save(); }
 }
 function deleteNew(nid){
-  if(!confirm('削除しますか？')) return;
-  NEW_TOOLS=NEW_TOOLS.filter(x=>x.nid!==nid);
-  save(); render();
+  if (!confirm('削除しますか？')) return;
+  NEW_TOOLS = NEW_TOOLS.filter(x => x.nid !== nid);
+  save(); renderBoard();
 }
 
-/* ── 新規追加モーダル ── */
-function showAddModal(){
-  ['add-name','add-price','add-period','add-bef','add-note'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('add-cat').value='情報収集';
-  document.getElementById('add-modal').style.display='flex';
-  setTimeout(()=>document.getElementById('add-name').focus(),100);
+/* ── カード HTML ── */
+function renderCard(t, isNew) {
+  const id = isNew ? 'n' + t.nid : t.id;
+  const rawId = isNew ? t.nid : t.id;
+  const status = isNew ? t.status : STATE[t.id]?.status;
+  const note = isNew ? (t.note || '') : (STATE[t.id]?.note || '');
+  const showNote = status === 'mod' || note.length > 0;
+  const onNote = isNew ? `setNewNote(${rawId},this.value)` : `setNote(${rawId},this.value)`;
+
+  return `<div class="kcard${isNew?' isnew':''}" id="card-${id}"
+      draggable="true"
+      ondragstart="dragStart(event,${rawId},${isNew})"
+      ondragend="dragEnd(event,${rawId},${isNew})">
+    <div class="kcard-hd">
+      <div class="kcard-id">${isNew?'NEW':'#'+t.id}</div>
+      <div class="kcard-name">${t.name}${isNew?'<span class="badge-new">新規</span>':''}${t.dup?`<span class="badge-dup">⚠️ ${t.dup}</span>`:''}</div>
+      ${isNew?`<button class="kcard-del" onclick="deleteNew(${rawId});event.stopPropagation()" title="削除">×</button>`:''}
+    </div>
+    <div class="kcard-cat">${t.cat}</div>
+    <div class="kcard-meta">${t.priceL} ／ 工数 ${t.period}</div>
+    ${t.bef?`<div class="kcard-bef">😓 ${t.bef}</div>`:''}
+    ${showNote?`<div class="kcard-note"><textarea placeholder="修正内容・補足メモ..." onchange="${onNote}">${note}</textarea></div>`:''}
+  </div>`;
 }
-function closeAdd(){ document.getElementById('add-modal').style.display='none'; }
-function submitAdd(){
-  const name=document.getElementById('add-name').value.trim();
-  if(!name){toast('ツール名を入力してください');return;}
-  const nid = Date.now();
-  NEW_TOOLS.push({
-    nid,
-    cat: document.getElementById('add-cat').value,
-    name,
-    priceL: document.getElementById('add-price').value.trim()||'未定',
-    period: document.getElementById('add-period').value.trim()||'未定',
-    bef:  document.getElementById('add-bef').value.trim(),
-    note: document.getElementById('add-note').value.trim(),
-    status: 'keep',
-  });
-  save(); render(); closeAdd();
-  toast('✨ 追加しました：'+name);
+
+/* ── ボード レンダリング ── */
+const COLUMNS = [
+  { status: null,   label: '📋 未評価', cls: 'col-pend', dropVal: '' },
+  { status: 'keep', label: '✅ 残す',   cls: 'col-keep', dropVal: 'keep' },
+  { status: 'mod',  label: '✏️ 要修正', cls: 'col-mod',  dropVal: 'mod' },
+  { status: 'rm',   label: '🗑️ 外す',   cls: 'col-rm',   dropVal: 'rm' },
+];
+
+function renderBoard() {
+  document.getElementById('board').innerHTML = COLUMNS.map(col => {
+    const existing = TOOLS.filter(t => {
+      const s = STATE[t.id]?.status || null;
+      return s === col.status;
+    });
+    const added = NEW_TOOLS.filter(t => {
+      const s = t.status || null;
+      return s === col.status;
+    });
+    const cards = [...existing.map(t => renderCard(t, false)), ...added.map(t => renderCard(t, true))];
+    const count = cards.length;
+
+    return `<div class="column ${col.cls}">
+      <div class="col-hdr">
+        <span class="col-hdr-name">${col.label}</span>
+        <span class="col-count">${count}</span>
+      </div>
+      <div class="col-body"
+        ondragover="dragOver(event,this)"
+        ondragleave="dragLeave(event,this)"
+        ondrop="drop(event,this,'${col.dropVal}')">
+        ${cards.join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  updateCounter();
+  updateProgress();
 }
 
 /* ── カウンター・プログレス ── */
 function updateCounter(){
-  let keep=0,mod=0,rm=0;
-  TOOLS.forEach(t=>{
-    const s=STATE[t.id]?.status;
-    if(s==='keep') keep++; else if(s==='mod') mod++; else if(s==='rm') rm++;
+  let pend=0, keep=0, mod=0, rm=0;
+  TOOLS.forEach(t => {
+    const s = STATE[t.id]?.status || null;
+    if (!s) pend++; else if (s==='keep') keep++; else if (s==='mod') mod++; else if (s==='rm') rm++;
   });
-  NEW_TOOLS.forEach(t=>{
-    if(t.status==='keep') keep++; else if(t.status==='mod') mod++; else if(t.status==='rm') rm++;
+  NEW_TOOLS.forEach(t => {
+    const s = t.status || null;
+    if (s==='keep') keep++; else if (s==='mod') mod++; else if (s==='rm') rm++;
   });
-  document.getElementById('cnt-keep').textContent=keep;
-  document.getElementById('cnt-mod').textContent=mod;
-  document.getElementById('cnt-rm').textContent=rm;
-  document.getElementById('cnt-new').textContent=NEW_TOOLS.length;
+  document.getElementById('cnt-pend').textContent = pend;
+  document.getElementById('cnt-keep').textContent = keep;
+  document.getElementById('cnt-mod').textContent  = mod;
+  document.getElementById('cnt-rm').textContent   = rm;
+  document.getElementById('cnt-new').textContent  = NEW_TOOLS.length;
 }
 function updateProgress(){
-  const existing = TOOLS.filter(t=>STATE[t.id]?.status).length;
-  const total = TOOLS.length;
-  document.getElementById('progress').style.width=(existing/total*100)+'%';
+  const rated = TOOLS.filter(t => STATE[t.id]?.status).length;
+  document.getElementById('progress').style.width = (rated / TOOLS.length * 100) + '%';
 }
 
-/* ── レンダリング ── */
-function renderCard(t, isNew=false){
-  const id = isNew ? 'n'+t.nid : t.id;
-  const s = isNew ? (t.status||'') : (STATE[t.id]?.status||'');
-  const note = isNew ? (t.note||'') : (STATE[t.id]?.note||'');
-  const showNote = s==='mod' || note.length>0;
-  const onStatus = isNew ? `setNewStatus(${t.nid},'STAT')` : `setStatus(${t.id},'STAT')`;
-  const onNote = isNew ? `setNewNote(${t.nid},this.value)` : `setNote(${t.id},this.value)`;
-  return`<div class="tool-card ${s}${isNew?' isnew':''}" id="card-${id}">
-    <div class="tool-top">
-      <div class="tool-id">${isNew?'NEW':'#'+t.id}</div>
-      <div class="tool-info">
-        <div class="tool-name">${t.name}${isNew?'<span class="badge-new">新規</span>':''}${t.dup?`<span class="badge-dup">⚠️ ${t.dup}</span>`:''}</div>
-        <div class="tool-meta">${t.priceL} ／ 工数 ${t.period}</div>
-        ${t.bef?`<div class="tool-bef">😓 ${t.bef}</div>`:''}
-      </div>
-      <div class="tool-actions">
-        <button class="btn-keep${s==='keep'?' active':''}" onclick="${onStatus.replace('STAT','keep')}">✅ 残す</button>
-        <button class="btn-mod${s==='mod'?' active':''}" onclick="${onStatus.replace('STAT','mod')}">✏️ 要修正</button>
-        <button class="btn-rm${s==='rm'?' active':''}" onclick="${onStatus.replace('STAT','rm')}">🗑️ 外す</button>
-        ${isNew?`<button class="btn-del" onclick="deleteNew(${t.nid})" title="削除">×</button>`:''}
-      </div>
-    </div>
-    <div class="tool-note${showNote?' show':''}">
-      <textarea placeholder="修正内容・補足メモなど..." onchange="${onNote}">${note}</textarea>
-    </div>
-  </div>`;
+/* ── 新規追加モーダル ── */
+function showAddModal(){
+  ['add-name','add-price','add-period','add-bef','add-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('add-cat').value = '情報収集';
+  document.getElementById('add-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('add-name').focus(), 100);
 }
-
-function render(){
-  const allCats = [...new Set([...ALL_CATS, ...NEW_TOOLS.map(n=>n.cat)])];
-  document.getElementById('main').innerHTML = allCats.map(cat=>{
-    const existing = TOOLS.filter(t=>t.cat===cat);
-    const added = NEW_TOOLS.filter(t=>t.cat===cat);
-    if(!existing.length && !added.length) return '';
-    return`<div class="cat-block">
-      <div class="cat-hdr">
-        <span class="cat-name">${cat}</span>
-        <span class="cat-count">${existing.length+added.length}ツール${added.length?` (+${added.length}新規)`:''}</span>
-      </div>
-      ${existing.map(t=>renderCard(t,false)).join('')}
-      ${added.map(t=>renderCard(t,true)).join('')}
-    </div>`;
-  }).join('');
+function closeAdd(){ document.getElementById('add-modal').style.display = 'none'; }
+function submitAdd(){
+  const name = document.getElementById('add-name').value.trim();
+  if (!name) { toast('ツール名を入力してください'); return; }
+  NEW_TOOLS.push({
+    nid: Date.now(),
+    cat:    document.getElementById('add-cat').value,
+    name,
+    priceL: document.getElementById('add-price').value.trim() || '未定',
+    period: document.getElementById('add-period').value.trim() || '未定',
+    bef:    document.getElementById('add-bef').value.trim(),
+    note:   document.getElementById('add-note').value.trim(),
+    status: 'keep',
+  });
+  save(); renderBoard(); closeAdd();
+  toast('✨ 追加しました：' + name);
 }
 
 /* ── エクスポート ── */
 function showExport(){
-  const keep=[],mod=[],rm=[],undecided=[];
-  TOOLS.forEach(t=>{
-    const s=STATE[t.id]?.status;
-    if(s==='keep') keep.push({...t,note:STATE[t.id]?.note||''});
-    else if(s==='mod') mod.push({...t,note:STATE[t.id]?.note||''});
-    else if(s==='rm') rm.push({...t,note:STATE[t.id]?.note||''});
+  const keep=[], mod=[], rm=[], undecided=[];
+  TOOLS.forEach(t => {
+    const s = STATE[t.id]?.status;
+    if (s==='keep') keep.push({...t, note: STATE[t.id]?.note||''});
+    else if (s==='mod') mod.push({...t, note: STATE[t.id]?.note||''});
+    else if (s==='rm') rm.push({...t, note: STATE[t.id]?.note||''});
     else undecided.push(t);
   });
-  const newKeep=[],newMod=[],newRm=[];
-  NEW_TOOLS.forEach(t=>{
-    if(t.status==='keep'||!t.status) newKeep.push(t);
-    else if(t.status==='mod') newMod.push(t);
-    else if(t.status==='rm') newRm.push(t);
+  const newKeep=[], newMod=[], newRm=[];
+  NEW_TOOLS.forEach(t => {
+    if (t.status==='keep'||!t.status) newKeep.push(t);
+    else if (t.status==='mod') newMod.push(t);
+    else if (t.status==='rm') newRm.push(t);
   });
-
-  const lines=[];
+  const lines = [];
   lines.push(`=== カタログ精査結果 ===`);
   lines.push(`判断済み: ${keep.length+mod.length+rm.length} / ${TOOLS.length}ツール  新規追加: ${NEW_TOOLS.length}本\n`);
-  if(keep.length){
+  if (keep.length) {
     lines.push(`【残す】 ${keep.length}本`);
-    keep.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
+    keep.forEach(t => lines.push(`  #${t.id} ${t.name}`));
     lines.push('');
   }
-  if(mod.length){
+  if (mod.length) {
     lines.push(`【要修正】 ${mod.length}本`);
-    mod.forEach(t=>{lines.push(`  #${t.id} ${t.name}${t.note?'\n    → '+t.note:''}`)});
+    mod.forEach(t => { lines.push(`  #${t.id} ${t.name}${t.note?'\n    → '+t.note:''}`); });
     lines.push('');
   }
-  if(rm.length){
+  if (rm.length) {
     lines.push(`【外す】 ${rm.length}本`);
-    rm.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
+    rm.forEach(t => lines.push(`  #${t.id} ${t.name}`));
     lines.push('');
   }
-  if(undecided.length){
+  if (undecided.length) {
     lines.push(`【未判断】 ${undecided.length}本`);
-    undecided.forEach(t=>lines.push(`  #${t.id} ${t.name}`));
+    undecided.forEach(t => lines.push(`  #${t.id} ${t.name}`));
     lines.push('');
   }
-  if(NEW_TOOLS.length){
+  if (NEW_TOOLS.length) {
     lines.push(`【新規追加候補】 ${newKeep.length+newMod.length}本`);
-    [...newKeep,...newMod].forEach(t=>{
+    [...newKeep, ...newMod].forEach(t => {
       lines.push(`  [${t.cat}] ${t.name}`);
       lines.push(`    価格: ${t.priceL} ／ 工数: ${t.period}`);
-      if(t.bef) lines.push(`    困りごと: ${t.bef}`);
-      if(t.note) lines.push(`    メモ: ${t.note}`);
+      if (t.bef)  lines.push(`    困りごと: ${t.bef}`);
+      if (t.note) lines.push(`    メモ: ${t.note}`);
     });
-    if(newRm.length){
-      lines.push('');
-      lines.push(`  （見送り: ${newRm.map(t=>t.name).join('、')}）`);
-    }
+    if (newRm.length) { lines.push(''); lines.push(`  （見送り: ${newRm.map(t=>t.name).join('、')}）`); }
   }
-  document.getElementById('export-pre').textContent=lines.join('\n');
-  document.getElementById('export-modal').style.display='flex';
+  document.getElementById('export-pre').textContent = lines.join('\n');
+  document.getElementById('export-modal').style.display = 'flex';
 }
 function copyExport(){
-  navigator.clipboard.writeText(document.getElementById('export-pre').textContent).then(()=>toast('コピーしました'));
+  navigator.clipboard.writeText(document.getElementById('export-pre').textContent).then(() => toast('コピーしました'));
 }
 
 function resetAll(){
-  if(!confirm('全ての評価と新規追加をリセットしますか？')) return;
-  Object.keys(STATE).forEach(k=>delete STATE[k]);
-  NEW_TOOLS=[];
+  if (!confirm('全ての評価と新規追加をリセットしますか？')) return;
+  Object.keys(STATE).forEach(k => delete STATE[k]);
+  NEW_TOOLS = [];
   localStorage.removeItem('yumematch-curation-v1');
   localStorage.removeItem('yumematch-curation-new-v1');
-  render(); updateCounter(); updateProgress();
+  renderBoard();
 }
 
 function toast(msg){
-  const el=document.createElement('div');
-  el.className='toast';el.textContent=msg;
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(()=>el.remove(),2000);
+  setTimeout(() => el.remove(), 2200);
 }
 
-load(); render(); updateCounter(); updateProgress();
+load(); renderBoard();
 </script>
 </body>
 </html>
