@@ -300,7 +300,17 @@ function load(){
   const s = localStorage.getItem('yumematch-curation-v1');
   if (s) Object.assign(STATE, JSON.parse(s));
   const n = localStorage.getItem('yumematch-curation-new-v1');
-  if (n) { NEW_TOOLS = JSON.parse(n); } else { NEW_TOOLS = PRESET_NEW.map(t=>({...t})); }
+  if (n) {
+    NEW_TOOLS = JSON.parse(n);
+    // PRESET_NEW は常に「残す」に置く（ない場合は先頭に追加、ステータス未設定なら keep にする）
+    PRESET_NEW.forEach(preset => {
+      const existing = NEW_TOOLS.find(t => t.nid === preset.nid);
+      if (!existing) { NEW_TOOLS.unshift({...preset}); }
+      else if (!existing.status) { existing.status = 'keep'; }
+    });
+  } else {
+    NEW_TOOLS = PRESET_NEW.map(t=>({...t}));
+  }
 }
 function save(){
   localStorage.setItem('yumematch-curation-v1', JSON.stringify(STATE));
