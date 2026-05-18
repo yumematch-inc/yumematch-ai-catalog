@@ -237,6 +237,18 @@ const TOOLS=[
 const STATE = {};
 let NEW_TOOLS = [];
 
+// 小池さんが実際に作った・使っているツール → デフォルトで「残す」
+const DEFAULT_KEEP = [
+  4,  // 自分専用新聞（NewGo Timez）
+  5,  // MTG議事録 自動化（PharmaEight議事録スキル）
+  8,  // 雇用契約書・入社書類 一括生成（はなひらく採用）
+  18, // 採用面接記録→DB 自動登録（はなひらく採用）
+  31, // 食品ラベル（栄養成分表示）自動生成（kanoka）
+  32, // FP実績管理 ダッシュボード（fp-jisseki）
+  33, // 福祉事業所 給付費・工賃 自動集計（はなひらく給付費）
+  34, // 面談・アポ 自動予約ツール（GAS予約スクリプト、Gemini BEST10 #2）
+];
+
 const PRESET_NEW=[
   {nid:1000000001,cat:'組織マネジメント',name:'社内情報共有・理念浸透ポータル',priceL:'¥60,000〜',period:'3〜4週間',
    bef:'連絡がチャットで流れ、理念や目標が浸透しない。「また聞いてなかった」が繰り返される',
@@ -299,6 +311,11 @@ function drop(e, el, status) {
 function load(){
   const s = localStorage.getItem('yumematch-curation-v1');
   if (s) Object.assign(STATE, JSON.parse(s));
+  // 実際に作ったツールはデフォルトで「残す」（未評価の場合のみ適用）
+  DEFAULT_KEEP.forEach(id => {
+    if (!STATE[id]) STATE[id] = { status: 'keep' };
+    else if (!STATE[id].status) STATE[id].status = 'keep';
+  });
   const n = localStorage.getItem('yumematch-curation-new-v1');
   if (n) {
     NEW_TOOLS = JSON.parse(n);
