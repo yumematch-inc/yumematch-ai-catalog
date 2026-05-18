@@ -44,7 +44,6 @@
   .page-header h1 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
   .page-header h1 em { font-style: normal; color: var(--gold); }
   .page-header p { font-size: 13px; color: rgba(255,255,255,0.45); }
-
   .progress-bar-wrap {
     background: rgba(255,255,255,0.1);
     height: 3px;
@@ -60,11 +59,9 @@
 
   .container { max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; }
 
-  /* ── Screens ── */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* ── Step card ── */
   .step-card {
     background: white;
     border: 1px solid var(--border);
@@ -72,14 +69,7 @@
     padding: 32px 28px;
     margin-bottom: 16px;
   }
-  .step-num {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: var(--red);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+  .step-num { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--red); text-transform: uppercase; margin-bottom: 10px; }
   .step-q { font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1.5; margin-bottom: 6px; }
   .step-sub { font-size: 13px; color: var(--ink-mute); margin-bottom: 24px; }
 
@@ -103,75 +93,74 @@
   .opt-text { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.5; }
   .opt-sub { font-size: 12px; color: var(--ink-mute); font-weight: 400; margin-top: 2px; }
 
-  /* Multi select note */
-  .multi-note {
-    font-size: 12px;
-    color: var(--ink-mute);
-    margin-bottom: 16px;
-    padding: 8px 12px;
-    background: #f8f9fb;
-    border-radius: 8px;
-  }
-
   .nav-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
   .btn-back {
-    padding: 12px 24px;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1.5px solid var(--border);
-    border-radius: 30px;
-    background: white;
-    color: var(--ink-sub);
-    cursor: pointer;
-    font-family: inherit;
-    transition: border-color .15s;
+    padding: 12px 24px; font-size: 13px; font-weight: 600;
+    border: 1.5px solid var(--border); border-radius: 30px; background: white;
+    color: var(--ink-sub); cursor: pointer; font-family: inherit; transition: border-color .15s;
   }
   .btn-back:hover { border-color: var(--navy); color: var(--navy); }
   .btn-next {
-    padding: 12px 28px;
-    font-size: 13px;
-    font-weight: 700;
-    border: none;
-    border-radius: 30px;
-    background: var(--red);
-    color: white;
-    cursor: pointer;
-    font-family: inherit;
-    transition: transform .15s, box-shadow .15s;
-    box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+    padding: 12px 28px; font-size: 13px; font-weight: 700; border: none; border-radius: 30px;
+    background: var(--red); color: white; cursor: pointer; font-family: inherit;
+    transition: transform .15s, box-shadow .15s; box-shadow: 0 4px 12px rgba(230,57,70,0.3);
   }
   .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(230,57,70,0.4); }
   .btn-next:disabled { background: var(--border); color: var(--ink-mute); cursor: not-allowed; box-shadow: none; transform: none; }
 
   /* ── Result ── */
   .result-header {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px 28px;
-    margin-bottom: 16px;
-    text-align: center;
+    background: white; border: 1px solid var(--border); border-radius: 20px;
+    padding: 32px 28px; margin-bottom: 16px; text-align: center;
   }
-  .result-score-wrap { margin-bottom: 20px; }
-  .result-score {
-    font-size: 64px;
-    font-weight: 900;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--red), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Gauge */
+  .gauge-container { margin: 0 auto 20px; max-width: 380px; }
+  .gauge-track {
+    height: 18px; border-radius: 9px; position: relative; margin: 0 10px;
+    background: linear-gradient(90deg, #22c55e 0%, #84cc16 22%, #eab308 45%, #f97316 68%, #ef4444 100%);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.12);
   }
-  .result-score-label { font-size: 13px; color: var(--ink-mute); margin-top: 4px; }
-  .result-level { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
-  .result-desc { font-size: 14px; color: var(--ink-sub); line-height: 1.8; max-width: 460px; margin: 0 auto; }
+  .gauge-marker {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 30px; height: 30px; background: white;
+    border: 3px solid var(--navy); border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,.2); transition: left 1.2s cubic-bezier(.34,1.56,.64,1);
+    left: 0%;
+  }
+  .gauge-emojis {
+    display: flex; justify-content: space-between;
+    padding: 6px 4px 0; font-size: 18px; line-height: 1;
+  }
+  .gauge-zone-labels {
+    display: flex; justify-content: space-between;
+    font-size: 9px; color: var(--ink-mute); font-weight: 700;
+    padding: 2px 4px 0; letter-spacing: .02em;
+  }
+  /* Big emoji & level */
+  .result-emoji-big { font-size: 60px; line-height: 1; margin-bottom: 10px; }
+  .result-level { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .result-desc { font-size: 13px; color: var(--ink-sub); line-height: 1.8; max-width: 460px; margin: 0 auto; }
+
+  /* ROI block */
+  .roi-block {
+    background: linear-gradient(135deg, #0d1b35 0%, #1a3260 100%);
+    border-radius: 20px; padding: 28px; margin-bottom: 16px; color: white;
+    display: flex; gap: 0; overflow: hidden; position: relative;
+  }
+  .roi-block::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(244,162,97,0.15) 0%, transparent 60%);
+  }
+  .roi-item { flex: 1; text-align: center; position: relative; }
+  .roi-item + .roi-item { border-left: 1px solid rgba(255,255,255,0.1); }
+  .roi-lbl { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 10px; text-transform: uppercase; }
+  .roi-val { font-size: 40px; font-weight: 900; line-height: 1; color: var(--gold); }
+  .roi-unit { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.7); margin-top: 6px; }
+  .roi-note { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 6px; line-height: 1.5; }
 
   .result-areas {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 16px;
+    background: white; border: 1px solid var(--border); border-radius: 20px;
+    padding: 28px; margin-bottom: 16px;
   }
   .result-areas-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 16px; letter-spacing: 1px; }
   .area-row { margin-bottom: 14px; }
@@ -184,78 +173,58 @@
   .area-rec strong { color: var(--red); }
 
   .result-tools {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 16px;
+    background: white; border: 1px solid var(--border); border-radius: 20px;
+    padding: 28px; margin-bottom: 16px;
   }
-  .result-tools-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 16px; letter-spacing: 1px; }
+  .result-tools-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 4px; letter-spacing: 1px; }
+  .result-tools-sub { font-size: 12px; color: var(--ink-mute); margin-bottom: 16px; }
   .rec-tool-list { display: grid; gap: 10px; }
   .rec-tool {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 12px 14px;
-    background: #fff8f0;
-    border-radius: 10px;
-    border-left: 3px solid var(--gold);
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 16px; background: #fff8f0; border-radius: 12px;
+    border-left: 3px solid var(--gold); text-decoration: none;
+    transition: background .15s, transform .1s;
   }
-  .rec-tool-icon { font-size: 20px; flex-shrink: 0; }
+  .rec-tool:hover { background: #fff0e0; transform: translateX(2px); }
+  .rec-tool-icon { font-size: 22px; flex-shrink: 0; }
+  .rec-tool-body { flex: 1; min-width: 0; }
   .rec-tool-name { font-size: 13px; font-weight: 700; color: var(--navy); }
-  .rec-tool-why { font-size: 12px; color: var(--ink-sub); margin-top: 2px; }
+  .rec-tool-why { font-size: 12px; color: var(--ink-sub); margin-top: 2px; line-height: 1.5; }
+  .rec-tool-meta { font-size: 11px; color: var(--ink-mute); margin-top: 4px; }
+  .rec-tool-arrow { font-size: 14px; color: var(--ink-mute); flex-shrink: 0; align-self: center; }
 
   .cta-block {
-    background: var(--navy);
-    border-radius: 20px;
-    padding: 36px 28px;
-    text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
+    background: var(--navy); border-radius: 20px; padding: 36px 28px;
+    text-align: center; color: white; position: relative; overflow: hidden;
   }
   .cta-block::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(ellipse at 70% 50%, rgba(230,57,70,0.2) 0%, transparent 60%);
   }
   .cta-block h2 { font-size: 20px; font-weight: 800; margin-bottom: 8px; position: relative; }
   .cta-block h2 em { font-style: normal; color: var(--gold); }
   .cta-block p { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px; position: relative; }
   .cta-btn {
-    display: inline-block;
-    background: var(--red);
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 14px 36px;
-    border-radius: 30px;
-    text-decoration: none;
-    position: relative;
-    box-shadow: 0 4px 16px rgba(230,57,70,0.4);
-    cursor: pointer;
-    border: none;
-    font-family: inherit;
-    transition: transform .15s;
+    display: inline-block; background: var(--red); color: white; font-size: 14px; font-weight: 700;
+    padding: 14px 36px; border-radius: 30px; text-decoration: none; position: relative;
+    box-shadow: 0 4px 16px rgba(230,57,70,0.4); cursor: pointer; border: none;
+    font-family: inherit; transition: transform .15s;
   }
   .cta-btn:hover { transform: translateY(-2px); }
   .cta-sub { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 14px; position: relative; }
 
   .back-to-catalog {
-    display: block;
-    text-align: center;
-    color: var(--ink-mute);
-    font-size: 13px;
-    text-decoration: none;
-    margin-top: 24px;
+    display: block; text-align: center; color: var(--ink-mute);
+    font-size: 13px; text-decoration: none; margin-top: 24px;
   }
   .back-to-catalog:hover { color: var(--navy); }
 
   @media (max-width: 600px) {
     .step-card { padding: 24px 18px; }
     .step-q { font-size: 16px; }
-    .result-score { font-size: 52px; }
+    .result-emoji-big { font-size: 48px; }
+    .roi-val { font-size: 32px; }
+    .gauge-emojis { font-size: 15px; }
   }
 </style>
 </head>
@@ -281,7 +250,7 @@
       <div class="options">
         <button class="option-btn" data-val="service" onclick="selectOption(this,'q1')">
           <span class="opt-icon">🏢</span>
-          <div><div class="opt-text">士業・コンサル・コーチング</div><div class="opt-sub">税理士、社労士、コンサルタントなど</div></div>
+          <div><div class="opt-text">士業・コンサル・コーチング</div><div class="opt-sub">税理士、社労士、FP、コンサルタントなど</div></div>
         </button>
         <button class="option-btn" data-val="welfare" onclick="selectOption(this,'q1')">
           <span class="opt-icon">🌸</span>
@@ -531,12 +500,31 @@
   <div class="screen" id="result">
 
     <div class="result-header">
-      <div class="result-score-wrap">
-        <div class="result-score" id="totalScore">--</div>
-        <div class="result-score-label">業務効率化 ポテンシャルスコア</div>
+      <!-- ゲージ -->
+      <div class="gauge-container">
+        <div class="gauge-track"><div class="gauge-marker" id="gaugeMarker"></div></div>
+        <div class="gauge-emojis"><span>😊</span><span>🙂</span><span>😓</span><span>😰</span><span>🔥</span></div>
+        <div class="gauge-zone-labels"><span>余裕</span><span>ちょっと重い</span><span>要チェック</span><span>かなり重い</span><span>今すぐ！</span></div>
       </div>
+      <div class="result-emoji-big" id="resultEmoji">…</div>
       <div class="result-level" id="resultLevel">診断中...</div>
       <div class="result-desc" id="resultDesc"></div>
+    </div>
+
+    <!-- ROI block -->
+    <div class="roi-block">
+      <div class="roi-item">
+        <div class="roi-lbl">月間削減見込み</div>
+        <div class="roi-val" id="roiHours">--</div>
+        <div class="roi-unit">時間 / 月</div>
+        <div class="roi-note">会議・経理・HR・集客の<br>手作業を合計した概算</div>
+      </div>
+      <div class="roi-item">
+        <div class="roi-lbl">年間換算コスト削減</div>
+        <div class="roi-val" id="roiMoney">--</div>
+        <div class="roi-unit">万円 / 年</div>
+        <div class="roi-note">時給換算3,000円で試算<br>（経営者・担当者の工数）</div>
+      </div>
     </div>
 
     <div class="result-areas">
@@ -545,14 +533,15 @@
     </div>
 
     <div class="result-tools">
-      <div class="result-tools-title">🔧 おすすめツール（御社向け）</div>
+      <div class="result-tools-title">🔧 御社向けおすすめツール</div>
+      <div class="result-tools-sub" id="recToolsSub"></div>
       <div class="rec-tool-list" id="recTools"></div>
     </div>
 
     <div class="cta-block">
-      <h2>無料で<em>個別ヒアリング</em>を受ける</h2>
-      <p>診断結果をもとに、具体的な改善提案をします。30分・完全無料。</p>
-      <a href="https://lin.ee/placeholder" class="cta-btn">LINEで相談する →</a>
+      <h2>診断結果をもとに<em>無料相談</em></h2>
+      <p>どのツールから始めると最も効果的か、30分で具体的にご提案します。</p>
+      <button class="cta-btn" onclick="window.location.href='ai-tools-catalog.html#apo'">無料相談を予約する →</button>
       <div class="cta-sub">※相談後に無理な勧誘は一切しません</div>
     </div>
 
@@ -566,6 +555,65 @@
   const areaScores = { meeting: 0, management: 0, hr: 0, marketing: 0 };
   const TOTAL_Q = 8;
 
+  // 業種別・領域別おすすめツール
+  const TOOL_RECS = {
+    meeting: {
+      service:   [{id:5,  icon:'📝', name:'MTG議事録 自動化',         why:'商談・社内MTG後の議事録がゼロ工数に。クライアントへの即時共有も可能',    price:'¥30,000〜', period:'1〜2週間'},
+                  {id:10, icon:'📊', name:'月次経営会議資料 自動生成', why:'毎月の経営資料作成2〜3日が不要に。数字を入れるだけで資料が完成',         price:'¥45,000〜', period:'2〜3週間'}],
+      welfare:   [{id:5,  icon:'📝', name:'MTG議事録 自動化',         why:'支援会議・スタッフMTGの議事録がゼロ工数に。記録漏れも防止',              price:'¥30,000〜', period:'1〜2週間'},
+                  {id:9,  icon:'📋', name:'業務マニュアル 自動生成',   why:'口頭伝達が多い福祉現場。手順書を自動生成してスタッフ離脱リスクを低減',   price:'¥45,000〜', period:'2〜3週間'}],
+      retail:    [{id:5,  icon:'📝', name:'MTG議事録 自動化',         why:'毎週のスタッフMTGが記録→自動共有。「言った言わない」がゼロに',          price:'¥30,000〜', period:'1〜2週間'},
+                  {id:22, icon:'📅', name:'日報・週報 自動集計',       why:'スタッフの日報を自動集約・可視化。読む時間が1/10に',                     price:'¥35,000〜', period:'2週間'}],
+      freelance: [{id:5,  icon:'📝', name:'MTG議事録 自動化',         why:'クライアントMTGの議事録が自動完成。議事確認メールの工数もゼロに',         price:'¥30,000〜', period:'1〜2週間'},
+                  {id:47, icon:'🖥️', name:'提案書・プレゼン 自動生成', why:'商談後の提案書作成が半日→30分に短縮。デザインの悩みも不要',            price:'¥40,000〜', period:'2週間'}],
+      other:     [{id:5,  icon:'📝', name:'MTG議事録 自動化',         why:'会議後の議事録作成・共有をゼロにします',                                   price:'¥30,000〜', period:'1〜2週間'}],
+    },
+    management: {
+      service:   [{id:11, icon:'📈', name:'経営ダッシュボード',              why:'売上・KPIをリアルタイム把握。月末のExcel集計作業が不要に',               price:'¥40,000〜', period:'2〜3週間'},
+                  {id:7,  icon:'🧾', name:'見積書・請求書 自動生成',         why:'毎月の請求業務を自動化。フォーマットも統一され転記ミスゼロ',             price:'¥40,000〜', period:'2〜3週間'}],
+      welfare:   [{id:33, icon:'🏥', name:'福祉事業所 給付費・工賃 自動集計', why:'毎月のPDF集計・転記作業が全自動に。2時間→10分の実績あり',             price:'¥50,000〜', period:'3〜4週間'},
+                  {id:38, icon:'📨', name:'月次決算サマリ 自動送信',          why:'月次レポートを自動生成→関係者に一斉送信。報告業務が消えます',           price:'¥30,000〜', period:'1〜2週間'}],
+      retail:    [{id:44, icon:'🍽️', name:'メニュー原価計算（飲食）',        why:'感覚任せだった値付けを原価計算で即座に判断。利益率が改善',               price:'¥30,000〜', period:'1〜2週間'},
+                  {id:46, icon:'📦', name:'在庫・発注管理ツール',             why:'欠品・過剰発注をゼロに。発注タイミングを自動通知します',                  price:'¥45,000〜', period:'2〜3週間'}],
+      freelance: [{id:7,  icon:'🧾', name:'見積書・請求書 自動生成',         why:'毎月の請求作業を10分以内に完了。インボイス対応も自動で処理',             price:'¥40,000〜', period:'2〜3週間'},
+                  {id:32, icon:'📊', name:'FP実績管理 ダッシュボード',        why:'スクショ1枚で月次実績を自動集計・グラフ化。毎月30分の作業がゼロに',     price:'¥35,000〜', period:'2週間'}],
+      other:     [{id:11, icon:'📈', name:'経営ダッシュボード',              why:'売上・KPIをリアルタイムで把握。Excelまとめ作業が不要に',                 price:'¥40,000〜', period:'2〜3週間'},
+                  {id:7,  icon:'🧾', name:'見積書・請求書 自動生成',         why:'毎月の請求業務を大幅削減します',                                         price:'¥40,000〜', period:'2〜3週間'}],
+    },
+    hr: {
+      service:   [{id:8,  icon:'📋', name:'雇用契約書・入社書類 一括生成', why:'採用のたびの書類作成が数クリックで完了。記載漏れリスクもゼロに',         price:'¥35,000〜', period:'1〜2週間'},
+                  {id:20, icon:'🌱', name:'スタッフ育成カルテ',            why:'スタッフの目標・成長・面談記録を一元管理。定着率が上がります',           price:'¥40,000〜', period:'2〜3週間'}],
+      welfare:   [{id:21, icon:'📅', name:'シフト管理・勤怠 自動集計',    why:'LINEシフト集め→調整→集計まで全自動化。毎月2〜3日が1時間以内に',       price:'¥45,000〜', period:'3週間'},
+                  {id:8,  icon:'📋', name:'雇用契約書・入社書類 一括生成', why:'採用書類の作成・管理が即時完了。離職多い福祉業界の採用コストを削減',     price:'¥35,000〜', period:'1〜2週間'}],
+      retail:    [{id:21, icon:'📅', name:'シフト管理・勤怠 自動集計',    why:'毎月2〜3日かかるシフト調整が1時間以内に。スタッフの不満も解消',         price:'¥45,000〜', period:'3週間'},
+                  {id:22, icon:'📊', name:'日報・週報 自動集計',           why:'スタッフの報告業務を効率化。提出率も上がります',                         price:'¥35,000〜', period:'2週間'}],
+      freelance: [{id:18, icon:'🗂️', name:'採用面接記録→DB 自動登録',    why:'面接後の評価入力が自動化。「あの人どんな人だっけ」がゼロに',             price:'¥30,000〜', period:'1〜2週間'},
+                  {id:35, icon:'🎙️', name:'営業ログ 音声自動記録',        why:'商談メモをその場で音声→テキスト変換。CRMに自動登録します',              price:'¥35,000〜', period:'2週間'}],
+      other:     [{id:21, icon:'📅', name:'シフト管理・勤怠 自動集計',    why:'シフト調整・勤怠集計を自動化します',                                      price:'¥45,000〜', period:'3週間'},
+                  {id:8,  icon:'📋', name:'雇用契約書・入社書類 一括生成', why:'採用書類の作成作業を自動化します',                                       price:'¥35,000〜', period:'1〜2週間'}],
+    },
+    marketing: {
+      service:   [{id:34, icon:'📆', name:'面談・アポ 自動予約ツール',            why:'「来週空いていますか？」のやり取りが完全自動化。URL1つで予約完結',      price:'¥30,000〜', period:'1〜2週間'},
+                  {id:25, icon:'🎪', name:'イベント・セミナーLP＋申込管理',       why:'セミナーのLP＋申込フォームをその日に公開。外注費も不要に',              price:'¥35,000〜', period:'1〜2週間'}],
+      welfare:   [{id:25, icon:'🎪', name:'イベント・セミナーLP＋申込管理',       why:'体験会・見学会のページをすぐ公開。申込管理もExcel不要',                 price:'¥35,000〜', period:'1〜2週間'},
+                  {id:43, icon:'👨‍👩‍👧', name:'生徒管理・保護者連絡ツール',         why:'保護者への連絡を一斉送信。1通ずつLINEを送る手間がゼロに',              price:'¥40,000〜', period:'2〜3週間'}],
+      retail:    [{id:30, icon:'💬', name:'LINE公式 FAQ自動応答',                 why:'営業時間外のLINEを自動返答。問い合わせ機会損失をゼロに',                price:'¥40,000〜', period:'2〜3週間'},
+                  {id:24, icon:'✍️', name:'SNS投稿文・広告コピー 自動生成',       why:'毎日の投稿文作成が30秒で完了。ネタ切れとも無縁に',                     price:'¥40,000〜', period:'2週間'}],
+      freelance: [{id:27, icon:'🌐', name:'AIポートフォリオ・実績サイト',         why:'「実績を見せて」に即答。更新も簡単な実績サイトを構築',                   price:'¥30,000〜', period:'1〜2週間'},
+                  {id:24, icon:'✍️', name:'SNS投稿文・広告コピー 自動生成',       why:'投稿文作成の時間を90%削減。ブランディングを継続できます',               price:'¥40,000〜', period:'2週間'}],
+      other:     [{id:25, icon:'🎪', name:'イベント・セミナーLP＋申込管理',       why:'告知・集客ページをすぐ公開できます',                                    price:'¥35,000〜', period:'1〜2週間'},
+                  {id:30, icon:'💬', name:'LINE公式 FAQ自動応答',                 why:'問い合わせ対応を自動化します',                                          price:'¥40,000〜', period:'2〜3週間'}],
+    },
+  };
+
+  const INDUSTRY_LABELS = {
+    service: '士業・コンサル・コーチング', welfare: '福祉・医療・介護',
+    retail: '小売・飲食・サービス', freelance: 'フリーランス・個人事業主', other: 'その他'
+  };
+
+  // 領域ごとの時間換算率（1スコアあたり月間削減時間）
+  const HOUR_RATES = { meeting: 1.2, management: 1.0, hr: 1.8, marketing: 0.9 };
+
   function updateProgress(step) {
     document.getElementById('progressBar').style.width = (step / TOTAL_Q * 100) + '%';
   }
@@ -574,11 +622,7 @@
     const parent = btn.closest('.options');
     parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    answers[qId] = {
-      val: btn.dataset.val,
-      area: btn.dataset.area,
-      score: parseInt(btn.dataset.score || 0)
-    };
+    answers[qId] = { val: btn.dataset.val, area: btn.dataset.area, score: parseInt(btn.dataset.score || 0) };
     document.getElementById('next-' + qId).disabled = false;
   }
 
@@ -599,100 +643,115 @@
   function showResult() {
     // Calc area scores
     Object.values(answers).forEach(a => {
-      if (a.area && areaScores[a.area] !== undefined) {
-        areaScores[a.area] += a.score;
-      }
+      if (a.area && areaScores[a.area] !== undefined) areaScores[a.area] += a.score;
     });
 
-    // Total score (max ~20 points → convert to 100)
+    const industry = answers.q1?.val || 'other';
     const rawTotal = Object.values(areaScores).reduce((s, v) => s + v, 0);
     const totalPct = Math.min(100, Math.round(rawTotal / 18 * 100));
 
-    // Show result
+    // ROI calc
+    let totalHours = 0;
+    Object.entries(areaScores).forEach(([area, score]) => {
+      totalHours += score * (HOUR_RATES[area] || 1.0);
+    });
+    totalHours = Math.round(totalHours);
+    const yearlyMoney = Math.round(totalHours * 3000 * 12 / 10000); // 万円/年
+
+    // Transition to result
     document.getElementById('q8').classList.remove('active');
     document.getElementById('result').classList.add('active');
     updateProgress(8);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Score
     setTimeout(() => {
-      document.getElementById('totalScore').textContent = totalPct + 'pt';
+      // レベル定義（絵文字スケール）
+      const LEVELS = [
+        { min: 0,  max: 15,  emoji: '😊', name: 'いまのところ余裕あり',
+          desc: '大きな非効率は見当たりません。事業が拡大するタイミングで改めて検討するのがおすすめです。' },
+        { min: 16, max: 35,  emoji: '🙂', name: 'ちょっと重い部分がある',
+          desc: '1〜2か所、手作業が残っています。1本ツールを入れるだけで月3〜5時間は取り戻せます。' },
+        { min: 36, max: 55,  emoji: '😓', name: 'じわじわ消耗している',
+          desc: 'いくつかの領域で手作業が積み重なっています。放置するほど「見えないコスト」が増え続けます。' },
+        { min: 56, max: 75,  emoji: '😰', name: 'かなりの時間が手作業に消えている',
+          desc: '複数の領域で非効率が重なっています。月10〜20時間以上が「本来やらなくていい作業」に消えている状態です。' },
+        { min: 76, max: 100, emoji: '🔥', name: '今すぐ手を打ったほうがいい！',
+          desc: '業務の負荷が限界に近づいています。このまま放置すると採用・離職・機会損失に直結します。今が改善のベストタイミングです。' },
+      ];
+      const lv = LEVELS.find(l => totalPct >= l.min && totalPct <= l.max) || LEVELS[0];
 
-      let level, desc;
-      if (totalPct >= 70) {
-        level = '改善余地 大！今すぐ着手を';
-        desc = '複数の領域で手作業・非効率が積み重なっています。ツール化することで月10〜30時間以上の削減が見込めます。今の状態が最もコストが高い状態です。';
-      } else if (totalPct >= 40) {
-        level = '改善余地 あり。部分的に着手できます';
-        desc = '一部の業務で効率化できる余地があります。1〜2本のツールを入れるだけで月3〜15時間程度の削減が見込めます。';
-      } else if (totalPct >= 10) {
-        level = '軽微な改善で更に良くなります';
-        desc = '概ねうまく回っていますが、小さな自動化でさらに楽になれる部分があります。';
-      } else {
-        level = '現状のオペレーションは良好です';
-        desc = '現時点では大きな効率化の余地は少ないようです。ただし事業が拡大したタイミングで再検討することをお勧めします。';
-      }
-      document.getElementById('resultLevel').textContent = level;
-      document.getElementById('resultDesc').textContent = desc;
+      document.getElementById('resultEmoji').textContent = lv.emoji;
+      document.getElementById('resultLevel').textContent = lv.name;
+      document.getElementById('resultDesc').textContent = lv.desc;
+
+      // ゲージマーカー位置（0〜94% の範囲で動かす、端が隠れないよう）
+      setTimeout(() => {
+        document.getElementById('gaugeMarker').style.left = Math.min(94, Math.max(4, totalPct)) + '%';
+      }, 80);
+
+      // ROI
+      document.getElementById('roiHours').textContent = totalHours > 0 ? totalHours : '—';
+      document.getElementById('roiMoney').textContent = yearlyMoney > 0 ? yearlyMoney : '—';
 
       // Area bars
       const areaLabels = {
-        meeting: { label: '会議・議事録', max: 6, color: '#6c63ff', rec: 'AI議事録 自動生成ツールで解決' },
-        management: { label: '経営・経理管理', max: 9, color: '#e63946', rec: '経営ダッシュボード or 請求書自動化で解決' },
-        hr: { label: '採用・労務管理', max: 6, color: '#f4a261', rec: '採用書類自動生成 or シフト管理ツールで解決' },
-        marketing: { label: '集客・LP・営業', max: 6, color: '#2a9d8f', rec: 'イベントLP即日生成ツールで解決' }
+        meeting:    { label: '会議・議事録',   max: 6, color: '#6c63ff' },
+        management: { label: '経営・経理管理', max: 9, color: '#e63946' },
+        hr:         { label: '採用・労務管理', max: 6, color: '#f4a261' },
+        marketing:  { label: '集客・LP・営業', max: 6, color: '#2a9d8f' },
       };
-
       const areaHtml = Object.entries(areaScores).map(([key, score]) => {
         const info = areaLabels[key];
         const pct = Math.min(100, Math.round(score / info.max * 100));
-        return `
-          <div class="area-row">
-            <div class="area-label-wrap">
-              <span class="area-label">${info.label}</span>
-              <span class="area-score-text">${pct}pt</span>
-            </div>
-            <div class="area-bar-bg">
-              <div class="area-bar" style="width:0%;background:${info.color}" data-pct="${pct}"></div>
-            </div>
-            ${score >= 2 ? `<div class="area-rec">→ <strong>${info.rec}</strong></div>` : ''}
+        const hrs = Math.round(score * (HOUR_RATES[key] || 1));
+        return `<div class="area-row">
+          <div class="area-label-wrap">
+            <span class="area-label">${info.label}</span>
+            <span class="area-score-text">${pct > 0 ? '月約' + hrs + '時間削減余地' : '課題なし'}</span>
           </div>
-        `;
+          <div class="area-bar-bg">
+            <div class="area-bar" style="width:0%;background:${info.color}" data-pct="${pct}"></div>
+          </div>
+        </div>`;
       }).join('');
       document.getElementById('areaScores').innerHTML = areaHtml;
-
-      // Animate bars
       setTimeout(() => {
-        document.querySelectorAll('.area-bar').forEach(bar => {
-          bar.style.width = bar.dataset.pct + '%';
-        });
+        document.querySelectorAll('.area-bar').forEach(bar => { bar.style.width = bar.dataset.pct + '%'; });
       }, 200);
 
-      // Recommend tools
-      const sorted = Object.entries(areaScores).sort((a,b) => b[1]-a[1]);
-      const tools = {
-        meeting: { icon: '📝', name: 'AI議事録 自動生成ツール', why: '会議後の議事録作成・共有をゼロにします' },
-        management: { icon: '📊', name: '経営ダッシュボード + 請求書自動化', why: '数字の集計・レポート・請求処理を自動化します' },
-        hr: { icon: '👥', name: '採用書類自動生成 / シフト管理ツール', why: '採用・スタッフ管理の手作業を大幅削減します' },
-        marketing: { icon: '📱', name: 'イベントLP即日公開ツール', why: '告知・集客ページをその日に公開できます' }
-      };
+      // Recommended tools (top 2 areas × 1 tool each, max 3 total, industry-aware)
+      const sorted = Object.entries(areaScores).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+      const seen = new Set();
+      const recItems = [];
+      for (const [area] of sorted) {
+        const recs = TOOL_RECS[area]?.[industry] || TOOL_RECS[area]?.other || [];
+        for (const t of recs) {
+          if (!seen.has(t.id) && recItems.length < 4) {
+            seen.add(t.id);
+            recItems.push({...t, area});
+          }
+        }
+        if (recItems.length >= 4) break;
+      }
 
-      const recHtml = sorted
-        .filter(([,v]) => v > 0)
-        .slice(0, 3)
-        .map(([key]) => {
-          const t = tools[key];
-          return `
-            <div class="rec-tool">
-              <span class="rec-tool-icon">${t.icon}</span>
-              <div>
-                <div class="rec-tool-name">${t.name}</div>
-                <div class="rec-tool-why">${t.why}</div>
-              </div>
+      const industryLabel = INDUSTRY_LABELS[industry] || '';
+      document.getElementById('recToolsSub').textContent =
+        industryLabel ? `${industryLabel}の方のスコアをもとに選定しました` : 'スコアをもとに選定しました';
+
+      const recHtml = recItems.length > 0
+        ? recItems.map(t => `
+          <a class="rec-tool" href="tool-detail.html?id=${t.id}">
+            <span class="rec-tool-icon">${t.icon}</span>
+            <div class="rec-tool-body">
+              <div class="rec-tool-name">${t.name}</div>
+              <div class="rec-tool-why">${t.why}</div>
+              <div class="rec-tool-meta">${t.price} ／ 工数 ${t.period}</div>
             </div>
-          `;
-        }).join('');
-      document.getElementById('recTools').innerHTML = recHtml || '<div style="color:var(--ink-mute);font-size:13px;">現時点では大きな課題は見当たりません。</div>';
+            <span class="rec-tool-arrow">›</span>
+          </a>`).join('')
+        : '<div style="color:var(--ink-mute);font-size:13px;">現時点では大きな課題は見当たりません。</div>';
+      document.getElementById('recTools').innerHTML = recHtml;
+
     }, 100);
   }
 </script>

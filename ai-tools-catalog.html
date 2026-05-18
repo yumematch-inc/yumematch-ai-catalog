@@ -332,6 +332,26 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 @keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
 @media(max-width:1000px){.layout{grid-template-columns:1fr;}.diag{position:static;height:auto;border-right:none;border-bottom:1px solid var(--bdr);}.tg{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:580px){.tg{grid-template-columns:1fr;}.echips{display:none;}}
+
+/* ─── GAUGE (sidebar result) ─── */
+.res-gauge{padding:12px 14px 0;}
+.g-track{height:12px;border-radius:6px;position:relative;background:linear-gradient(90deg,#22c55e 0%,#84cc16 22%,#eab308 45%,#f97316 68%,#ef4444 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.12);}
+.g-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:white;border:3px solid #0f172a;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:left 1.2s cubic-bezier(.34,1.56,.64,1);left:4%;}
+.g-emojis{display:flex;justify-content:space-between;padding:4px 2px 0;font-size:13px;line-height:1;}
+.g-emoji-big{font-size:36px;line-height:1;text-align:center;margin:8px 0 2px;}
+.g-level{font-size:11px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:2px;padding:0 8px;line-height:1.4;}
+/* ─── ROI mini (sidebar) ─── */
+.res-roi{display:grid;grid-template-columns:1fr 1fr;background:#0f172a;margin:10px;border-radius:8px;overflow:hidden;}
+.rri{padding:10px 12px;text-align:center;}
+.rri+.rri{border-left:1px solid rgba(255,255,255,.1);}
+.rrl{font-size:9px;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.4);margin-bottom:4px;text-transform:uppercase;}
+.rrv{font-size:22px;font-weight:900;color:#f4a261;line-height:1;}
+.rru{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;}
+/* ─── CTA mini (sidebar) ─── */
+.res-cta{margin:0 10px 10px;padding:11px 12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:8px;text-align:center;}
+.res-cta p{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.5;}
+.res-cta-btn{display:block;width:100%;padding:8px;border-radius:7px;background:#e11d48;border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(225,29,72,.35);}
+.res-cta-btn:hover{background:#be123c;}
 </style>
 </head>
 <body>
@@ -987,24 +1007,40 @@ function renderW(){
     const p=pot();
     const catN={finance:'経営・財務',hr:'採用・人事',marketing:'営業・マーケ',doc:'議事録・文書',info:'情報収集',industry:'業界特化'};
     const pains=[...new Set(S.ans.pain.map(v=>QS[1].opts.find(x=>x.v===v)?.cat).filter(Boolean))].map(c=>catN[c]).filter(Boolean);
+    const totalPct=Math.min(100,Math.round(p.h/40*100));
+    const LVLS=[
+      {min:0, max:24, emoji:'😊', name:'いまのところ余裕あり'},
+      {min:25,max:44, emoji:'🙂', name:'ちょっと重い部分がある'},
+      {min:45,max:59, emoji:'😓', name:'じわじわ消耗している'},
+      {min:60,max:79, emoji:'😰', name:'かなりの時間が手作業に'},
+      {min:80,max:100,emoji:'🔥', name:'今すぐ手を打ったほうがいい！'},
+    ];
+    const lv=LVLS.find(l=>totalPct>=l.min&&totalPct<=l.max)||LVLS[0];
+    const yrMoney=Math.round(p.c*12/10000);
     area.innerHTML=`
 <div class="res">
   <div class="res-top">
-    <div class="rt-tag">診断完了</div>
-    <div class="rt-ttl">あなたの改善ポテンシャル</div>
-    <div class="rt-sub">右側におすすめツールを表示しています</div>
+    <div class="rt-tag">診断完了 · 改善ポテンシャル</div>
+    <div class="rt-sub">右側にあなた向けのツールを表示中</div>
   </div>
-  <div class="res-nums">
-    <div class="rn"><div class="rnl">削減できる業務時間</div><div class="rnv">約${p.h}<small>時間/月</small></div></div>
-    <div class="rn"><div class="rnl">月あたり換算コスト</div><div class="rnv">¥${(Math.round(p.c/1000)*1000).toLocaleString()}<small>〜</small></div></div>
+  <div class="res-gauge">
+    <div class="g-track"><div class="g-marker" id="gm"></div></div>
+    <div class="g-emojis"><span>😊</span><span>🙂</span><span>😓</span><span>😰</span><span>🔥</span></div>
   </div>
-  <div style="margin:0 10px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;font-size:10px;color:#92400e;line-height:1.6;">
-    <div style="font-weight:700;margin-bottom:2px;">このまま1年放置すると…</div>
-    <div>機会損失 <strong style="font-size:13px;">¥${(Math.round(p.c*12/10000)*10000).toLocaleString()}〜/年</strong> が積み上がります</div>
+  <div class="g-emoji-big">${lv.emoji}</div>
+  <div class="g-level">${lv.name}</div>
+  <div class="res-roi">
+    <div class="rri"><div class="rrl">月間削減見込み</div><div class="rrv">${p.h>0?p.h:'—'}</div><div class="rru">時間 / 月</div></div>
+    <div class="rri"><div class="rrl">年間換算削減</div><div class="rrv">${yrMoney>0?yrMoney:'—'}</div><div class="rru">万円 / 年</div></div>
   </div>
-  ${pains.length?`<div class="res-tags">${pains.map(c=>`<span class="rtag">${c}</span>`).join('')}</div>`:''}
+  ${pains.length?`<div class="res-tags" style="padding:8px 10px;">${pains.map(c=>`<span class="rtag">${c}</span>`).join('')}</div>`:''}
+  <div class="res-cta">
+    <p>診断結果をもとに<br><strong style="color:#fff;">無料相談</strong>で具体策をご提案</p>
+    <button class="res-cta-btn" onclick="showApo()">📅 30分 無料相談を予約 →</button>
+  </div>
   <div class="res-foot"><button class="breset" onclick="rst()">↩ やり直す</button></div>
 </div>`;
+    setTimeout(()=>{const gm=document.getElementById('gm');if(gm)gm.style.left=Math.min(94,Math.max(4,totalPct))+'%';},80);
     renderT();return;
   }
 
