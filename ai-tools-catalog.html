@@ -376,7 +376,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="dh">
       <div class="dh-tag">Diagnosis</div>
       <div class="dh-ttl">業務改善診断</div>
-      <div class="dh-sub">3問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
+      <div class="dh-sub">6問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
     </div>
     <div class="prog">
       <div class="pbar" id="pb"></div>
@@ -596,8 +596,34 @@ const T=[
 const QS=[
   {id:'industry',q:'あなたの業種を教えてください',h:'複数選択OK',multi:true,
    opts:[{v:'調剤薬局・クリニック',i:'💊'},{v:'福祉・介護事業所',i:'🏥'},{v:'飲食・食品製造',i:'🍱'},{v:'コンサル・FP・士業',i:'💼'},{v:'美容・サロン',i:'✨'},{v:'教育・学習塾',i:'📚'},{v:'人材・採用',i:'👥'},{v:'その他・一般企業',i:'🏢'}]},
-  {id:'pain',q:'最も時間がかかっている業務は？',h:'複数選択OK',multi:true,
-   opts:[{v:'経理・請求・申告',i:'📊',h:20,cat:'finance'},{v:'採用・人事管理',i:'👤',h:12,cat:'hr'},{v:'集客・SNS・広告',i:'📣',h:15,cat:'marketing'},{v:'議事録・書類作成',i:'📝',h:10,cat:'doc'},{v:'情報収集・調査',i:'🔍',h:8,cat:'info'},{v:'顧客管理・フォロー',i:'🤝',h:10,cat:'marketing'}]},
+  {id:'meeting',q:'会議・議事録の後処理はどうしてますか？',h:'現状に最も近いものを1つ選択',multi:false,
+   opts:[
+     {v:'会議がほぼない / 既に自動化済み',i:'✅',score:0,h:0,cat:'doc'},
+     {v:'ツールは使うが整理に時間がかかる',i:'🛠️',score:1,h:5,cat:'doc'},
+     {v:'手書き・Wordで毎回30分〜かかる',i:'✏️',score:2,h:10,cat:'doc'},
+     {v:'毎回1時間以上かけて作っている',i:'😰',score:3,h:15,cat:'doc'},
+   ]},
+  {id:'finance',q:'経営数字・経費管理の現状は？',h:'現状に最も近いものを1つ選択',multi:false,
+   opts:[
+     {v:'ダッシュボードで常に把握できている',i:'✅',score:0,h:0,cat:'finance'},
+     {v:'ツールはあるが活用できていない',i:'🔧',score:1,h:8,cat:'finance'},
+     {v:'Excelで集計している（時間がかかる）',i:'📊',score:2,h:15,cat:'finance'},
+     {v:'ほぼ管理できていない / 月末に焦る',i:'😱',score:3,h:20,cat:'finance'},
+   ]},
+  {id:'hr',q:'採用・スタッフ管理の課題は？',h:'現状に最も近いものを1つ選択',multi:false,
+   opts:[
+     {v:'今のところ問題なし',i:'✅',score:0,h:0,cat:'hr'},
+     {v:'スタッフ情報がバラバラで探せない',i:'🗂️',score:1,h:6,cat:'hr'},
+     {v:'シフト調整や書類作成に毎月時間がかかる',i:'📅',score:2,h:12,cat:'hr'},
+     {v:'採用・入退社対応で頻繁に手間が発生する',i:'😓',score:3,h:18,cat:'hr'},
+   ]},
+  {id:'marketing',q:'集客・マーケティングの状況は？',h:'現状に最も近いものを1つ選択',multi:false,
+   opts:[
+     {v:'仕組みが整っていて特に困っていない',i:'✅',score:0,h:0,cat:'marketing'},
+     {v:'SNS投稿・広告文の作成が手間',i:'📱',score:1,h:6,cat:'marketing'},
+     {v:'LP・告知ページの作成で毎回困る',i:'😩',score:2,h:10,cat:'marketing'},
+     {v:'集客の仕組みが整っておらず売上が不安定',i:'🔥',score:3,h:15,cat:'marketing'},
+   ]},
   {id:'budget',q:'1回あたりの予算感は？',h:'1つ選択',multi:false,
    opts:[{v:'〜 ¥50,000（まず1本試したい）',i:'💡',budget:50000},{v:'〜 ¥150,000（まとめて3〜4本）',i:'⚡',budget:150000},{v:'上限なし（課題解決を優先したい）',i:'🚀',budget:Infinity}]},
 ];
@@ -622,7 +648,7 @@ const IND={
 
 const MAINT_FREE=new Set([8,16,31,44,49]);
 
-let S={step:0,ans:{industry:[],pain:[],budget:null},cart:new Map()};
+let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null},cart:new Map()};
 let F='rec';
 let V='grid';
 
@@ -639,10 +665,17 @@ function setV(v){
   renderT();
 }
 
+const AREA_QS=['meeting','finance','hr','marketing'];
+
 function sc(){
   const b={};
   S.ans.industry.forEach(v=>(IND[v]||[]).forEach(c=>b[c]=(b[c]||0)+3));
-  S.ans.pain.forEach(p=>{const o=QS[1].opts.find(x=>x.v===p);if(o)b[o.cat]=(b[o.cat]||0)+2;});
+  AREA_QS.forEach(qid=>{
+    const q=QS.find(x=>x.id===qid);
+    const sel=(S.ans[qid]||[])[0];
+    const opt=q?.opts.find(o=>o.v===sel);
+    if(opt&&opt.score>0)b[opt.cat]=(b[opt.cat]||0)+(opt.score*1.5);
+  });
   const bud=S.ans.budget||Infinity;
   return T.map(t=>{
     let s=(b[t.cat]||0)+(t.sym==='super'?1.5:t.sym==='high'?.7:0);
@@ -651,12 +684,18 @@ function sc(){
   }).sort((a,z)=>z._s-a._s);
 }
 
-function hasA(){return S.ans.industry.length>0||S.ans.pain.length>0||S.ans.budget!==null;}
+function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0)||S.ans.budget!==null;}
 
 function pot(){
-  let h=0;S.ans.pain.forEach(p=>{const o=QS[1].opts.find(x=>x.v===p);if(o)h+=o.h||0;});
+  let totalH=0;
+  AREA_QS.forEach(qid=>{
+    const q=QS.find(x=>x.id===qid);
+    const sel=(S.ans[qid]||[])[0];
+    const opt=q?.opts.find(o=>o.v===sel);
+    if(opt)totalH+=opt.h||0;
+  });
   const m=S.ans.budget===50000?.7:S.ans.budget===Infinity?1.3:1;
-  return{h:Math.round(h*m),c:Math.round(h*m*2500)};
+  return{h:Math.round(totalH*m),c:Math.round(totalH*m*2500)};
 }
 
 function renderT(){
@@ -1006,8 +1045,20 @@ function renderW(){
   if(done>=total){
     const p=pot();
     const catN={finance:'経営・財務',hr:'採用・人事',marketing:'営業・マーケ',doc:'議事録・文書',info:'情報収集',industry:'業界特化'};
-    const pains=[...new Set(S.ans.pain.map(v=>QS[1].opts.find(x=>x.v===v)?.cat).filter(Boolean))].map(c=>catN[c]).filter(Boolean);
-    const totalPct=Math.min(100,Math.round(p.h/40*100));
+    const pains=[];
+    AREA_QS.forEach(qid=>{
+      const q=QS.find(x=>x.id===qid);
+      const sel=(S.ans[qid]||[])[0];
+      const opt=q?.opts.find(o=>o.v===sel);
+      if(opt&&opt.score>0&&opt.cat&&catN[opt.cat])pains.push(catN[opt.cat]);
+    });
+    const rawScore=AREA_QS.reduce((s,qid)=>{
+      const q=QS.find(x=>x.id===qid);
+      const sel=(S.ans[qid]||[])[0];
+      const opt=q?.opts.find(o=>o.v===sel);
+      return s+(opt?.score||0);
+    },0);
+    const totalPct=Math.min(100,Math.round(rawScore/12*100));
     const LVLS=[
       {min:0, max:24, emoji:'😊', name:'いまのところ余裕あり'},
       {min:25,max:44, emoji:'🙂', name:'ちょっと重い部分がある'},
@@ -1045,7 +1096,8 @@ function renderW(){
   }
 
   QS.slice(0,done).forEach((q,i)=>{
-    const val=q.id==='budget'?(QS[2].opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
+    const budQ=QS.find(x=>x.id==='budget');
+    const val=q.id==='budget'?(budQ.opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
     const d=document.createElement('div');d.className='sdone';d.onclick=()=>{S.step=i;renderW();};
     d.innerHTML=`<div class="sck">✓</div><div class="sdq">${q.q}</div><div class="sda">${val}</div>`;
     area.appendChild(d);
@@ -1097,7 +1149,7 @@ function pick(qId,val,budget,multi){
 }
 function nxt(){if(S.step<QS.length)S.step++;renderW();}
 function prev(){if(S.step>0)S.step--;renderW();}
-function rst(){S.step=0;S.ans={industry:[],pain:[],budget:null};renderW();}
+function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null};renderW();}
 
 document.querySelectorAll('.ftab').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');F=btn.dataset.f;renderT();});
