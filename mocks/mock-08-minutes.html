@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTG議事録自動作成 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.h-badge{background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+.layout{display:flex;min-height:calc(100vh - 58px);}
+
+/* Sidebar past meetings */
+.sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;padding:16px 12px;flex-shrink:0;}
+.sb-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:12px;}
+.new-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.new-btn:hover{background:#1e3a5f;}
+
+.past-item{padding:10px 10px;border-radius:10px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.1s;}
+.past-item.active,.past-item:hover{background:#f8fafc;border-color:#e2e8f0;}
+.past-item.active{border-color:var(--gold);}
+.pi-title{font-size:13px;font-weight:600;color:#374151;}
+.pi-date{font-size:11px;color:#94a3b8;margin-top:2px;}
+.pi-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:4px;display:inline-block;}
+.pi-done{background:#dcfce7;color:#166534;}
+.pi-ai{background:#dbeafe;color:#1e40af;}
+
+/* Main */
+.main{flex:1;padding:24px;overflow:auto;max-width:800px;}
+
+/* Step flow */
+.steps{display:flex;gap:0;margin-bottom:24px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.step{flex:1;padding:12px 16px;display:flex;align-items:center;gap:8px;border-right:1px solid #f1f5f9;position:relative;}
+.step:last-child{border-right:none;}
+.step-num{width:24px;height:24px;border-radius:50%;background:#e2e8f0;color:#94a3b8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step.done .step-num{background:var(--green);color:#fff;}
+.step.active .step-num{background:var(--navy);color:#fff;}
+.step-label{font-size:12px;font-weight:600;color:#94a3b8;}
+.step.done .step-label,.step.active .step-label{color:#1e293b;}
+
+/* AI progress */
+.ai-progress{background:#fff;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.ap-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px;}
+.ap-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f8fafc;}
+.ap-item:last-child{border-bottom:none;}
+.ap-check{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ap-label{font-size:13px;color:#374151;flex:1;}
+.ap-time{font-size:11px;color:#94a3b8;}
+
+/* Toolbar */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tool-btn{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;display:flex;align-items:center;gap:5px;transition:.1s;}
+.tool-btn:hover{background:#f8fafc;border-color:#cbd5e1;}
+.tool-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* Minutes document */
+.minutes{background:#fff;border-radius:14px;padding:28px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.min-divider{border:none;border-top:2px solid var(--navy);margin:16px 0;}
+.min-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;padding:14px 16px;background:#f8fafc;border-radius:10px;}
+.mm-item{font-size:13px;color:#374151;}
+.mm-label{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.min-title{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:10px;}
+.ai-gen-badge{font-size:10px;font-weight:700;background:#dbeafe;color:#1e40af;padding:3px 8px;border-radius:6px;}
+
+.summary-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:12px;padding:16px;margin-bottom:20px;}
+.sb-title{font-size:12px;font-weight:700;color:#166534;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.sb-body{font-size:13px;color:#166534;line-height:1.7;}
+
+.agenda-section{margin-bottom:20px;}
+.ag-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #f1f5f9;}
+.ag-item{margin-bottom:14px;padding:12px 14px;background:#f8fafc;border-radius:10px;border-left:3px solid var(--navy);}
+.ag-item-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:8px;}
+.ag-bullets{padding-left:0;list-style:none;}
+.ag-bullets li{font-size:13px;color:#374151;line-height:1.65;padding:2px 0;padding-left:16px;position:relative;}
+.ag-bullets li::before{content:'•';position:absolute;left:0;color:var(--navy);}
+
+/* Action items table */
+.action-section{margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.5px;}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+tr.inprogress td{background:#eff6ff;}
+tr.done-row td{background:#f0fdf4;}
+.at-person{font-weight:700;color:#1e293b;}
+.at-task{color:#374151;}
+.at-deadline{font-size:12px;color:#64748b;font-weight:600;}
+.at-status{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;}
+.st-inprogress{background:#dbeafe;color:#1e40af;}
+.st-pending{background:#f1f5f9;color:#64748b;}
+
+.next-box{background:var(--navy);border-radius:12px;padding:16px 20px;color:#fff;}
+.nb-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.nb-body{font-size:13px;color:#e2e8f0;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">MTG<span>議事録</span>自動作成</div>
+  <div class="header-right">
+    <div class="h-badge">⚡ AI自動生成</div>
+    <span style="font-size:12px;color:#94a3b8;">テックスタート株式会社</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button class="new-btn">🎙️ 新しい議事録を作成</button>
+    <div class="sb-title">📂 過去の議事録</div>
+    <div class="past-item active">
+      <div class="pi-title">月次営業会議</div>
+      <div class="pi-date">2026/05/19 14:00</div>
+      <span class="pi-badge pi-done">✅ 完成</span>
+    </div>
+    <div class="past-item">
+      <div class="pi-title">開発チームMTG</div>
+      <div class="pi-date">2026/05/18 11:00</div>
+      <span class="pi-badge pi-done">✅ 完成</span>
+    </div>
+    <div class="past-item">
+      <div class="pi-title">採用面接 フィードバック</div>
+      <div class="pi-date">2026/05/16 15:30</div>
+      <span class="pi-badge pi-done">✅ 完成</span>
+    </div>
+    <div class="past-item">
+      <div class="pi-title">全社朝礼（週次）</div>
+      <div class="pi-date">2026/05/13 09:00</div>
+      <span class="pi-badge pi-done">✅ 完成</span>
+    </div>
+    <div class="past-item">
+      <div class="pi-title">経営会議</div>
+      <div class="pi-date">2026/05/08 10:00</div>
+      <span class="pi-badge pi-done">✅ 完成</span>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step done"><div class="step-num">✓</div><div class="step-label">会議情報・録音</div></div>
+      <div class="step done"><div class="step-num">✓</div><div class="step-label">AI処理</div></div>
+      <div class="step active"><div class="step-num">3</div><div class="step-label">議事録完成！</div></div>
+    </div>
+
+    <!-- AI progress (completed state) -->
+    <div class="ai-progress">
+      <div class="ap-title">✅ AI処理完了 — 3.4秒で生成</div>
+      <div class="ap-item"><div class="ap-check">✓</div><div class="ap-label">音声データ取得完了</div><div class="ap-time">0.3秒</div></div>
+      <div class="ap-item"><div class="ap-check">✓</div><div class="ap-label">発言者の識別</div><div class="ap-time">1.2秒</div></div>
+      <div class="ap-item"><div class="ap-check">✓</div><div class="ap-label">要約・構造化</div><div class="ap-time">2.8秒</div></div>
+      <div class="ap-item"><div class="ap-check">✓</div><div class="ap-label">アクションアイテム抽出</div><div class="ap-time">3.1秒</div></div>
+      <div class="ap-item"><div class="ap-check">✓</div><div class="ap-label">議事録生成完了！</div><div class="ap-time">3.4秒</div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="tool-btn primary">📥 ダウンロード</button>
+      <button class="tool-btn">📨 メールで送信</button>
+      <button class="tool-btn">📋 Notionに同期</button>
+      <button class="tool-btn">✏️ 編集</button>
+    </div>
+
+    <!-- Minutes document -->
+    <div class="minutes">
+      <div class="min-title">📋 月次営業会議 議事録 <span class="ai-gen-badge">🤖 AI自動生成</span></div>
+      <hr class="min-divider">
+
+      <div class="min-meta">
+        <div class="mm-item"><div class="mm-label">日時</div>2026年5月19日（火）14:00〜15:20</div>
+        <div class="mm-item"><div class="mm-label">場所</div>第1会議室 / Zoom（ハイブリッド）</div>
+        <div class="mm-item"><div class="mm-label">参加者</div>山田太郎（司会）・鈴木花子・田中一郎・佐藤美咲・高橋健</div>
+        <div class="mm-item"><div class="mm-label">記録</div>AI自動生成（承認: 山田太郎）</div>
+      </div>
+
+      <div class="summary-box">
+        <div class="sb-title">⚡ AIサマリー（30秒で読める）</div>
+        <div class="sb-body">今月の売上は目標の92%達成。来月に向けて新規顧客獲得施策を強化する方針。田中さん担当のシステム改善が来週完了予定。採用については書類選考を今週中に完了させる。</div>
+      </div>
+
+      <div class="agenda-section">
+        <div class="ag-title">📌 アジェンダ & 議論内容</div>
+
+        <div class="ag-item">
+          <div class="ag-item-title">1. 今月の売上報告（山田）</div>
+          <ul class="ag-bullets">
+            <li>5月実績: <strong>2,340万円</strong>（目標2,540万円 / 達成率92%）</li>
+            <li>新規: 3件獲得、既存: 売上15%増</li>
+            <li>課題: 中型案件のクロージングに時間がかかっている</li>
+          </ul>
+        </div>
+
+        <div class="ag-item">
+          <div class="ag-item-title">2. 来月の施策（全員）</div>
+          <ul class="ag-bullets">
+            <li>高橋提案: SNS広告を月10万円に増額 → <strong>全員賛成</strong></li>
+            <li>鈴木: メルマガ配信頻度を週1→週2に変更検討（効果試算後に決定）</li>
+          </ul>
+        </div>
+
+        <div class="ag-item">
+          <div class="ag-item-title">3. システム改善状況（田中）</div>
+          <ul class="ag-bullets">
+            <li>CRM連携の実装: 来週火曜完了予定</li>
+            <li>遅延の原因: API仕様の変更対応が発生したが解決済み</li>
+          </ul>
+        </div>
+
+        <div class="ag-item">
+          <div class="ag-item-title">4. 採用状況（佐藤）</div>
+          <ul class="ag-bullets">
+            <li>応募者12名 → 書類通過4名 → 一次面接3名</li>
+            <li>来週中に内定出しを目指す方針で一致</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <div class="ag-title">✅ アクションアイテム</div>
+        <table>
+          <thead><tr><th>担当</th><th>タスク</th><th>期限</th><th>ステータス</th></tr></thead>
+          <tbody>
+            <tr><td class="at-person">山田</td><td class="at-task">中型案件フォロー施策の資料作成</td><td class="at-deadline">5/24</td><td><span class="at-status st-pending">⬜ 未着手</span></td></tr>
+            <tr><td class="at-person">高橋</td><td class="at-task">SNS広告予算申請書の提出</td><td class="at-deadline">5/22</td><td><span class="at-status st-pending">⬜ 未着手</span></td></tr>
+            <tr class="inprogress"><td class="at-person">田中</td><td class="at-task">CRM連携実装・動作確認</td><td class="at-deadline">5/26</td><td><span class="at-status st-inprogress">🔄 進行中</span></td></tr>
+            <tr class="inprogress"><td class="at-person">佐藤</td><td class="at-task">書類選考完了・面接日程調整</td><td class="at-deadline">5/23</td><td><span class="at-status st-inprogress">🔄 進行中</span></td></tr>
+            <tr><td class="at-person">鈴木</td><td class="at-task">メルマガ頻度変更の効果試算</td><td class="at-deadline">5/27</td><td><span class="at-status st-pending">⬜ 未着手</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="next-box">
+        <div class="nb-title">📅 次回MTG</div>
+        <div class="nb-body">
+          <strong>2026年6月2日（火）14:00〜</strong><br>
+          アジェンダ（暫定）: 5月実績確定報告 / SNS広告効果検証 / CRMシステム利用状況確認
+        </div>
+      </div>
+
+    </div><!-- /minutes -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>

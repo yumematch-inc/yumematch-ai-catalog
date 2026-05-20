@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社内SNS — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo{font-size:17px;font-weight:900;letter-spacing:-.5px;}
+.logo span{color:var(--gold);}
+.company-name{font-size:12px;color:#94a3b8;border-left:1px solid #334155;padding-left:12px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.h-btn{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;position:relative;}
+.notif-dot{position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--navy);}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+
+.layout{display:flex;height:calc(100vh - 58px);}
+
+/* Left sidebar */
+.left-bar{width:240px;background:var(--navy);color:#fff;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.lb-section{padding:16px 12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.lb-label{font-size:10px;font-weight:700;color:#475569;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding:0 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:#94a3b8;font-size:13px;font-weight:500;transition:.15s;}
+.nav-item.active,.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item .ico{font-size:16px;width:22px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;}
+
+.online-list{display:flex;flex-wrap:wrap;gap:8px;padding:4px;}
+.online-member{display:flex;align-items:center;gap:6px;width:calc(50% - 4px);}
+.om-avatar{width:28px;height:28px;border-radius:50%;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
+.om-dot{position:absolute;bottom:-1px;right:-1px;width:8px;height:8px;background:#22c55e;border-radius:50%;border:2px solid var(--navy);}
+.om-name{font-size:11px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* Center feed */
+.feed{flex:1;overflow-y:auto;padding:20px 16px;}
+.compose{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.compose-row{display:flex;gap:10px;align-items:flex-start;}
+.compose-input{flex:1;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;resize:none;color:#374151;outline:none;}
+.compose-input:focus{border-color:var(--blue);}
+.compose-actions{display:flex;gap:8px;margin-top:10px;}
+.compose-btn{background:none;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#64748b;display:flex;align-items:center;gap:4px;}
+.post-btn{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-left:auto;}
+
+.post{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:4px solid transparent;}
+.post.pinned{border-left-color:var(--gold);}
+.post-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.post-meta{flex:1;}
+.post-name{font-size:14px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:6px;}
+.dept-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;}
+.admin-badge{background:#fef3c7;color:#92400e;}
+.sales-badge{background:#dbeafe;color:#1e40af;}
+.dev-badge{background:#dcfce7;color:#166534;}
+.hr-badge{background:#f3e8ff;color:#6b21a8;}
+.mkt-badge{background:#fce7f3;color:#9d174d;}
+.post-time{font-size:11px;color:#94a3b8;margin-top:2px;}
+.pin-label{font-size:10px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:3px;}
+.post-body{font-size:13px;line-height:1.65;color:#374151;margin-bottom:12px;}
+.post-img{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-radius:10px;height:120px;display:flex;align-items:center;justify-content:center;color:#6366f1;font-size:28px;margin-bottom:12px;}
+.reactions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.reaction{background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;transition:.1s;}
+.reaction:hover{background:#f1f5f9;}
+.reaction.active{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;}
+.post-actions{display:flex;gap:12px;padding-top:10px;border-top:1px solid #f1f5f9;}
+.post-action-btn{background:none;border:none;cursor:pointer;font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:6px;}
+.post-action-btn:hover{background:#f1f5f9;color:#475569;}
+
+/* Right sidebar */
+.right-bar{width:280px;background:#fff;border-left:1px solid #e2e8f0;overflow-y:auto;flex-shrink:0;padding:16px 14px;}
+.rb-section{margin-bottom:20px;}
+.rb-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+.dept-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;cursor:pointer;margin-bottom:4px;}
+.dept-item:hover{background:#f8fafc;}
+.dept-name{font-size:13px;font-weight:600;color:#374151;}
+.dept-count{background:#f1f5f9;color:#64748b;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700;}
+
+.trend-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;margin-bottom:4px;}
+.trend-item:hover{background:#f8fafc;}
+.trend-ico{font-size:16px;}
+.trend-text{font-size:13px;color:#374151;flex:1;}
+.trend-count{font-size:11px;color:#94a3b8;}
+
+.recent-reaction{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;margin-bottom:4px;background:#f8fafc;}
+.rr-emoji{font-size:18px;}
+.rr-info{flex:1;}
+.rr-name{font-size:12px;font-weight:600;color:#374151;}
+.rr-post{font-size:11px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">テック<span>スタート</span></div>
+    <div class="company-name">テックスタート株式会社 社内SNS</div>
+  </div>
+  <div class="header-right">
+    <button class="h-btn">🔍</button>
+    <button class="h-btn">🔔<span class="notif-dot"></span></button>
+    <div class="avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">山田</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Left sidebar -->
+  <div class="left-bar">
+    <div class="lb-section">
+      <div class="lb-label">メニュー</div>
+      <div class="nav-item active"><span class="ico">🏠</span>ホーム</div>
+      <div class="nav-item"><span class="ico">🏢</span>部門フィード</div>
+      <div class="nav-item"><span class="ico">👥</span>メンバー</div>
+      <div class="nav-item"><span class="ico">📢</span>お知らせ<span class="nav-badge">2</span></div>
+      <div class="nav-item"><span class="ico">💬</span>ダイレクトメッセージ</div>
+      <div class="nav-item"><span class="ico">📌</span>ピン留め投稿</div>
+    </div>
+    <div class="lb-section">
+      <div class="lb-label">オンライン（6名）</div>
+      <div class="online-list">
+        <div class="online-member">
+          <div class="om-avatar" style="background:#6366f1;">山田<div class="om-dot"></div></div>
+          <div class="om-name">山田 太郎</div>
+        </div>
+        <div class="online-member">
+          <div class="om-avatar" style="background:#ec4899;">鈴木<div class="om-dot"></div></div>
+          <div class="om-name">鈴木 花子</div>
+        </div>
+        <div class="online-member">
+          <div class="om-avatar" style="background:#10b981;">田中<div class="om-dot"></div></div>
+          <div class="om-name">田中 一郎</div>
+        </div>
+        <div class="online-member">
+          <div class="om-avatar" style="background:#f59e0b;">佐藤<div class="om-dot"></div></div>
+          <div class="om-name">佐藤 美咲</div>
+        </div>
+        <div class="online-member">
+          <div class="om-avatar" style="background:#ef4444;">高橋<div class="om-dot"></div></div>
+          <div class="om-name">高橋 健</div>
+        </div>
+        <div class="online-member">
+          <div class="om-avatar" style="background:#8b5cf6;">中村<div class="om-dot"></div></div>
+          <div class="om-name">中村 さくら</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feed -->
+  <div class="feed">
+
+    <!-- Compose -->
+    <div class="compose">
+      <div class="compose-row">
+        <div class="avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">山田</div>
+        <textarea class="compose-input" rows="2" placeholder="今何してる？チームに共有しよう"></textarea>
+      </div>
+      <div class="compose-actions">
+        <button class="compose-btn">📷 画像</button>
+        <button class="compose-btn">📎 ファイル</button>
+        <button class="compose-btn">🔖 部門指定</button>
+        <button class="post-btn">投稿する</button>
+      </div>
+    </div>
+
+    <!-- Pinned post -->
+    <div class="post pinned">
+      <div class="post-header">
+        <div class="avatar" style="background:#ec4899;">鈴木</div>
+        <div class="post-meta">
+          <div class="post-name">
+            鈴木 花子
+            <span class="dept-badge admin-badge">👑 管理者</span>
+            <span class="dept-badge" style="background:#f1f5f9;color:#64748b;">総務部</span>
+          </div>
+          <div class="post-time">2026/05/20 09:15 · <span style="color:var(--gold);">📌 ピン留め</span></div>
+        </div>
+        <div class="pin-label">📌 重要</div>
+      </div>
+      <div class="post-body">
+        【重要】来週月曜日から夏季休暇の申請受付開始です。期限は <strong>6月30日（火）まで</strong>。Googleフォームから申請してください。<br>
+        申請が遅れると希望期間が取れない場合があります。お早めに！
+      </div>
+      <div class="reactions">
+        <span class="reaction active">👍 8</span>
+        <span class="reaction">📅 3</span>
+        <span class="reaction">🙏 2</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn">👍 いいね</button>
+        <button class="post-action-btn">💬 5件のコメント</button>
+        <button class="post-action-btn">🔗 シェア</button>
+      </div>
+    </div>
+
+    <!-- Post 1 -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar" style="background:#6366f1;">山田</div>
+        <div class="post-meta">
+          <div class="post-name">山田 太郎 <span class="dept-badge sales-badge">営業部</span></div>
+          <div class="post-time">2026/05/20 18:30 · 2時間前</div>
+        </div>
+      </div>
+      <div class="post-body">
+        今月の目標達成しました！🎉 チームのみなさんのおかげです。先月比 +22% の売上を達成できました。数字で語れるのが気持ちいい！来月も頑張りましょう！
+      </div>
+      <div class="post-img">📈</div>
+      <div class="reactions">
+        <span class="reaction active">🎉 12</span>
+        <span class="reaction">👏 7</span>
+        <span class="reaction">💪 4</span>
+        <span class="reaction">🔥 3</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn">👍 いいね</button>
+        <button class="post-action-btn">💬 3件のコメント</button>
+        <button class="post-action-btn">🔗 シェア</button>
+      </div>
+    </div>
+
+    <!-- Post 2 -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar" style="background:#10b981;">田中</div>
+        <div class="post-meta">
+          <div class="post-name">田中 一郎 <span class="dept-badge dev-badge">開発チーム</span></div>
+          <div class="post-time">2026/05/20 17:45 · 3時間前</div>
+        </div>
+      </div>
+      <div class="post-body">
+        新しいCRMシステムの設定完了しました✅ マニュアルを社内ドライブに置いておきます。ログイン情報は鈴木さんまで。導入後は見積もりの作成時間が半分以下になるはずです！質問あればDMどうぞ
+      </div>
+      <div class="reactions">
+        <span class="reaction active">👍 6</span>
+        <span class="reaction">🙌 4</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn">👍 いいね</button>
+        <button class="post-action-btn">💬 2件のコメント</button>
+        <button class="post-action-btn">🔗 シェア</button>
+      </div>
+    </div>
+
+    <!-- Post 3: Welcome -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar" style="background:#f59e0b;">佐藤</div>
+        <div class="post-meta">
+          <div class="post-name">佐藤 美咲 <span class="dept-badge hr-badge">人事部</span></div>
+          <div class="post-time">2026/05/19 10:00 · 昨日</div>
+        </div>
+      </div>
+      <div class="post-body">
+        🌸 今月の新入社員紹介！<br>
+        中村さくらさんが <strong>営業部</strong> に加わりました！前職では3年間BtoB営業を経験されています。<br>
+        ぜひ温かく迎えてあげてください🙏 よろしくお願いします！
+      </div>
+      <div class="reactions">
+        <span class="reaction active">🎉 24</span>
+        <span class="reaction">👋 18</span>
+        <span class="reaction">🌸 11</span>
+        <span class="reaction">💐 8</span>
+        <span class="reaction">😊 6</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn">👍 いいね</button>
+        <button class="post-action-btn">💬 11件のコメント</button>
+        <button class="post-action-btn">🔗 シェア</button>
+      </div>
+    </div>
+
+    <!-- Post 4 -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar" style="background:#ef4444;">高橋</div>
+        <div class="post-meta">
+          <div class="post-name">高橋 健 <span class="dept-badge mkt-badge">マーケティング</span></div>
+          <div class="post-time">2026/05/18 16:20 · 2日前</div>
+        </div>
+      </div>
+      <div class="post-body">
+        先週のスプリングイベント振り返りレポートUPしました📊<br>
+        来場者数 <strong>847名（過去最高！）</strong>、SNS言及数は前回比3倍でした。<br>
+        詳細はドライブの「2026_spring_event_report.pdf」で確認できます
+      </div>
+      <div class="reactions">
+        <span class="reaction active">🔥 15</span>
+        <span class="reaction">👏 9</span>
+        <span class="reaction">📊 4</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn">👍 いいね</button>
+        <button class="post-action-btn">💬 4件のコメント</button>
+        <button class="post-action-btn">🔗 シェア</button>
+      </div>
+    </div>
+
+    <!-- Post 5: System -->
+    <div class="post" style="background:#f8fafc;border:1px dashed #e2e8f0;box-shadow:none;">
+      <div class="post-header">
+        <div class="avatar" style="background:#475569;font-size:10px;">SYS</div>
+        <div class="post-meta">
+          <div class="post-name" style="color:#64748b;">📊 週次KPIサマリー <span style="font-size:10px;font-weight:400;color:#94a3b8;">自動投稿</span></div>
+          <div class="post-time">2026/05/19 09:00 · 昨日</div>
+        </div>
+      </div>
+      <div class="post-body" style="color:#64748b;">
+        <div style="background:#fff;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;gap:20px;">
+          <div><div style="font-size:10px;color:#94a3b8;">今週の売上</div><div style="font-size:18px;font-weight:900;color:var(--navy);">¥2,340万</div><div style="font-size:11px;color:var(--green);">▲ +12%</div></div>
+          <div><div style="font-size:10px;color:#94a3b8;">新規商談</div><div style="font-size:18px;font-weight:900;color:var(--navy);">8件</div><div style="font-size:11px;color:var(--green);">▲ +3</div></div>
+          <div><div style="font-size:10px;color:#94a3b8;">採用進捗</div><div style="font-size:18px;font-weight:900;color:var(--navy);">3名</div><div style="font-size:11px;color:#94a3b8;">面接中</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /feed -->
+
+  <!-- Right sidebar -->
+  <div class="right-bar">
+    <div class="rb-section">
+      <div class="rb-title">🔥 おすすめトピック</div>
+      <div class="trend-item"><span class="trend-ico">🎉</span><span class="trend-text">目標達成報告</span><span class="trend-count">12件</span></div>
+      <div class="trend-item"><span class="trend-ico">🌸</span><span class="trend-text">新入社員歓迎</span><span class="trend-count">8件</span></div>
+      <div class="trend-item"><span class="trend-ico">📊</span><span class="trend-text">KPIレポート</span><span class="trend-count">6件</span></div>
+      <div class="trend-item"><span class="trend-ico">💡</span><span class="trend-text">改善アイデア</span><span class="trend-count">4件</span></div>
+    </div>
+
+    <div class="rb-section">
+      <div class="rb-title">🏢 部門一覧</div>
+      <div class="dept-item"><span class="dept-name">📈 営業部</span><span class="dept-count">12名</span></div>
+      <div class="dept-item"><span class="dept-name">💻 開発チーム</span><span class="dept-count">8名</span></div>
+      <div class="dept-item"><span class="dept-name">📣 マーケティング</span><span class="dept-count">5名</span></div>
+      <div class="dept-item"><span class="dept-name">🏛️ 人事・総務</span><span class="dept-count">4名</span></div>
+      <div class="dept-item"><span class="dept-name">👔 経営</span><span class="dept-count">3名</span></div>
+    </div>
+
+    <div class="rb-section">
+      <div class="rb-title">😊 最近のリアクション</div>
+      <div class="recent-reaction"><span class="rr-emoji">🎉</span><div class="rr-info"><div class="rr-name">田中さんが反応</div><div class="rr-post">目標達成しました！🎉 チームのみ...</div></div></div>
+      <div class="recent-reaction"><span class="rr-emoji">👋</span><div class="rr-info"><div class="rr-name">高橋さんが反応</div><div class="rr-post">今月の新入社員紹介！中村さく...</div></div></div>
+      <div class="recent-reaction"><span class="rr-emoji">🙌</span><div class="rr-info"><div class="rr-name">鈴木さんが反応</div><div class="rr-post">新しいCRMシステムの設定完了...</div></div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

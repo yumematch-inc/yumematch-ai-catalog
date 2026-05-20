@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>書類スキャン→送付状生成 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.h-badge{background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+.container{max-width:1060px;margin:0 auto;padding:24px;}
+
+/* Steps */
+.steps{display:flex;align-items:center;gap:0;background:#fff;border-radius:12px;padding:4px;margin-bottom:24px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.step{flex:1;display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:8px;}
+.step.active{background:var(--navy);}
+.step-num{width:26px;height:26px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step.done .step-num{background:var(--green);color:#fff;}
+.step.active .step-num{background:var(--gold);color:var(--navy);}
+.step.inactive .step-num{background:#e2e8f0;color:#94a3b8;}
+.step-label{font-size:12px;font-weight:600;}
+.step.active .step-label{color:#fff;}
+.step.done .step-label{color:#1e293b;}
+.step.inactive .step-label{color:#94a3b8;}
+.step-arrow{font-size:16px;color:#cbd5e1;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+/* Upload & scan panel */
+.panel{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px;}
+.panel-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+
+.upload-zone{border:2px dashed #e2e8f0;border-radius:12px;padding:32px;text-align:center;cursor:pointer;margin-bottom:14px;background:#f8fafc;}
+.upload-zone:hover{border-color:var(--blue);background:#eff6ff;}
+.uz-ico{font-size:40px;margin-bottom:10px;}
+.uz-title{font-size:14px;font-weight:700;color:#374151;margin-bottom:4px;}
+.uz-sub{font-size:12px;color:#94a3b8;}
+
+.scanned-doc{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:14px;}
+.sd-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sd-thumb{width:48px;height:60px;background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.sd-meta{flex:1;}
+.sd-name{font-size:13px;font-weight:700;color:#1e293b;}
+.sd-pages{font-size:11px;color:#64748b;}
+.sd-done{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--green);}
+
+.extracted-fields{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;}
+.ef-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.ef-item{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;}
+.ef-label{font-size:11px;font-weight:700;color:#64748b;min-width:80px;flex-shrink:0;padding-top:2px;}
+.ef-val{font-size:13px;color:#1e293b;}
+.ef-badge{font-size:10px;font-weight:700;background:#dcfce7;color:#166534;padding:1px 6px;border-radius:4px;margin-left:4px;}
+
+/* Cover letter preview */
+.cover-preview{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.cp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cp-title{font-size:15px;font-weight:700;color:var(--navy);}
+.cp-actions{display:flex;gap:8px;}
+.cp-btn{border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#374151;}
+.cp-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* The actual cover letter */
+.cover-letter{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:24px;font-size:13px;line-height:1.9;color:#1e293b;}
+.cl-date{text-align:right;margin-bottom:16px;color:#374151;}
+.cl-addressee{margin-bottom:16px;}
+.cl-sender{text-align:right;margin-bottom:20px;font-size:12px;color:#374151;}
+.cl-title{text-align:center;font-size:15px;font-weight:900;margin-bottom:16px;padding:8px 0;border-top:1px solid #1e293b;border-bottom:1px solid #1e293b;}
+.cl-body{margin-bottom:16px;}
+.cl-table{width:100%;border-collapse:collapse;margin-top:16px;}
+.cl-table th{background:#f8fafc;padding:7px 12px;text-align:left;font-size:12px;font-weight:700;border:1px solid #e2e8f0;}
+.cl-table td{padding:7px 12px;font-size:12px;border:1px solid #e2e8f0;}
+
+/* Tone selector */
+.tone-row{display:flex;gap:8px;margin-bottom:14px;}
+.tone-btn{flex:1;padding:8px;border:2px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#64748b;text-align:center;transition:.1s;}
+.tone-btn.active{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+/* History */
+.history-row{display:flex;gap:12px;margin-top:20px;overflow-x:auto;padding-bottom:4px;}
+.hist-item{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);min-width:160px;cursor:pointer;border:2px solid transparent;}
+.hist-item:hover{border-color:var(--gold);}
+.hi-name{font-size:12px;font-weight:700;color:#374151;margin-bottom:2px;}
+.hi-date{font-size:10px;color:#94a3b8;}
+.hi-type{font-size:10px;font-weight:700;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">書類スキャン <span>→ 送付状</span>生成</div>
+  <div class="h-badge">✨ OCR + AI</div>
+</div>
+
+<div class="container">
+
+  <div class="steps">
+    <div class="step done"><div class="step-num">✓</div><div class="step-label">書類をスキャン</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step done"><div class="step-num">✓</div><div class="step-label">AIが情報を読み取り</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step active"><div class="step-num">3</div><div class="step-label">送付状が完成！</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step inactive"><div class="step-num">4</div><div class="step-label">印刷・送信</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Left: upload & extracted info -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">📄 スキャン済み書類</div>
+
+        <div class="scanned-doc">
+          <div class="sd-header">
+            <div class="sd-thumb">📄</div>
+            <div class="sd-meta">
+              <div class="sd-name">保険申込書類_山田様.pdf</div>
+              <div class="sd-pages">3ページ · 2.4MB · スキャン済み</div>
+            </div>
+            <div class="sd-done">✅ OCR完了</div>
+          </div>
+          <div class="extracted-fields">
+            <div class="ef-title">🤖 AIが読み取った情報</div>
+            <div class="ef-item"><div class="ef-label">宛先</div><div class="ef-val">山田 太郎 様<span class="ef-badge">自動検出</span></div></div>
+            <div class="ef-item"><div class="ef-label">会社名</div><div class="ef-val">山田商事株式会社<span class="ef-badge">自動検出</span></div></div>
+            <div class="ef-item"><div class="ef-label">書類種別</div><div class="ef-val">生命保険申込書類<span class="ef-badge">自動検出</span></div></div>
+            <div class="ef-item"><div class="ef-label">部数</div><div class="ef-val">3部</div></div>
+            <div class="ef-item"><div class="ef-label">日付</div><div class="ef-val">2026年5月20日</div></div>
+          </div>
+        </div>
+
+        <div class="upload-zone">
+          <div class="uz-ico">📤</div>
+          <div class="uz-title">次の書類をドロップ</div>
+          <div class="uz-sub">PDF / JPG / PNG · スキャン画像もOK</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">⚙️ 送付状の設定</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">文体・トーン</div>
+          <div class="tone-row">
+            <div class="tone-btn active">🎩 丁寧・フォーマル</div>
+            <div class="tone-btn">📝 標準</div>
+            <div class="tone-btn">😊 親しみやすい</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;">差出人会社名</label>
+            <input type="text" value="株式会社NewGo Insurance" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;">差出人担当者</label>
+            <input type="text" value="小池 悠吾" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: cover letter preview -->
+    <div class="cover-preview">
+      <div class="cp-header">
+        <div class="cp-title">📋 生成された送付状</div>
+        <div class="cp-actions">
+          <button class="cp-btn">✏️ 編集</button>
+          <button class="cp-btn">📧 メール添付</button>
+          <button class="cp-btn primary">🖨️ 印刷</button>
+        </div>
+      </div>
+
+      <div class="cover-letter">
+        <div class="cl-date">2026年5月20日</div>
+        <div class="cl-addressee">
+          山田商事株式会社<br>
+          山田 太郎 様
+        </div>
+        <div class="cl-sender">
+          株式会社NewGo Insurance<br>
+          担当：小池 悠吾<br>
+          TEL: 03-XXXX-XXXX<br>
+          Email: koike@newgo-ins.co.jp
+        </div>
+        <div class="cl-title">書類送付のご案内</div>
+        <div class="cl-body">
+          拝啓　時下ますますご清栄のこととお喜び申し上げます。平素は格別のご高配を賜り、厚く御礼申し上げます。<br><br>
+          さて、下記の書類をご送付申し上げます。ご査収のほど、よろしくお願い申し上げます。<br><br>
+          ご不明な点がございましたら、お気軽にお問い合わせください。<br><br>
+          敬具
+        </div>
+        <table class="cl-table">
+          <thead>
+            <tr>
+              <th>書類名</th>
+              <th>部数</th>
+              <th>備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>生命保険申込書類</td>
+              <td>3部</td>
+              <td>ご捺印・ご返送ください</td>
+            </tr>
+            <tr>
+              <td>重要事項説明書</td>
+              <td>1部</td>
+              <td>お控えとして保管ください</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;font-size:12px;color:#64748b;">以上</div>
+      </div>
+
+      <!-- History -->
+      <div style="margin-top:16px;">
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:10px;">📂 最近の送付状</div>
+        <div class="history-row">
+          <div class="hist-item">
+            <div class="hi-name">鈴木 一郎 様</div>
+            <div class="hi-date">2026/05/18</div>
+            <div class="hi-type" style="color:var(--blue);">📄 申込書類</div>
+          </div>
+          <div class="hist-item">
+            <div class="hi-name">田中 美咲 様</div>
+            <div class="hi-date">2026/05/15</div>
+            <div class="hi-type" style="color:var(--green);">📄 契約更新</div>
+          </div>
+          <div class="hist-item">
+            <div class="hi-name">高橋 健 様</div>
+            <div class="hi-date">2026/05/12</div>
+            <div class="hi-type" style="color:var(--gold);">📄 見積書</div>
+          </div>
+          <div class="hist-item">
+            <div class="hi-name">中村 さくら 様</div>
+            <div class="hi-date">2026/05/08</div>
+            <div class="hi-type" style="color:var(--blue);">📄 申込書類</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不動産CFシミュレーター — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--orange:#f97316;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.h-badge{background:rgba(244,162,97,.2);color:var(--gold);border:1px solid rgba(244,162,97,.4);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+/* Main layout */
+.layout{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 58px);}
+
+/* Input panel */
+.input-panel{background:#fff;border-right:1px solid #e2e8f0;padding:20px;overflow-y:auto;}
+.ip-section{margin-bottom:18px;}
+.ips-title{font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:6px;}
+
+.field{margin-bottom:10px;}
+label{display:block;font-size:11px;font-weight:600;color:#64748b;margin-bottom:5px;}
+input,select{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus{border-color:var(--blue);}
+
+.two-field{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+.scenario-tabs{display:flex;gap:4px;background:#f4f6fb;border-radius:8px;padding:4px;margin-bottom:14px;}
+.st{flex:1;padding:7px;border-radius:6px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;color:#64748b;}
+.st.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+.calc-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.calc-btn:hover{background:#1e3a5f;}
+
+/* Results panel */
+.results{padding:20px;overflow-y:auto;}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.kc-label{font-size:10px;color:#64748b;font-weight:600;margin-bottom:4px;}
+.kc-val{font-size:22px;font-weight:900;color:var(--navy);line-height:1;}
+.kc-val.green{color:var(--green);}
+.kc-val.red{color:var(--red);}
+.kc-val.gold{color:var(--gold);}
+.kc-sub{font-size:10px;color:#94a3b8;margin-top:3px;}
+.kpi-card.highlight{background:var(--navy);}
+.kpi-card.highlight .kc-label{color:#94a3b8;}
+.kpi-card.highlight .kc-val{color:#fff;}
+
+/* Scenario comparison */
+.scenario-section{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:18px;}
+.ss-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px;}
+
+.scenario-compare{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.sc-col{border-radius:10px;padding:14px;text-align:center;}
+.sc-col.optimistic{background:#f0fdf4;border:1px solid #86efac;}
+.sc-col.standard{background:#f8fafc;border:2px solid var(--navy);}
+.sc-col.pessimistic{background:#fff5f5;border:1px solid #fca5a5;}
+.sc-label{font-size:11px;font-weight:700;margin-bottom:6px;}
+.sc-col.optimistic .sc-label{color:#166534;}
+.sc-col.standard .sc-label{color:var(--navy);}
+.sc-col.pessimistic .sc-label{color:#991b1b;}
+.sc-val{font-size:20px;font-weight:900;margin-bottom:2px;}
+.sc-col.optimistic .sc-val{color:#16a34a;}
+.sc-col.standard .sc-val{color:var(--navy);}
+.sc-col.pessimistic .sc-val{color:var(--red);}
+.sc-sub{font-size:10px;color:#94a3b8;}
+
+/* Cashflow bar chart */
+.cf-chart{display:flex;align-items:flex-end;gap:6px;height:140px;margin-bottom:8px;}
+.cf-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.cf-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;}
+.cf-bar{width:28px;border-radius:4px 4px 0 0;min-height:4px;}
+.cf-bar.positive{background:var(--navy);}
+.cf-bar.projected{background:var(--blue);opacity:.6;}
+.cf-year{font-size:10px;color:#94a3b8;text-align:center;}
+
+/* CF table */
+.cf-table{width:100%;border-collapse:collapse;font-size:12px;}
+.cf-table th{background:#f8fafc;padding:8px 12px;text-align:right;font-size:10px;font-weight:700;color:#64748b;border-bottom:1px solid #e2e8f0;letter-spacing:.3px;}
+.cf-table th:first-child{text-align:left;}
+.cf-table td{padding:8px 12px;border-bottom:1px solid #f8fafc;text-align:right;color:#374151;}
+.cf-table td:first-child{text-align:left;font-weight:600;color:#1e293b;}
+.cf-table tr:hover td{background:#fafafa;}
+.cf-table .total-row td{background:#f0f9ff;font-weight:700;}
+.positive-val{color:var(--green);font-weight:700;}
+.negative-val{color:var(--red);}
+
+/* AI judgement */
+.ai-judge{background:var(--navy);border-radius:14px;padding:18px 22px;border-left:4px solid var(--gold);}
+.aj-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.aj-title{font-size:14px;font-weight:700;color:var(--gold);}
+.go-badge{background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.4);border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;}
+.aj-body{font-size:13px;color:#e2e8f0;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">不動産<span>CFシミュレーター</span></div>
+  <div class="h-badge">📊 AI投資判定付き</div>
+</div>
+
+<div class="layout">
+
+  <!-- Input panel -->
+  <div class="input-panel">
+
+    <div class="ip-section">
+      <div class="ips-title">🏢 物件情報</div>
+      <div class="field"><label>物件名</label><input type="text" value="渋谷区代々木 一棟アパート"></div>
+      <div class="two-field">
+        <div class="field"><label>物件種別</label><select><option>一棟アパート</option><option>マンション</option><option>区分所有</option><option>戸建</option></select></div>
+        <div class="field"><label>所在地</label><input type="text" value="東京都渋谷区"></div>
+      </div>
+      <div class="two-field">
+        <div class="field"><label>購入価格（万円）</label><input type="text" value="8,500"></div>
+        <div class="field"><label>築年数（年）</label><input type="text" value="22"></div>
+      </div>
+      <div class="two-field">
+        <div class="field"><label>総戸数</label><input type="text" value="8戸"></div>
+        <div class="field"><label>専有面積（㎡）</label><input type="text" value="25"></div>
+      </div>
+    </div>
+
+    <div class="ip-section">
+      <div class="ips-title">💰 収支情報</div>
+      <div class="two-field">
+        <div class="field"><label>月額家賃（1戸）</label><input type="text" value="¥68,000"></div>
+        <div class="field"><label>現在入居率（%）</label><input type="text" value="87.5"></div>
+      </div>
+      <div class="two-field">
+        <div class="field"><label>年間管理費（万円）</label><input type="text" value="85"></div>
+        <div class="field"><label>固定資産税（万円）</label><input type="text" value="42"></div>
+      </div>
+    </div>
+
+    <div class="ip-section">
+      <div class="ips-title">🏦 融資条件</div>
+      <div class="two-field">
+        <div class="field"><label>自己資金（万円）</label><input type="text" value="1,700"></div>
+        <div class="field"><label>借入金額（万円）</label><input type="text" value="6,800"></div>
+      </div>
+      <div class="two-field">
+        <div class="field"><label>金利（%）</label><input type="text" value="1.8"></div>
+        <div class="field"><label>返済期間（年）</label><input type="text" value="25"></div>
+      </div>
+    </div>
+
+    <div class="ip-section">
+      <div class="ips-title">📊 シミュレーション設定</div>
+      <div class="scenario-tabs">
+        <div class="st active">楽観</div>
+        <div class="st">標準</div>
+        <div class="st">悲観</div>
+      </div>
+      <div class="two-field">
+        <div class="field"><label>家賃下落率（年率%）</label><input type="text" value="0.5"></div>
+        <div class="field"><label>シミュレーション期間</label><select><option>10年</option><option selected>20年</option><option>30年</option></select></div>
+      </div>
+    </div>
+
+    <button class="calc-btn">🧮 CFをシミュレートする</button>
+    <div style="font-size:11px;color:#94a3b8;text-align:center;">※ 結果は参考値です。投資判断は専門家にご相談ください</div>
+  </div>
+
+  <!-- Results panel -->
+  <div class="results">
+
+    <div style="font-size:16px;font-weight:900;color:var(--navy);margin-bottom:16px;">📊 CFシミュレーション結果 — 渋谷区代々木 一棟アパート</div>
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="kpi-card highlight">
+        <div class="kc-label">表面利回り</div>
+        <div class="kc-val gold">7.67%</div>
+        <div class="kc-sub">業界平均 5.8%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">実質利回り</div>
+        <div class="kc-val green">5.42%</div>
+        <div class="kc-sub">諸経費控除後</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">月次キャッシュフロー</div>
+        <div class="kc-val green">+¥38,200</div>
+        <div class="kc-sub">返済後の手残り</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">投資回収期間</div>
+        <div class="kc-val">14.2年</div>
+        <div class="kc-sub">自己資金ベース</div>
+      </div>
+    </div>
+
+    <!-- Scenario compare -->
+    <div class="scenario-section">
+      <div class="ss-title">3シナリオ比較（20年後の累計CF）</div>
+      <div class="scenario-compare">
+        <div class="sc-col optimistic">
+          <div class="sc-label">楽観シナリオ</div>
+          <div class="sc-val">+¥2,840万</div>
+          <div class="sc-sub">入居率95% 家賃微増</div>
+        </div>
+        <div class="sc-col standard">
+          <div class="sc-label">▶ 標準シナリオ（現状）</div>
+          <div class="sc-val">+¥1,920万</div>
+          <div class="sc-sub">入居率87% 家賃横ばい</div>
+        </div>
+        <div class="sc-col pessimistic">
+          <div class="sc-label">悲観シナリオ</div>
+          <div class="sc-val">+¥640万</div>
+          <div class="sc-sub">入居率70% 家賃下落</div>
+        </div>
+      </div>
+
+      <!-- CF bar chart -->
+      <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;">年次キャッシュフロー（標準シナリオ）</div>
+      <div class="cf-chart">
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:50px;"></div></div><div class="cf-year">1年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:55px;"></div></div><div class="cf-year">2年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:52px;"></div></div><div class="cf-year">3年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:58px;"></div></div><div class="cf-year">4年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:60px;"></div></div><div class="cf-year">5年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:62px;"></div></div><div class="cf-year">6年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:65px;"></div></div><div class="cf-year">7年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:63px;"></div></div><div class="cf-year">8年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:67px;"></div></div><div class="cf-year">9年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar positive" style="height:70px;"></div></div><div class="cf-year">10年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar projected" style="height:68px;"></div></div><div class="cf-year">11年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar projected" style="height:66px;"></div></div><div class="cf-year">12年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar projected" style="height:70px;"></div></div><div class="cf-year">15年目</div></div>
+        <div class="cf-bar-group"><div class="cf-bar-wrap"><div class="cf-bar projected" style="height:74px;"></div></div><div class="cf-year">20年目</div></div>
+      </div>
+    </div>
+
+    <!-- CF table -->
+    <div class="scenario-section">
+      <div class="ss-title">年次CFテーブル（標準シナリオ）</div>
+      <table class="cf-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">年次</th>
+            <th>家賃収入</th>
+            <th>経費合計</th>
+            <th>ローン返済</th>
+            <th>年間CF</th>
+            <th>累計CF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1年目</td><td>¥4,761,600</td><td>¥1,270,000</td><td>¥3,031,200</td><td class="positive-val">¥460,400</td><td class="positive-val">¥460,400</td></tr>
+          <tr><td>2年目</td><td>¥4,761,600</td><td>¥1,270,000</td><td>¥3,031,200</td><td class="positive-val">¥460,400</td><td class="positive-val">¥920,800</td></tr>
+          <tr><td>3年目</td><td>¥4,737,800</td><td>¥1,320,000</td><td>¥3,031,200</td><td class="positive-val">¥386,600</td><td class="positive-val">¥1,307,400</td></tr>
+          <tr><td>5年目</td><td>¥4,690,000</td><td>¥1,370,000</td><td>¥3,031,200</td><td class="positive-val">¥288,800</td><td class="positive-val">¥2,123,200</td></tr>
+          <tr><td>10年目</td><td>¥4,582,000</td><td>¥1,450,000</td><td>¥3,031,200</td><td class="positive-val">¥100,800</td><td class="positive-val">¥3,868,000</td></tr>
+          <tr class="total-row"><td>20年累計</td><td>¥91,420,000</td><td>¥27,400,000</td><td>¥60,624,000</td><td class="positive-val">¥3,396,000</td><td class="positive-val">¥19,200,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- AI judgement -->
+    <div class="ai-judge">
+      <div class="aj-header">
+        <div class="aj-title">🤖 AI投資判定</div>
+        <div class="go-badge">🟢 GO — 投資推薦</div>
+      </div>
+      <div class="aj-body">
+        表面利回り7.67%は東京都心の平均（5.8%）を大幅に上回っており、優良物件と判断します。標準シナリオで月次+¥38,200の手残りが見込まれます。<br><br>
+        <strong style="color:var(--gold);">注意点：</strong>築22年のため5〜10年以内に大規模修繕費（¥200〜400万）が発生する可能性を織り込んで下さい。入居率が70%を下回るとCFがマイナスに転じます。管理会社の選定が最重要です。
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

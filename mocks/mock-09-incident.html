@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インシデント報告ツール — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--orange:#f97316;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.pulse-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+
+.tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;}
+.tab{padding:14px 24px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;transition:.15s;}
+.tab.active{color:var(--navy);border-bottom-color:var(--red);}
+
+.screen{display:none;padding:24px;max-width:960px;margin:0 auto;}
+.screen.active{display:block;}
+
+/* Report form */
+.form-card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px;}
+.fc-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+
+.urgency-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0;}
+.urgency-btn{padding:16px 12px;border-radius:12px;border:3px solid #e2e8f0;background:#fff;cursor:pointer;text-align:center;transition:.15s;}
+.urgency-btn:hover,.urgency-btn.active{transform:translateY(-2px);}
+.urgency-btn.critical{border-color:var(--red);}
+.urgency-btn.important{border-color:var(--orange);}
+.urgency-btn.minor{border-color:#eab308;}
+.urgency-btn.critical.active{background:#fef2f2;}
+.urgency-btn.important.active{background:#fff7ed;}
+.urgency-btn.minor.active{background:#fefce8;}
+.ub-ico{font-size:28px;margin-bottom:6px;}
+.ub-level{font-size:13px;font-weight:700;margin-bottom:2px;}
+.ub-sub{font-size:11px;color:#94a3b8;}
+.urgency-btn.critical .ub-level{color:var(--red);}
+.urgency-btn.important .ub-level{color:var(--orange);}
+.urgency-btn.minor .ub-level{color:#ca8a04;}
+
+.field-row{margin-bottom:14px;}
+label{display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+select,input[type="text"],input[type="datetime-local"],textarea{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;background:#fff;}
+select:focus,input:focus,textarea:focus{border-color:var(--blue);}
+textarea{resize:vertical;}
+
+.category-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.cat-chip{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.cat-chip.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+.upload-area{border:2px dashed #e2e8f0;border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:#94a3b8;font-size:13px;}
+.upload-area:hover{border-color:var(--blue);color:var(--blue);}
+
+.submit-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+.submit-btn:hover{background:#dc2626;}
+.line-hint{text-align:center;margin-top:10px;font-size:12px;color:#94a3b8;}
+
+/* Manager dashboard */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);text-align:center;}
+.sc-val{font-size:28px;font-weight:900;color:var(--navy);line-height:1.1;}
+.sc-val.red{color:var(--red);}
+.sc-val.orange{color:var(--orange);}
+.sc-val.green{color:var(--green);}
+.sc-label{font-size:11px;color:#64748b;margin-top:4px;}
+.sc-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+.alert-box{background:#fef2f2;border:1px solid #fecaca;border-left:4px solid var(--red);border-radius:12px;padding:16px 20px;margin-bottom:20px;}
+.ab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.ab-title{font-size:14px;font-weight:700;color:#991b1b;display:flex;align-items:center;gap:8px;}
+.confirm-btn{background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+.ab-body{font-size:13px;color:#991b1b;line-height:1.6;}
+
+.table-wrap{background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;margin-bottom:20px;}
+.table-header{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
+.table-title{font-size:14px;font-weight:700;color:#1e293b;}
+table{width:100%;border-collapse:collapse;}
+th{background:#f8fafc;padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;letter-spacing:.5px;border-bottom:1px solid #e2e8f0;}
+td{padding:11px 16px;font-size:13px;color:#374151;border-bottom:1px solid #f8fafc;vertical-align:middle;}
+tr:hover td{background:#fafafa;}
+.urg-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;}
+.urg-critical{background:#fef2f2;color:#991b1b;}
+.urg-important{background:#fff7ed;color:#c2410c;}
+.urg-minor{background:#fefce8;color:#92400e;}
+.st-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;}
+.st-open{background:#fee2e2;color:#991b1b;}
+.st-inprog{background:#dbeafe;color:#1e40af;}
+.st-done{background:#dcfce7;color:#166534;}
+.cat-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:#f1f5f9;color:#64748b;}
+
+.ai-analysis{background:var(--navy);border-radius:14px;padding:20px;border-left:4px solid var(--gold);}
+.aa-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.aa-body{font-size:13px;color:#e2e8f0;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">インシデント<span>報告</span>ツール</div>
+  <div class="header-right">
+    <div class="pulse-dot"></div>
+    <span style="font-size:12px;color:#fca5a5;">未対応 1件</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('report',this)">📝 報告画面</div>
+  <div class="tab" onclick="switchTab('dash',this)">📊 管理者ダッシュボード</div>
+</div>
+
+<!-- REPORT VIEW -->
+<div class="screen active" id="report">
+
+  <div class="form-card">
+    <div class="fc-title">⚡ 緊急度を選択</div>
+    <div class="urgency-row">
+      <div class="urgency-btn critical active" onclick="selectUrgency(this)">
+        <div class="ub-ico">🔴</div>
+        <div class="ub-level">緊急</div>
+        <div class="ub-sub">即対応が必要</div>
+      </div>
+      <div class="urgency-btn important" onclick="selectUrgency(this)">
+        <div class="ub-ico">🟠</div>
+        <div class="ub-level">重要</div>
+        <div class="ub-sub">今日中に対応</div>
+      </div>
+      <div class="urgency-btn minor" onclick="selectUrgency(this)">
+        <div class="ub-ico">🟡</div>
+        <div class="ub-level">軽微</div>
+        <div class="ub-sub">今週中に対応</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="fc-title">📋 インシデント詳細</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="field-row" style="margin-bottom:0;">
+        <label>発生日時</label>
+        <input type="datetime-local" value="2026-05-20T14:32">
+      </div>
+      <div class="field-row" style="margin-bottom:0;">
+        <label>発生場所</label>
+        <select>
+          <option>店舗・受付</option>
+          <option>オフィス</option>
+          <option>現場・倉庫</option>
+          <option>オンライン</option>
+          <option>その他</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label>カテゴリ</label>
+      <div class="category-chips">
+        <div class="cat-chip active">📞 クレーム</div>
+        <div class="cat-chip">🚨 事故</div>
+        <div class="cat-chip">⚠️ ヒヤリハット</div>
+        <div class="cat-chip">💻 システム障害</div>
+        <div class="cat-chip">📦 その他</div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label>状況の説明</label>
+      <textarea rows="4" placeholder="何が起きたか、関係者、状況を具体的に記載してください"></textarea>
+    </div>
+
+    <div class="field-row">
+      <label>写真・資料（任意）</label>
+      <div class="upload-area">📷 ここに画像やファイルをドロップ、またはクリックして選択</div>
+    </div>
+
+    <div class="field-row">
+      <label>初動対応（すでに対応した内容があれば）</label>
+      <textarea rows="3" placeholder="すでに取った対応があれば記載してください"></textarea>
+    </div>
+
+    <button class="submit-btn">🚨 インシデントを報告する</button>
+    <div class="line-hint">📱 LINEからも報告できます — 管理者に即時通知が届きます</div>
+  </div>
+
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="screen" id="dash">
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sc-val">23</div>
+      <div class="sc-label">今月の報告件数</div>
+      <div class="sc-sub">先月比 -5件</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val orange">4</div>
+      <div class="sc-label">対応中</div>
+      <div class="sc-sub">平均解決 2.3日</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val green">18</div>
+      <div class="sc-label">解決済み</div>
+      <div class="sc-sub">解決率 78%</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val red">1</div>
+      <div class="sc-label">要確認</div>
+      <div class="sc-sub">🔴 至急確認を</div>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <div class="ab-header">
+      <div class="ab-title">
+        <div class="pulse-dot"></div>
+        🚨 新規緊急報告 — 即時対応が必要
+      </div>
+      <button class="confirm-btn">今すぐ確認</button>
+    </div>
+    <div class="ab-body">
+      <strong>2026/5/20 14:32</strong> — 高橋さんより報告<br>
+      「お客様からクレームの電話。商品に異物混入の疑いがある」<br>
+      場所: 店舗・受付 / カテゴリ: クレーム
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div class="table-title">📋 インシデント一覧</div>
+      <span style="font-size:12px;color:#94a3b8;">全23件 · 直近6件表示</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>報告日時</th>
+          <th>緊急度</th>
+          <th>カテゴリ</th>
+          <th>概要</th>
+          <th>報告者</th>
+          <th>ステータス</th>
+          <th>対応者</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--red);">5/20 14:32</td>
+          <td><span class="urg-badge urg-critical">🔴 緊急</span></td>
+          <td><span class="cat-tag">クレーム</span></td>
+          <td>商品異物混入疑い</td>
+          <td>高橋</td>
+          <td><span class="st-badge st-inprog">🔄 対応中</span></td>
+          <td>山田</td>
+        </tr>
+        <tr>
+          <td>5/19 11:20</td>
+          <td><span class="urg-badge urg-important">🟠 重要</span></td>
+          <td><span class="cat-tag">システム障害</span></td>
+          <td>POSレジ接続エラー</td>
+          <td>田中</td>
+          <td><span class="st-badge st-done">✅ 解決済み</span></td>
+          <td>田中</td>
+        </tr>
+        <tr>
+          <td>5/18 09:05</td>
+          <td><span class="urg-badge urg-minor">🟡 軽微</span></td>
+          <td><span class="cat-tag">ヒヤリハット</span></td>
+          <td>倉庫の段差でつまずき</td>
+          <td>中村</td>
+          <td><span class="st-badge st-done">✅ 確認済み</span></td>
+          <td>佐藤</td>
+        </tr>
+        <tr>
+          <td>5/16 16:45</td>
+          <td><span class="urg-badge urg-important">🟠 重要</span></td>
+          <td><span class="cat-tag">クレーム</span></td>
+          <td>配送遅延クレーム</td>
+          <td>鈴木</td>
+          <td><span class="st-badge st-done">✅ 解決済み</span></td>
+          <td>山田</td>
+        </tr>
+        <tr>
+          <td>5/15 10:30</td>
+          <td><span class="urg-badge urg-minor">🟡 軽微</span></td>
+          <td><span class="cat-tag">その他</span></td>
+          <td>備品不足（コピー用紙）</td>
+          <td>木村</td>
+          <td><span class="st-badge st-done">✅ 解決済み</span></td>
+          <td>鈴木</td>
+        </tr>
+        <tr>
+          <td>5/13 14:00</td>
+          <td><span class="urg-badge urg-important">🟠 重要</span></td>
+          <td><span class="cat-tag">事故</span></td>
+          <td>来客が駐車場で転倒</td>
+          <td>高橋</td>
+          <td><span class="st-badge st-done">✅ 解決済み</span></td>
+          <td>山田</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ai-analysis">
+    <div class="aa-title">🤖 AIによる傾向分析と再発防止提案</div>
+    <div class="aa-body">
+      今月のクレームの<strong style="color:var(--gold);">67%が「初動対応の遅さ」</strong>に関連した内容です。報告から担当者への連絡まで平均24分かかっています。<br><br>
+      <strong style="color:var(--gold);">おすすめ対策：</strong>緊急クレームの自動エスカレーション設定（報告から5分以内に管理者へLINE通知）と、初動対応マニュアルの整備をお勧めします。
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function selectUrgency(el){
+  document.querySelectorAll('.urgency-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+document.querySelectorAll('.cat-chip').forEach(c=>{
+  c.addEventListener('click',function(){this.classList.toggle('active');});
+});
+</script>
+</body>
+</html>

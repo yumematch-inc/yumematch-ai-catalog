@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自社専用ニュース配信 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;letter-spacing:-.5px;}.logo span{color:var(--gold);}
+.header-meta{display:flex;align-items:center;gap:10px;}
+.live-badge{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.live-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* Newspaper layout */
+.newspaper{max-width:1000px;margin:0 auto;padding:20px;}
+
+/* Masthead */
+.masthead{background:#fff;border-radius:14px;padding:20px 28px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.06);border-bottom:3px solid var(--navy);}
+.mh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.mh-edition{font-size:11px;color:#64748b;}
+.mh-title{font-size:28px;font-weight:900;color:var(--navy);text-align:center;letter-spacing:-1px;}
+.mh-sub{font-size:12px;color:#64748b;text-align:center;margin-top:4px;}
+.mh-meta{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0;}
+.mh-meta-item{font-size:11px;color:#94a3b8;}
+.mh-meta-item strong{color:#374151;}
+
+/* Category filter */
+.cat-filter{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+.cf-btn{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#64748b;white-space:nowrap;transition:.1s;}
+.cf-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.cf-btn:hover:not(.active){border-color:#cbd5e1;}
+
+/* Main grid */
+.news-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;}
+
+/* Lead article */
+.lead-article{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.la-img{background:linear-gradient(135deg,var(--navy),#1e3a5f);height:200px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:60px;}
+.la-body{padding:20px;}
+.la-cat{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.la-title{font-size:20px;font-weight:900;color:var(--navy);margin-bottom:8px;line-height:1.35;}
+.la-lead{font-size:13px;color:#475569;line-height:1.7;margin-bottom:12px;}
+.la-footer{display:flex;align-items:center;justify-content:space-between;}
+.la-source{font-size:11px;color:#94a3b8;}
+.read-btn{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* Side articles */
+.side-articles{display:flex;flex-direction:column;gap:12px;}
+.side-article{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;gap:12px;}
+.sa-thumb{width:56px;height:56px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.sa-meta{flex:1;}
+.sa-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.sa-title{font-size:13px;font-weight:700;color:#1e293b;line-height:1.4;margin-bottom:4px;}
+.sa-time{font-size:10px;color:#94a3b8;}
+
+/* Bottom 3-col */
+.bottom-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.news-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.nc-cat{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:8px;}
+.nc-title{font-size:14px;font-weight:700;color:#1e293b;line-height:1.4;margin-bottom:6px;}
+.nc-body{font-size:12px;color:#64748b;line-height:1.6;}
+.nc-time{font-size:10px;color:#94a3b8;margin-top:8px;}
+
+/* Delivery stats */
+.delivery-bar{background:#fff;border-radius:14px;padding:16px 24px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.db-left{font-size:13px;color:#374151;}
+.db-stats{display:flex;gap:28px;}
+.db-stat{text-align:center;}
+.db-val{font-size:22px;font-weight:900;color:var(--navy);}
+.db-label{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+/* AI badge */
+.ai-curated{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.ai-ico{font-size:24px;}
+.ai-text{font-size:13px;color:#1e40af;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🗞️ 自社専用<span>ニュース</span>配信</div>
+  <div class="header-meta">
+    <div class="live-badge"><div class="live-dot"></div>LIVE — 毎朝7:00自動配信</div>
+    <span style="font-size:12px;color:#94a3b8;">テックスタート版</span>
+  </div>
+</div>
+
+<div class="newspaper">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="mh-top">
+      <div class="mh-edition">Vol.248 · 2026年5月20日（水）朝刊</div>
+      <div style="font-size:11px;color:#94a3b8;">👥 12名に配信済み · 開封率 91%</div>
+    </div>
+    <div class="mh-title">テックスタート DAILY</div>
+    <div class="mh-sub">AIがキュレーションした業界ニュース + 社内アップデートをお届け</div>
+    <div class="mh-meta">
+      <div class="mh-meta-item">📅 <strong>今日の重要度：★★★★☆</strong></div>
+      <div class="mh-meta-item">📰 <strong>記事数：9本</strong>（業界5 / 競合2 / 社内2）</div>
+      <div class="mh-meta-item">⏱️ 読了時間：<strong>約5分</strong></div>
+    </div>
+  </div>
+
+  <!-- AI curated note -->
+  <div class="ai-curated">
+    <div class="ai-ico">🤖</div>
+    <div class="ai-text">
+      <strong>今日のAIサマリー：</strong>AI活用の業界導入事例が急増。競合のサービス改訂に注目。社内では今週の売上が先週比+22%と好調です。
+    </div>
+  </div>
+
+  <!-- Category filter -->
+  <div class="cat-filter">
+    <div class="cf-btn active">📰 すべて</div>
+    <div class="cf-btn">🏭 業界動向</div>
+    <div class="cf-btn">🤖 AI・DX</div>
+    <div class="cf-btn">📊 競合情報</div>
+    <div class="cf-btn">🏢 社内ニュース</div>
+    <div class="cf-btn">💰 経済・市場</div>
+  </div>
+
+  <!-- Delivery stats -->
+  <div class="delivery-bar">
+    <div class="db-left">📬 本日の配信状況</div>
+    <div class="db-stats">
+      <div class="db-stat"><div class="db-val" style="color:var(--green);">11</div><div class="db-label">開封済み</div></div>
+      <div class="db-stat"><div class="db-val">1</div><div class="db-label">未開封</div></div>
+      <div class="db-stat"><div class="db-val" style="color:var(--gold);">91%</div><div class="db-label">開封率</div></div>
+      <div class="db-stat"><div class="db-val">07:00</div><div class="db-label">配信時刻</div></div>
+    </div>
+  </div>
+
+  <!-- Main news grid -->
+  <div class="news-grid">
+    <div class="lead-article">
+      <div class="la-img">🤖</div>
+      <div class="la-body">
+        <div class="la-cat">🤖 AI・DX <span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:4px;">注目</span></div>
+        <div class="la-title">中小企業のAI導入率、前年比2.8倍に急増——経産省調査</div>
+        <div class="la-lead">経済産業省が発表した最新調査によると、従業員50名以下の中小企業におけるAIツール活用率が急上昇。特に営業支援・書類自動化の分野での導入が顕著で、導入企業の83%が「業務効率が改善した」と回答。未導入企業との生産性格差が広がりつつある。</div>
+        <div class="la-footer">
+          <div class="la-source">📰 日経新聞 · 2時間前</div>
+          <button class="read-btn">続きを読む →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-articles">
+      <div class="side-article">
+        <div class="sa-thumb" style="background:#fef3c7;">📊</div>
+        <div class="sa-meta">
+          <div class="sa-cat" style="color:var(--orange);">競合情報</div>
+          <div class="sa-title">競合A社が新料金プランを発表——月額15%値下げ</div>
+          <div class="sa-time">🕐 1時間前 · 要チェック</div>
+        </div>
+      </div>
+      <div class="side-article">
+        <div class="sa-thumb" style="background:#dcfce7;">🏢</div>
+        <div class="sa-meta">
+          <div class="sa-cat" style="color:var(--green);">社内ニュース</div>
+          <div class="sa-title">【速報】先週の売上が月間目標92%達成</div>
+          <div class="sa-time">🕐 本日 09:00</div>
+        </div>
+      </div>
+      <div class="side-article">
+        <div class="sa-thumb" style="background:#ede9fe;">🌐</div>
+        <div class="sa-meta">
+          <div class="sa-cat" style="color:var(--purple);">業界動向</div>
+          <div class="sa-title">BtoB SaaS市場、2027年に1兆円超の予測</div>
+          <div class="sa-time">🕐 昨日 · 調査レポート</div>
+        </div>
+      </div>
+      <div class="side-article">
+        <div class="sa-thumb" style="background:#fce7f3;">💼</div>
+        <div class="sa-meta">
+          <div class="sa-cat" style="color:#9d174d;">採用情報</div>
+          <div class="sa-title">【社内】営業職候補者の最終面接を今週実施予定</div>
+          <div class="sa-time">🕐 本日 · 人事部より</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom 3-col -->
+  <div class="bottom-grid">
+    <div class="news-card">
+      <div class="nc-cat" style="background:#dbeafe;color:#1e40af;">🤖 AI活用</div>
+      <div class="nc-title">ChatGPT Enterprise、日本語対応の精度が大幅向上</div>
+      <div class="nc-body">OpenAIが最新アップデートを発表。特にビジネス文書の作成と要約タスクでの精度改善が報告されている。</div>
+      <div class="nc-time">📰 Tech Crunch · 3時間前</div>
+    </div>
+    <div class="news-card">
+      <div class="nc-cat" style="background:#dcfce7;color:#166534;">💰 経済</div>
+      <div class="nc-title">日銀、金利政策を現状維持——円安局面が継続</div>
+      <div class="nc-body">日本銀行は5月の金融政策決定会合で現行政策の継続を決定。輸出企業には追い風、輸入コストは依然高水準。</div>
+      <div class="nc-time">📰 Bloomberg · 4時間前</div>
+    </div>
+    <div class="news-card">
+      <div class="nc-cat" style="background:#fce7f3;color:#9d174d;">📣 マーケ</div>
+      <div class="nc-title">SNS広告のCPAが前年比平均23%上昇——代替手法模索</div>
+      <div class="nc-body">Instagram・Meta広告のコスト高騰が継続。SEOコンテンツや紹介プログラムへの回帰傾向が強まっている。</div>
+      <div class="nc-time">📰 MarkeZine · 昨日</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

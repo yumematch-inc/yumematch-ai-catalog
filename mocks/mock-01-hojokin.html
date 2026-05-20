@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>助成金・補助金レーダー | YUMEMATCH AI</title>
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;
+  --indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);
+  --green:#059669;--green-bg:#ecfdf5;--green-bdr:#a7f3d0;
+  --red:#e11d48;--red-bg:#fff1f2;--red-bdr:#fecdd3;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bdr:#fde68a;
+  --sh:0 1px 4px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-md:0 4px 20px rgba(15,23,42,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+/* ── HEADER ── */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh);}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;}
+.logo-txt{font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
+.logo-sub{font-size:10px;color:var(--mute);font-weight:400;margin-left:4px;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.badge-live{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-bdr);display:flex;align-items:center;gap:4px;}
+.badge-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.last-update{font-size:10px;color:var(--mute);}
+.hdr-btn{font-size:11px;font-weight:600;padding:7px 14px;border-radius:7px;border:none;background:var(--indigo);color:#fff;cursor:pointer;font-family:inherit;}
+
+/* ── LAYOUT ── */
+.layout{max-width:1200px;margin:0 auto;padding:24px 20px 60px;display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start;}
+
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:76px;display:flex;flex-direction:column;gap:12px;}
+.scard{background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:16px;box-shadow:var(--sh);}
+.scard-ttl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:12px;}
+.stat-row{display:flex;flex-direction:column;gap:8px;}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;background:var(--bg);}
+.stat-lbl{font-size:11px;color:var(--sub);}
+.stat-val{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.03em;}
+.stat-val.red{color:var(--red);}
+.stat-val.amber{color:var(--amber);}
+.stat-val.green{color:var(--green);}
+
+.profile-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bdr);}
+.profile-item:last-child{border-bottom:none;}
+.profile-key{font-size:11px;color:var(--mute);}
+.profile-val{font-size:11px;font-weight:600;color:var(--ink);}
+
+.alert-list{display:flex;flex-direction:column;gap:6px;}
+.alert-item{padding:8px 10px;border-radius:8px;border-left:3px solid;font-size:11px;line-height:1.5;}
+.alert-item.urgent{background:var(--red-bg);border-color:var(--red);color:#9f1239;}
+.alert-item.warn{background:var(--amber-bg);border-color:var(--amber);color:#92400e;}
+.alert-item.info{background:var(--indigo-bg);border-color:var(--indigo);color:var(--indigo-d);}
+.alert-name{font-weight:700;margin-bottom:1px;}
+.alert-date{font-size:10px;opacity:.8;}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;gap:16px;}
+
+/* ── TOP METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.metric{background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:16px;box-shadow:var(--sh);text-align:center;}
+.metric-icon{font-size:20px;margin-bottom:6px;}
+.metric-val{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;}
+.metric-lbl{font-size:10px;color:var(--mute);margin-top:4px;letter-spacing:.04em;}
+.metric.highlight{background:linear-gradient(135deg,var(--indigo),#6d28d9);border-color:transparent;}
+.metric.highlight .metric-val,.metric.highlight .metric-lbl{color:#fff;}
+.metric.highlight .metric-icon{filter:brightness(0) invert(1);}
+
+/* ── FILTER BAR ── */
+.fbar{background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:14px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);flex-wrap:wrap;}
+.fbar-ttl{font-size:11px;font-weight:600;color:var(--sub);white-space:nowrap;}
+.ftab{padding:5px 12px;font-size:11px;font-weight:500;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--mute);cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap;}
+.ftab.on{background:var(--indigo);color:#fff;border-color:var(--indigo);font-weight:600;}
+.ftab:hover:not(.on){background:var(--bg);color:var(--sub);}
+.fbar-search{margin-left:auto;display:flex;align-items:center;gap:6px;border:1px solid var(--bdr);border-radius:7px;padding:5px 10px;background:var(--bg);}
+.fbar-search input{border:none;background:transparent;font-size:11px;color:var(--ink);outline:none;width:140px;font-family:inherit;}
+.fbar-search input::placeholder{color:var(--mute);}
+
+/* ── TABLE ── */
+.tbl-wrap{background:var(--white);border-radius:12px;border:1px solid var(--bdr);overflow:hidden;box-shadow:var(--sh);}
+.tbl-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr);background:var(--bg);}
+.tbl-head-ttl{font-size:13px;font-weight:700;color:var(--ink);}
+.tbl-head-cnt{font-size:11px;color:var(--mute);}
+table{width:100%;border-collapse:collapse;}
+th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding:10px 16px;text-align:left;border-bottom:2px solid var(--bdr);white-space:nowrap;background:var(--bg);}
+td{padding:14px 16px;border-bottom:1px solid var(--bdr);vertical-align:middle;font-size:12px;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbff;}
+.name-main{font-weight:700;color:var(--ink);margin-bottom:2px;font-size:13px;}
+.name-sub{font-size:10px;color:var(--mute);}
+.amt{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-.03em;white-space:nowrap;}
+.amt-note{font-size:9px;color:var(--mute);margin-top:1px;}
+.status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;display:inline-block;}
+.s-open{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bdr);}
+.s-warn{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bdr);}
+.s-prep{background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
+.s-closed{background:var(--bg);color:var(--mute);border:1px solid var(--bdr);}
+.deadline{font-size:12px;font-weight:600;color:var(--ink);}
+.deadline.soon{color:var(--red);}
+.deadline-left{font-size:10px;color:var(--mute);margin-top:1px;}
+.deadline-left.soon{color:var(--red);font-weight:600;}
+.stars{color:#f59e0b;font-size:13px;letter-spacing:1px;}
+.match{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--indigo-bg);color:var(--indigo);}
+.row-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--sub);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.row-btn:hover{border-color:var(--indigo);color:var(--indigo);background:var(--indigo-bg);}
+.row-btn.apply{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+.row-btn.apply:hover{background:var(--indigo-d);}
+
+/* ── DELIVERY CARD ── */
+.delivery{background:linear-gradient(135deg,#0d1b35,#1e3a6e);border-radius:12px;padding:20px 22px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.dl-left{}
+.dl-ttl{font-size:16px;font-weight:800;margin-bottom:4px;letter-spacing:-.02em;}
+.dl-sub{font-size:11px;color:rgba(255,255,255,.55);line-height:1.6;}
+.dl-next{margin-top:10px;font-size:11px;color:rgba(255,255,255,.4);}
+.dl-next strong{color:#f4a261;font-weight:700;}
+.dl-btn{padding:10px 20px;border-radius:8px;background:#f4a261;border:none;color:#0d1b35;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.dl-stat{display:flex;gap:18px;flex-shrink:0;}
+.dl-stat-item{text-align:center;}
+.dl-stat-num{font-size:22px;font-weight:800;letter-spacing:-.04em;line-height:1;}
+.dl-stat-lbl{font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.06em;}
+
+/* ── CATEGORY TAGS ── */
+.ctag{font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--bg);color:var(--sub);border:1px solid var(--bdr);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:var(--sh-md);animation:toastin .3s ease;z-index:999;}
+@keyframes toastin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:static;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-mark">📡</div>
+    <div>
+      <span class="logo-txt">助成金・補助金レーダー</span>
+      <span class="logo-sub">by YUMEMATCH AI</span>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="badge-live">毎週自動更新</div>
+    <span class="last-update">最終更新: 2026年5月19日（月）8:00</span>
+    <button class="hdr-btn" onclick="showToast('設定を保存しました')">⚙ 通知設定</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <!-- アラート -->
+    <div class="scard">
+      <div class="scard-ttl">⚠ 締切アラート</div>
+      <div class="alert-list">
+        <div class="alert-item urgent">
+          <div class="alert-name">IT導入補助金（通常枠）</div>
+          <div class="alert-date">締切まであと <strong>7日</strong>（6月10日）</div>
+        </div>
+        <div class="alert-item warn">
+          <div class="alert-name">小規模事業者持続化補助金</div>
+          <div class="alert-date">締切まであと <strong>23日</strong>（6月30日）</div>
+        </div>
+        <div class="alert-item info">
+          <div class="alert-name">事業再構築補助金（第14回）</div>
+          <div class="alert-date">次回公募 <strong>7月上旬</strong> 予定</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 今週のサマリ -->
+    <div class="scard">
+      <div class="scard-ttl">今週のサマリ</div>
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-lbl">今週の新着</span>
+          <span class="stat-val green">3件</span>
+        </div>
+        <div class="stat">
+          <span class="stat-lbl">締切間近（30日以内）</span>
+          <span class="stat-val red">2件</span>
+        </div>
+        <div class="stat">
+          <span class="stat-lbl">申請可能な最大総額</span>
+          <span class="stat-val" style="font-size:15px;">3,950万円</span>
+        </div>
+        <div class="stat">
+          <span class="stat-lbl">あなたへのマッチ度高</span>
+          <span class="stat-val amber">5件</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 会社プロフィール -->
+    <div class="scard">
+      <div class="scard-ttl">登録プロフィール</div>
+      <div>
+        <div class="profile-item">
+          <span class="profile-key">業種</span>
+          <span class="profile-val">一般企業（サービス業）</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-key">従業員数</span>
+          <span class="profile-val">1〜20名</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-key">設立</span>
+          <span class="profile-val">3年以内</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-key">所在地</span>
+          <span class="profile-val">東京都</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-key">目的</span>
+          <span class="profile-val">DX推進・採用</span>
+        </div>
+      </div>
+      <button style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;" onclick="showToast('プロフィール編集を開きます')">編集する</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- 自動配信カード -->
+    <div class="delivery">
+      <div class="dl-left">
+        <div class="dl-ttl">毎週月曜 8:00 — 自動配信中 🟢</div>
+        <div class="dl-sub">あなたのプロフィールに合った補助金・助成金を<br>毎週自動でリサーチしてLINE・メールで届けます</div>
+        <div class="dl-next">次回配信: <strong>5月26日（月）8:00</strong>　＜ 今週の候補を先に確認 ▼</div>
+      </div>
+      <div class="dl-stat">
+        <div class="dl-stat-item">
+          <div class="dl-stat-num">47</div>
+          <div class="dl-stat-lbl">通算配信数</div>
+        </div>
+        <div class="dl-stat-item">
+          <div class="dl-stat-num">12</div>
+          <div class="dl-stat-lbl">申請済み</div>
+        </div>
+        <div class="dl-stat-item">
+          <div class="dl-stat-num">680<span style="font-size:12px">万</span></div>
+          <div class="dl-stat-lbl">採択総額</div>
+        </div>
+      </div>
+      <button class="dl-btn" onclick="showToast('配信設定を開きます')">配信設定を変更</button>
+    </div>
+
+    <!-- 指標 -->
+    <div class="metrics">
+      <div class="metric highlight">
+        <div class="metric-icon">🔥</div>
+        <div class="metric-val">5</div>
+        <div class="metric-lbl">今すぐ申請できる</div>
+      </div>
+      <div class="metric">
+        <div class="metric-icon">📅</div>
+        <div class="metric-val">2</div>
+        <div class="metric-lbl">締切まで30日以内</div>
+      </div>
+      <div class="metric">
+        <div class="metric-icon">📋</div>
+        <div class="metric-val">11</div>
+        <div class="metric-lbl">今週の候補合計</div>
+      </div>
+      <div class="metric">
+        <div class="metric-icon">💴</div>
+        <div class="metric-val">3,950<span style="font-size:13px;font-weight:400">万円</span></div>
+        <div class="metric-lbl">申請可能な最大総額</div>
+      </div>
+    </div>
+
+    <!-- フィルター -->
+    <div class="fbar">
+      <span class="fbar-ttl">絞り込み：</span>
+      <button class="ftab on" onclick="setTab(this)">すべて</button>
+      <button class="ftab" onclick="setTab(this)">🔥 今すぐ申請</button>
+      <button class="ftab" onclick="setTab(this)">⚡ 締切間近</button>
+      <button class="ftab" onclick="setTab(this)">DX・IT</button>
+      <button class="ftab" onclick="setTab(this)">採用・人材</button>
+      <button class="ftab" onclick="setTab(this)">設備投資</button>
+      <button class="ftab" onclick="setTab(this)">地域・創業</button>
+      <div class="fbar-search">
+        <span style="color:var(--mute);font-size:12px;">🔍</span>
+        <input type="text" placeholder="補助金名で検索...">
+      </div>
+    </div>
+
+    <!-- テーブル -->
+    <div class="tbl-wrap">
+      <div class="tbl-head">
+        <div class="tbl-head-ttl">候補一覧</div>
+        <div class="tbl-head-cnt">11件 ／ あなたへのおすすめ順</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th>補助金・助成金名</th>
+            <th>上限額</th>
+            <th>申請期限</th>
+            <th>おすすめ度</th>
+            <th>ステータス</th>
+            <th style="width:100px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-size:18px;text-align:center;">🖥</td>
+            <td>
+              <div class="name-main">IT導入補助金2026（通常枠）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">経済産業省</span><span class="ctag">DX・IT</span><span class="match">マッチ度 高</span>
+              </div>
+            </td>
+            <td><div class="amt">¥450万円</div><div class="amt-note">補助率 1/2</div></td>
+            <td><div class="deadline soon">6月10日</div><div class="deadline-left soon">⚡ あと7日</div></td>
+            <td><div class="stars">★★★</div></td>
+            <td><span class="status s-warn">締切間近</span></td>
+            <td><button class="row-btn apply" onclick="showToast('IT導入補助金の詳細を開きます')">今すぐ確認</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">🏪</td>
+            <td>
+              <div class="name-main">小規模事業者持続化補助金（第16回）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">中小企業庁</span><span class="ctag">販路開拓</span><span class="match">マッチ度 高</span>
+              </div>
+            </td>
+            <td><div class="amt">¥200万円</div><div class="amt-note">補助率 2/3</div></td>
+            <td><div class="deadline soon">6月30日</div><div class="deadline-left soon">⚡ あと23日</div></td>
+            <td><div class="stars">★★★</div></td>
+            <td><span class="status s-open">申請受付中</span></td>
+            <td><button class="row-btn apply" onclick="showToast('持続化補助金の詳細を開きます')">今すぐ確認</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">🏭</td>
+            <td>
+              <div class="name-main">ものづくり補助金（第19次）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">中小企業庁</span><span class="ctag">設備投資</span>
+              </div>
+            </td>
+            <td><div class="amt">¥750万円</div><div class="amt-note">補助率 1/2〜2/3</div></td>
+            <td><div class="deadline">7月31日</div><div class="deadline-left">あと54日</div></td>
+            <td><div class="stars">★★☆</div></td>
+            <td><span class="status s-open">申請受付中</span></td>
+            <td><button class="row-btn" onclick="showToast('ものづくり補助金の詳細を開きます')">詳細を見る</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">🔄</td>
+            <td>
+              <div class="name-main">事業再構築補助金（第14回）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">経済産業省</span><span class="ctag">事業転換</span><span class="match">マッチ度 高</span>
+              </div>
+            </td>
+            <td><div class="amt">¥1,500万円</div><div class="amt-note">補助率 1/2〜2/3</div></td>
+            <td><div class="deadline" style="color:var(--mute);">7月上旬予定</div><div class="deadline-left">公募準備中</div></td>
+            <td><div class="stars">★★★</div></td>
+            <td><span class="status s-prep">公募準備中</span></td>
+            <td><button class="row-btn" onclick="showToast('事業再構築補助金の通知設定をしました')">通知登録</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">👥</td>
+            <td>
+              <div class="name-main">キャリアアップ助成金（正規化コース）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">厚生労働省</span><span class="ctag">採用・人材</span><span class="match">マッチ度 高</span>
+              </div>
+            </td>
+            <td><div class="amt">¥57万円</div><div class="amt-note">1人あたり（随時申請）</div></td>
+            <td><div class="deadline">随時申請可</div><div class="deadline-left">— </div></td>
+            <td><div class="stars">★★★</div></td>
+            <td><span class="status s-open">申請受付中</span></td>
+            <td><button class="row-btn apply" onclick="showToast('キャリアアップ助成金の詳細を開きます')">今すぐ確認</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">🌱</td>
+            <td>
+              <div class="name-main">東京都 創業助成金（第2回）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">東京都</span><span class="ctag">地域・創業</span>
+              </div>
+            </td>
+            <td><div class="amt">¥300万円</div><div class="amt-note">補助率 2/3</div></td>
+            <td><div class="deadline">8月15日</div><div class="deadline-left">あと69日</div></td>
+            <td><div class="stars">★★☆</div></td>
+            <td><span class="status s-open">申請受付中</span></td>
+            <td><button class="row-btn" onclick="showToast('東京都創業助成金の詳細を開きます')">詳細を見る</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">💼</td>
+            <td>
+              <div class="name-main">人材開発支援助成金（人材育成訓練）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">厚生労働省</span><span class="ctag">採用・人材</span>
+              </div>
+            </td>
+            <td><div class="amt">¥48万円</div><div class="amt-note">1人あたり（随時申請）</div></td>
+            <td><div class="deadline">随時申請可</div><div class="deadline-left">—</div></td>
+            <td><div class="stars">★★☆</div></td>
+            <td><span class="status s-open">申請受付中</span></td>
+            <td><button class="row-btn" onclick="showToast('人材開発支援助成金の詳細を開きます')">詳細を見る</button></td>
+          </tr>
+          <tr>
+            <td style="font-size:18px;text-align:center;">♻️</td>
+            <td>
+              <div class="name-main">省エネ補助金（省エネルギー設備導入）</div>
+              <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+                <span class="ctag">経済産業省</span><span class="ctag">設備投資</span>
+              </div>
+            </td>
+            <td><div class="amt">¥1,000万円</div><div class="amt-note">補助率 1/3〜1/2</div></td>
+            <td><div class="deadline" style="color:var(--mute);">9月予定</div><div class="deadline-left">公募準備中</div></td>
+            <td><div class="stars">★☆☆</div></td>
+            <td><span class="status s-prep">公募準備中</span></td>
+            <td><button class="row-btn" onclick="showToast('通知を登録しました')">通知登録</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" style="display:none;"></div>
+
+<script>
+function setTab(el){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.style.display='none';},2400);
+}
+</script>
+</body>
+</html>

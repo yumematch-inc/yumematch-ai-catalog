@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原価計算ツール — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--orange:#f97316;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+
+.container{max-width:1100px;margin:0 auto;padding:24px;}
+
+.two-col{display:grid;grid-template-columns:420px 1fr;gap:20px;align-items:start;}
+
+/* Input panel */
+.panel{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px;}
+.panel-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+
+.product-tabs{display:flex;gap:4px;background:#f4f6fb;border-radius:8px;padding:4px;margin-bottom:16px;}
+.ptab{flex:1;padding:7px;border-radius:6px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;color:#64748b;}
+.ptab.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+.field{margin-bottom:12px;}
+label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+input,select{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus{border-color:var(--blue);}
+
+/* Ingredients table */
+.ingredients-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.ingredients-table th{font-size:10px;font-weight:700;color:#94a3b8;padding:6px 8px;text-align:left;border-bottom:1px solid #f1f5f9;text-transform:uppercase;letter-spacing:.4px;}
+.ingredients-table td{padding:8px 8px;font-size:13px;border-bottom:1px solid #f8fafc;vertical-align:middle;}
+.ingredients-table tr:hover td{background:#fafafa;}
+.ing-name{font-weight:600;color:#1e293b;}
+.ing-input{border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;width:70px;text-align:right;}
+.ing-unit{font-size:11px;color:#94a3b8;margin-left:4px;}
+.ing-cost{font-size:13px;font-weight:700;color:#374151;text-align:right;}
+.add-row-btn{width:100%;border:2px dashed #e2e8f0;background:none;border-radius:8px;padding:8px;font-size:12px;color:#94a3b8;cursor:pointer;margin-bottom:14px;}
+.add-row-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+.calc-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+/* Result panel */
+.result-panel{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.rp-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+
+/* Big result numbers */
+.result-big{background:var(--navy);border-radius:12px;padding:20px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;overflow:hidden;}
+.rb-item{background:var(--navy);padding:14px 16px;}
+.rb-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.rb-val{font-size:22px;font-weight:900;color:#fff;line-height:1;}
+.rb-val.gold{color:var(--gold);}
+.rb-val.green{color:#86efac;}
+.rb-val.red{color:#fca5a5;}
+.rb-sub{font-size:10px;color:#64748b;margin-top:3px;}
+
+/* Cost breakdown donut (CSS) */
+.breakdown-section{margin-bottom:16px;}
+.bs-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;}
+.breakdown-bars{display:flex;flex-direction:column;gap:8px;}
+.bb-item{display:flex;align-items:center;gap:10px;}
+.bb-label{font-size:12px;color:#374151;width:80px;flex-shrink:0;}
+.bb-track{flex:1;background:#f1f5f9;border-radius:4px;height:12px;overflow:hidden;}
+.bb-fill{height:100%;border-radius:4px;}
+.bb-val{font-size:12px;font-weight:700;color:#374151;width:50px;text-align:right;flex-shrink:0;}
+
+/* Pricing suggestions */
+.price-table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+.price-table th{background:#f8fafc;padding:9px 14px;text-align:left;font-size:11px;font-weight:700;color:#64748b;letter-spacing:.4px;border-bottom:1px solid #e2e8f0;}
+.price-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f8fafc;}
+.price-table tr:hover td{background:#fafafa;}
+.margin-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.margin-good{background:#dcfce7;color:#166534;}
+.margin-warn{background:#fef3c7;color:#92400e;}
+.margin-bad{background:#fee2e2;color:#991b1b;}
+
+/* AI advice */
+.ai-advice{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px;}
+.aa-title{font-size:12px;font-weight:700;color:#1e40af;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.aa-body{font-size:12px;color:#1e40af;line-height:1.65;}
+
+/* Product list sidebar */
+.product-list{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.pl-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;}
+.pl-item{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:4px;}
+.pl-item.active,.pl-item:hover{background:#f8fafc;}
+.pl-name{font-size:13px;font-weight:600;color:#374151;}
+.pl-margin{font-size:11px;font-weight:700;}
+.pl-margin.good{color:var(--green);}
+.pl-margin.warn{color:var(--orange);}
+.pl-margin.bad{color:var(--red);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">原価<span>計算</span>ツール</div>
+  <div style="font-size:12px;color:#94a3b8;">花咲くプリン — 商品原価管理</div>
+</div>
+
+<div class="container">
+
+  <div class="two-col">
+
+    <!-- Left: input + product list -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">📦 原価を計算する</div>
+
+        <div class="product-tabs">
+          <div class="ptab active">🍮 ほうじ茶プリン</div>
+          <div class="ptab">🍰 レモンタルト</div>
+          <div class="ptab">＋ 新商品</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div class="field" style="margin:0;">
+            <label>商品名</label>
+            <input type="text" value="ほうじ茶プリン">
+          </div>
+          <div class="field" style="margin:0;">
+            <label>販売価格（税込）</label>
+            <input type="text" value="¥680">
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">材料費（1個あたり）</div>
+        <table class="ingredients-table">
+          <thead>
+            <tr>
+              <th>材料名</th>
+              <th>使用量</th>
+              <th>単価</th>
+              <th>コスト</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ing-name">卵（国産）</td>
+              <td><input class="ing-input" value="1.5"><span class="ing-unit">個</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥25/個</td>
+              <td class="ing-cost">¥37</td>
+            </tr>
+            <tr>
+              <td class="ing-name">牛乳</td>
+              <td><input class="ing-input" value="80"><span class="ing-unit">ml</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥2.2/ml</td>
+              <td class="ing-cost">¥18</td>
+            </tr>
+            <tr>
+              <td class="ing-name">生クリーム</td>
+              <td><input class="ing-input" value="30"><span class="ing-unit">ml</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥5.8/ml</td>
+              <td class="ing-cost">¥42</td>
+            </tr>
+            <tr>
+              <td class="ing-name">砂糖</td>
+              <td><input class="ing-input" value="15"><span class="ing-unit">g</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥0.5/g</td>
+              <td class="ing-cost">¥8</td>
+            </tr>
+            <tr>
+              <td class="ing-name">ほうじ茶（茶葉）</td>
+              <td><input class="ing-input" value="3"><span class="ing-unit">g</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥12/g</td>
+              <td class="ing-cost">¥36</td>
+            </tr>
+            <tr>
+              <td class="ing-name">容器・包材</td>
+              <td><input class="ing-input" value="1"><span class="ing-unit">式</span></td>
+              <td style="font-size:12px;color:#94a3b8;">¥45/個</td>
+              <td class="ing-cost">¥45</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="add-row-btn">＋ 材料を追加</button>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div class="field" style="margin:0;">
+            <label>人件費（1個あたり）</label>
+            <input type="text" value="¥65">
+          </div>
+          <div class="field" style="margin:0;">
+            <label>光熱費・その他経費</label>
+            <input type="text" value="¥20">
+          </div>
+        </div>
+
+        <button class="calc-btn">🧮 原価を計算する</button>
+      </div>
+
+      <div class="product-list">
+        <div class="pl-title">📋 商品一覧</div>
+        <div class="pl-item active">
+          <div class="pl-name">🍮 ほうじ茶プリン</div>
+          <div class="pl-margin good">粗利 63.7%</div>
+        </div>
+        <div class="pl-item">
+          <div class="pl-name">🍰 レモンタルト</div>
+          <div class="pl-margin good">粗利 58.2%</div>
+        </div>
+        <div class="pl-item">
+          <div class="pl-name">🍫 チョコマドレーヌ</div>
+          <div class="pl-margin warn">粗利 44.1%</div>
+        </div>
+        <div class="pl-item">
+          <div class="pl-name">🍓 いちごロールケーキ</div>
+          <div class="pl-margin bad">粗利 31.8%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: results -->
+    <div class="result-panel">
+      <div class="rp-title">📊 原価計算結果 — ほうじ茶プリン</div>
+
+      <div class="result-big">
+        <div class="rb-item">
+          <div class="rb-label">原価合計</div>
+          <div class="rb-val red">¥271</div>
+          <div class="rb-sub">材料 + 人件費 + 経費</div>
+        </div>
+        <div class="rb-item" style="border-left:1px solid rgba(255,255,255,.1);">
+          <div class="rb-label">販売価格</div>
+          <div class="rb-val">¥680</div>
+          <div class="rb-sub">税込</div>
+        </div>
+        <div class="rb-item" style="border-left:1px solid rgba(255,255,255,.1);">
+          <div class="rb-label">粗利益</div>
+          <div class="rb-val green">63.7%</div>
+          <div class="rb-sub">¥409 / 個</div>
+        </div>
+      </div>
+
+      <div class="breakdown-section">
+        <div class="bs-title">内訳</div>
+        <div class="breakdown-bars">
+          <div class="bb-item">
+            <div class="bb-label">材料費</div>
+            <div class="bb-track"><div class="bb-fill" style="width:27%;background:#ef4444;"></div></div>
+            <div class="bb-val" style="color:#ef4444;">¥186</div>
+          </div>
+          <div class="bb-item">
+            <div class="bb-label">人件費</div>
+            <div class="bb-track"><div class="bb-fill" style="width:10%;background:#f97316;"></div></div>
+            <div class="bb-val" style="color:#f97316;">¥65</div>
+          </div>
+          <div class="bb-item">
+            <div class="bb-label">光熱・その他</div>
+            <div class="bb-track"><div class="bb-fill" style="width:3%;background:#eab308;"></div></div>
+            <div class="bb-val" style="color:#eab308;">¥20</div>
+          </div>
+          <div class="bb-item">
+            <div class="bb-label">粗利益</div>
+            <div class="bb-track"><div class="bb-fill" style="width:60%;background:#22c55e;"></div></div>
+            <div class="bb-val" style="color:#22c55e;">¥409</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;">💰 価格シミュレーション</div>
+      <table class="price-table">
+        <thead><tr><th>販売価格</th><th>粗利額</th><th>粗利率</th><th>評価</th></tr></thead>
+        <tbody>
+          <tr><td>¥500</td><td>¥229</td><td>45.8%</td><td><span class="margin-tag margin-warn">まあまあ</span></td></tr>
+          <tr style="background:#f0fdf4;"><td style="font-weight:700;color:var(--green);">¥680（現在）</td><td style="font-weight:700;">¥409</td><td style="font-weight:700;">63.7%</td><td><span class="margin-tag margin-good">優良</span></td></tr>
+          <tr><td>¥800</td><td>¥529</td><td>66.1%</td><td><span class="margin-tag margin-good">理想的</span></td></tr>
+          <tr><td>¥1,000</td><td>¥729</td><td>72.9%</td><td><span class="margin-tag margin-good">最高</span></td></tr>
+          <tr><td>¥400</td><td>¥129</td><td>32.3%</td><td><span class="margin-tag margin-bad">要見直し</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="ai-advice">
+        <div class="aa-title">🤖 AIアドバイス</div>
+        <div class="aa-body">
+          現在の粗利率63.7%は菓子業界の平均（約40%）を大きく上回っており、健全な水準です。<br>
+          ただし、材料費の<strong>ほうじ茶（¥36/個）と包材（¥45/個）</strong>がコストを圧迫しています。<br>
+          包材を月50個以上発注に切り替えると約20%削減できる可能性があります。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

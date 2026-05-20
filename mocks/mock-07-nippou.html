@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社内日報 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;}
+.tab{padding:14px 24px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;transition:.15s;}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+
+.screen{display:none;padding:24px;max-width:900px;margin:0 auto;}
+.screen.active{display:block;}
+
+/* Staff view */
+.form-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.form-title{font-size:18px;font-weight:900;color:var(--navy);}
+.form-date{font-size:13px;color:#64748b;}
+.status-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.status-unpub{background:#fee2e2;color:#991b1b;}
+.status-pub{background:#dcfce7;color:#166534;}
+
+.form-section{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.fs-label{font-size:12px;font-weight:700;color:#64748b;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+.fs-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:10px;}
+textarea{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:13px;font-family:inherit;resize:vertical;color:#374151;outline:none;line-height:1.6;}
+textarea:focus{border-color:var(--blue);}
+
+.tag-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.tag-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.tag-chip.active{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+.mood-row{display:flex;gap:12px;justify-content:center;padding:8px 0;}
+.mood-btn{width:50px;height:50px;border-radius:50%;border:3px solid #e2e8f0;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.mood-btn.active,.mood-btn:hover{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,162,97,.2);}
+
+.ai-suggest{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px;margin-bottom:16px;}
+.ai-suggest-title{font-size:12px;font-weight:700;color:#1e40af;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ai-suggest-body{font-size:13px;color:#1e40af;line-height:1.6;}
+
+.submit-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;}
+.submit-btn:hover{background:#1e3a5f;}
+
+.past-list{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.past-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px;}
+.past-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
+.past-item:last-child{border-bottom:none;}
+.past-date{font-size:13px;font-weight:600;color:#374151;width:60px;}
+.past-status{font-size:11px;font-weight:700;}
+.past-done{color:var(--green);}
+
+/* Manager view */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);text-align:center;}
+.sc-val{font-size:28px;font-weight:900;color:var(--navy);line-height:1.1;}
+.sc-val.red{color:var(--red);}
+.sc-val.green{color:var(--green);}
+.sc-val.gold{color:var(--gold);}
+.sc-label{font-size:11px;color:#64748b;margin-top:4px;}
+.sc-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+.alert-box{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.alert-title{font-size:13px;font-weight:700;color:#991b1b;margin-bottom:6px;}
+.alert-names{display:flex;gap:8px;flex-wrap:wrap;}
+.alert-name{background:#fee2e2;color:#991b1b;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;}
+.remind-btn{background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:12px;}
+
+.ai-summary{background:var(--navy);border-radius:14px;padding:20px;margin-bottom:20px;border-left:4px solid var(--gold);}
+.ai-sum-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ai-sum-body{font-size:13px;color:#e2e8f0;line-height:1.7;}
+
+.report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.report-card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.rc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.rc-meta{flex:1;}
+.rc-name{font-size:14px;font-weight:700;color:#1e293b;}
+.rc-dept{font-size:11px;color:#64748b;}
+.rc-time{font-size:11px;color:#94a3b8;margin-top:2px;}
+.rc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.rc-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.tag-sales{background:#dbeafe;color:#1e40af;}
+.tag-admin{background:#f3e8ff;color:#6b21a8;}
+.tag-dev{background:#dcfce7;color:#166534;}
+.tag-hr{background:#fce7f3;color:#9d174d;}
+.rc-row{margin-bottom:8px;}
+.rc-row-label{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.rc-row-val{font-size:13px;color:#374151;line-height:1.5;}
+.rc-footer{display:flex;gap:8px;padding-top:10px;border-top:1px solid #f1f5f9;}
+.rc-btn{flex:1;border:1px solid #e2e8f0;background:none;border-radius:8px;padding:7px;font-size:12px;cursor:pointer;color:#64748b;}
+.rc-btn:hover{background:#f8fafc;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">社内<span>日報</span></div>
+  <div class="header-right">
+    <span style="font-size:12px;color:#94a3b8;">2026年5月20日（水）</span>
+    <div class="avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">山田</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('staff')">📝 スタッフ画面（提出）</div>
+  <div class="tab" onclick="switchView('manager')">👔 管理者画面（確認）</div>
+</div>
+
+<!-- STAFF VIEW -->
+<div class="screen active" id="staff">
+
+  <div class="form-header">
+    <div>
+      <div class="form-title">本日の日報</div>
+      <div class="form-date">2026年5月20日（水）</div>
+    </div>
+    <span class="status-badge status-unpub">● 未提出</span>
+  </div>
+
+  <div class="ai-suggest">
+    <div class="ai-suggest-title">✨ AIが前回の日報から気になった点</div>
+    <div class="ai-suggest-body">先週から「顧客対応に時間がかかる」という記載が3日続いています。何かサポートが必要ですか？管理者への相談もいつでもできます。</div>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">今日の主な業務</div>
+    <div class="tag-chips">
+      <div class="tag-chip active" onclick="this.classList.toggle('active')">📈 営業</div>
+      <div class="tag-chip" onclick="this.classList.toggle('active')">📋 事務</div>
+      <div class="tag-chip" onclick="this.classList.toggle('active')">💻 開発</div>
+      <div class="tag-chip" onclick="this.classList.toggle('active')">📞 顧客対応</div>
+      <div class="tag-chip" onclick="this.classList.toggle('active')">🎯 その他</div>
+    </div>
+    <textarea rows="3" placeholder="今日取り組んだ業務を具体的に入力してください"></textarea>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">達成・良かったこと</div>
+    <textarea rows="3" placeholder="小さな成果でも◎ 「〇〇ができた」「〇〇が上手くいった」"></textarea>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">課題・困っていること</div>
+    <textarea rows="3" placeholder="困っていること、時間がかかっていること、サポートが必要なこと"></textarea>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">明日の予定</div>
+    <textarea rows="2" placeholder="明日のメイン業務や予定を入力してください"></textarea>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">体調・今日の気分</div>
+    <div class="mood-row">
+      <button class="mood-btn" title="とても辛い">😰</button>
+      <button class="mood-btn" title="少し辛い">😕</button>
+      <button class="mood-btn active" title="普通">😐</button>
+      <button class="mood-btn" title="良い">😊</button>
+      <button class="mood-btn" title="とても良い">😄</button>
+    </div>
+  </div>
+
+  <button class="submit-btn">日報を提出する</button>
+
+  <div class="past-list">
+    <div class="past-title">📂 過去の日報</div>
+    <div class="past-item">
+      <div class="past-date">5/19（火）</div>
+      <div class="past-status past-done">✅ 提出済み</div>
+      <div style="font-size:11px;color:#94a3b8;margin-left:auto;">18:05提出</div>
+    </div>
+    <div class="past-item">
+      <div class="past-date">5/16（金）</div>
+      <div class="past-status past-done">✅ 提出済み</div>
+      <div style="font-size:11px;color:#94a3b8;margin-left:auto;">17:52提出</div>
+    </div>
+    <div class="past-item">
+      <div class="past-date">5/15（木）</div>
+      <div class="past-status past-done">✅ 提出済み</div>
+      <div style="font-size:11px;color:#94a3b8;margin-left:auto;">18:10提出</div>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGER VIEW -->
+<div class="screen" id="manager">
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sc-val green">8<span style="font-size:14px;color:#94a3b8;">/12名</span></div>
+      <div class="sc-label">本日提出</div>
+      <div class="sc-sub">提出率 67%</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val red">4</div>
+      <div class="sc-label">未提出</div>
+      <div class="sc-sub">リマインド推奨</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val">17:42</div>
+      <div class="sc-label">平均提出時刻</div>
+      <div class="sc-sub">先週より8分早め</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val gold">23日</div>
+      <div class="sc-label">連続提出記録</div>
+      <div class="sc-sub">🏆 田中さん</div>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <div>
+      <div class="alert-title">⚠️ 未提出メンバー（4名）</div>
+      <div class="alert-names">
+        <span class="alert-name">中村 さくら</span>
+        <span class="alert-name">高橋 健</span>
+        <span class="alert-name">木村 誠</span>
+        <span class="alert-name">松本 陽子</span>
+      </div>
+    </div>
+    <button class="remind-btn">🔔 一括リマインダーを送る</button>
+  </div>
+
+  <div class="ai-summary">
+    <div class="ai-sum-title">🤖 本日のチームサマリー（AI生成）</div>
+    <div class="ai-sum-body">
+      営業チームは顧客訪問が多く、活発な一日でした。3名が新規商談を報告しています。<br>一方、田中さんと山田さんが「見積作成の工数」について課題感を記載しています。<strong style="color:var(--gold);">見積テンプレートの整備</strong>を検討されることをお勧めします。
+    </div>
+  </div>
+
+  <div style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px;">📋 本日の日報一覧</div>
+  <div class="report-grid">
+
+    <div class="report-card">
+      <div class="rc-header">
+        <div class="avatar" style="background:#6366f1;">山田</div>
+        <div class="rc-meta">
+          <div class="rc-name">山田 太郎</div>
+          <div class="rc-dept">営業部</div>
+          <div class="rc-time">⏰ 18:02提出</div>
+        </div>
+        <div style="font-size:22px;">😊</div>
+      </div>
+      <div class="rc-tags"><span class="rc-tag tag-sales">📈 営業</span></div>
+      <div class="rc-row">
+        <div class="rc-row-label">達成</div>
+        <div class="rc-row-val">田中電機様との商談が進展、来週デモ予定</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-row-label">課題</div>
+        <div class="rc-row-val" style="color:#dc2626;">見積書の作成に時間がかかった</div>
+      </div>
+      <div class="rc-footer">
+        <button class="rc-btn">📄 詳細を見る</button>
+        <button class="rc-btn">💬 コメントする</button>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <div class="rc-header">
+        <div class="avatar" style="background:#ec4899;">鈴木</div>
+        <div class="rc-meta">
+          <div class="rc-name">鈴木 花子</div>
+          <div class="rc-dept">総務部</div>
+          <div class="rc-time">⏰ 17:30提出</div>
+        </div>
+        <div style="font-size:22px;">😄</div>
+      </div>
+      <div class="rc-tags"><span class="rc-tag tag-admin">📋 事務</span></div>
+      <div class="rc-row">
+        <div class="rc-row-label">達成</div>
+        <div class="rc-row-val">備品発注完了、採用書類の整理</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-row-label">課題</div>
+        <div class="rc-row-val">特になし</div>
+      </div>
+      <div class="rc-footer">
+        <button class="rc-btn">📄 詳細を見る</button>
+        <button class="rc-btn">💬 コメントする</button>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <div class="rc-header">
+        <div class="avatar" style="background:#10b981;">田中</div>
+        <div class="rc-meta">
+          <div class="rc-name">田中 一郎</div>
+          <div class="rc-dept">開発チーム</div>
+          <div class="rc-time">⏰ 18:15提出</div>
+        </div>
+        <div style="font-size:22px;">😐</div>
+      </div>
+      <div class="rc-tags"><span class="rc-tag tag-dev">💻 開発</span></div>
+      <div class="rc-row">
+        <div class="rc-row-label">達成</div>
+        <div class="rc-row-val">API連携実装完了、動作確認済み</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-row-label">課題</div>
+        <div class="rc-row-val" style="color:#dc2626;">テスト環境の構築に手間取った</div>
+      </div>
+      <div class="rc-footer">
+        <button class="rc-btn">📄 詳細を見る</button>
+        <button class="rc-btn">💬 コメントする</button>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <div class="rc-header">
+        <div class="avatar" style="background:#f59e0b;">佐藤</div>
+        <div class="rc-meta">
+          <div class="rc-name">佐藤 美咲</div>
+          <div class="rc-dept">人事部</div>
+          <div class="rc-time">⏰ 17:55提出</div>
+        </div>
+        <div style="font-size:22px;">😊</div>
+      </div>
+      <div class="rc-tags"><span class="rc-tag tag-hr">📞 顧客対応</span></div>
+      <div class="rc-row">
+        <div class="rc-row-label">達成</div>
+        <div class="rc-row-val">面接3件実施、候補者評価シート更新</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-row-label">課題</div>
+        <div class="rc-row-val" style="color:#dc2626;">面接日程調整の連絡が多い</div>
+      </div>
+      <div class="rc-footer">
+        <button class="rc-btn">📄 詳細を見る</button>
+        <button class="rc-btn">💬 コメントする</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchView(v){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(v).classList.add('active');
+  event.target.classList.add('active');
+}
+document.querySelectorAll('.mood-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

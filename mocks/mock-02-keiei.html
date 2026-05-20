@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>経営状態分析シート | YUMEMATCH AI</title>
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;
+  --indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);
+  --green:#059669;--green-bg:#ecfdf5;--green-bdr:#a7f3d0;
+  --red:#e11d48;--red-bg:#fff1f2;--red-bdr:#fecdd3;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bdr:#fde68a;
+  --sh:0 1px 4px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-md:0 4px 20px rgba(15,23,42,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh);}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;}
+.logo-txt{font-size:14px;font-weight:800;color:var(--ink);}
+.logo-sub{font-size:10px;color:var(--mute);font-weight:400;margin-left:4px;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.period-sel{font-size:11px;border:1px solid var(--bdr);border-radius:7px;padding:5px 10px;background:var(--bg);color:var(--ink);cursor:pointer;font-family:inherit;}
+.hdr-btn{font-size:11px;font-weight:600;padding:7px 14px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;}
+.hdr-btn.primary{background:var(--indigo);color:#fff;}
+.hdr-btn.ghost{background:transparent;border:1px solid var(--bdr);color:var(--sub);}
+
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 60px;}
+
+/* メトリクス */
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.metric{background:var(--white);border-radius:12px;border:1px solid var(--bdr);padding:16px 14px;box-shadow:var(--sh);}
+.metric-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px;}
+.metric-val{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1.1;}
+.metric-sub{font-size:10px;margin-top:5px;display:flex;align-items:center;gap:3px;}
+.up{color:var(--green);}
+.dn{color:var(--red);}
+.metric-bar{height:4px;border-radius:2px;background:var(--bdr);margin-top:8px;overflow:hidden;}
+.metric-bar-fill{height:100%;border-radius:2px;transition:width .8s ease;}
+
+/* グリッド */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* カード */
+.card{background:var(--white);border-radius:12px;border:1px solid var(--bdr);box-shadow:var(--sh);overflow:hidden;}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.card-ttl{font-size:13px;font-weight:700;color:var(--ink);}
+.card-sub{font-size:10px;color:var(--mute);}
+.card-body{padding:18px;}
+
+/* 棒グラフ */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 4px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar-wrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;height:120px;justify-content:flex-end;}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .6s ease;position:relative;cursor:pointer;}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:var(--ink);white-space:nowrap;background:var(--white);padding:1px 4px;border-radius:3px;border:1px solid var(--bdr);}
+.bar.revenue{background:linear-gradient(180deg,#6366f1,#4f46e5);}
+.bar.profit{background:linear-gradient(180deg,#34d399,#059669);}
+.bar.cost{background:linear-gradient(180deg,#fca5a5,#f87171);opacity:.7;}
+.bar-lbl{font-size:9px;color:var(--mute);white-space:nowrap;}
+
+/* 凡例 */
+.legend{display:flex;gap:14px;padding:10px 18px;border-top:1px solid var(--bdr);}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--sub);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+
+/* PL表 */
+.pl-table{width:100%;border-collapse:collapse;}
+.pl-table tr td{padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:12px;}
+.pl-table tr:last-child td{border-bottom:none;}
+.pl-table tr.subtotal td{background:var(--bg);font-weight:700;}
+.pl-table tr.total td{background:var(--ink);color:#fff;font-weight:800;font-size:13px;}
+.pl-lbl{color:var(--sub);}
+.pl-val{text-align:right;font-weight:600;}
+.pl-val.pos{color:var(--green);}
+.pl-val.neg{color:var(--red);}
+.pl-delta{text-align:right;font-size:10px;}
+.pl-indent{padding-left:28px!important;color:var(--mute)!important;font-size:11px!important;}
+
+/* KPIゲージ */
+.kpi-list{display:flex;flex-direction:column;gap:12px;}
+.kpi-item{}
+.kpi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.kpi-name{font-size:11px;font-weight:600;color:var(--ink);}
+.kpi-nums{font-size:11px;color:var(--mute);}
+.kpi-nums strong{color:var(--ink);font-size:13px;}
+.kpi-track{height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;}
+.kpi-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+
+/* 損益コメント */
+.ai-comment{background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--indigo-bdr);border-radius:10px;padding:14px 16px;display:flex;gap:10px;}
+.ai-icon{width:28px;height:28px;border-radius:50%;background:var(--indigo);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ai-body{}
+.ai-ttl{font-size:11px;font-weight:700;color:var(--indigo);margin-bottom:3px;}
+.ai-txt{font-size:11px;color:var(--sub);line-height:1.7;}
+
+/* キャッシュフロー */
+.cf-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.cf-row:last-child{border-bottom:none;}
+.cf-icon{font-size:18px;flex-shrink:0;}
+.cf-info{flex:1;}
+.cf-name{font-size:12px;font-weight:600;color:var(--ink);}
+.cf-sub{font-size:10px;color:var(--mute);}
+.cf-amt{font-size:14px;font-weight:800;letter-spacing:-.03em;}
+.cf-bar-wrap{width:80px;}
+.cf-bar-track{height:6px;background:var(--bdr);border-radius:3px;overflow:hidden;}
+.cf-bar-fill{height:100%;border-radius:3px;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:var(--sh-md);z-index:999;display:none;}
+
+@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr);}.grid2,.grid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-mark">📊</div>
+    <div>
+      <span class="logo-txt">経営状態分析シート</span>
+      <span class="logo-sub">by YUMEMATCH AI</span>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <select class="period-sel" onchange="showToast('期間を変更しました')">
+      <option>2026年 1月〜5月（今期）</option>
+      <option>2025年 通期</option>
+      <option>直近12ヶ月</option>
+    </select>
+    <button class="hdr-btn ghost" onclick="showToast('PDFを出力しています...')">📄 PDF出力</button>
+    <button class="hdr-btn primary" onclick="showToast('レポートを送信しました')">📤 顧問へ共有</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 5指標 -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-lbl">累計売上</div>
+      <div class="metric-val">2,840<span style="font-size:13px;font-weight:400">万円</span></div>
+      <div class="metric-sub up">▲ 前年同期比 +18.4%</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:71%;background:var(--indigo);"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">営業利益</div>
+      <div class="metric-val" style="color:var(--green);">342<span style="font-size:13px;font-weight:400">万円</span></div>
+      <div class="metric-sub up">▲ 利益率 12.0%</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:60%;background:var(--green);"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">売上目標達成率</div>
+      <div class="metric-val">71<span style="font-size:15px;font-weight:700">%</span></div>
+      <div class="metric-sub" style="color:var(--amber);">年間目標 4,000万円</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:71%;background:var(--amber);"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">今月のキャッシュ残高</div>
+      <div class="metric-val">847<span style="font-size:13px;font-weight:400">万円</span></div>
+      <div class="metric-sub up">▲ 先月比 +62万円</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:84%;background:var(--green);"></div></div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">人件費率</div>
+      <div class="metric-val" style="color:var(--red);">38<span style="font-size:15px;font-weight:700">%</span></div>
+      <div class="metric-sub dn">▼ 適正値 35%を超過</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:38%;background:var(--red);"></div></div>
+    </div>
+  </div>
+
+  <!-- AIコメント -->
+  <div class="ai-comment" style="margin-bottom:16px;">
+    <div class="ai-icon">AI</div>
+    <div class="ai-body">
+      <div class="ai-ttl">今月のAI分析コメント</div>
+      <div class="ai-txt">売上は前年比+18%と好調ですが、<strong>人件費率が38%と適正値を3pt超過</strong>しています。5月の採用増加が主な要因です。売上目標（4,000万円）に対する達成率は71%で推移中。残り7ヶ月で月平均 <strong>165万円</strong> の上積みが必要です。来月の経費を抑えつつ受注単価の見直しを検討してください。</div>
+    </div>
+  </div>
+
+  <!-- グラフ + PL -->
+  <div class="grid3">
+    <!-- 棒グラフ -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ttl">月次 売上 / 利益 推移</div>
+        <div class="card-sub">2026年 1月〜5月</div>
+      </div>
+      <div class="card-body" style="padding-bottom:0;">
+        <div class="bar-chart">
+          <div class="bar-col">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:68%;" data-val="468万"></div>
+              <div class="bar profit" style="height:52%;" data-val="56万"></div>
+            </div>
+            <div class="bar-lbl">1月</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:55%;" data-val="382万"></div>
+              <div class="bar profit" style="height:38%;" data-val="41万"></div>
+            </div>
+            <div class="bar-lbl">2月</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:78%;" data-val="536万"></div>
+              <div class="bar profit" style="height:64%;" data-val="68万"></div>
+            </div>
+            <div class="bar-lbl">3月</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:74%;" data-val="512万"></div>
+              <div class="bar profit" style="height:55%;" data-val="58万"></div>
+            </div>
+            <div class="bar-lbl">4月</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:80%;" data-val="556万"></div>
+              <div class="bar profit" style="height:47%;" data-val="49万"></div>
+            </div>
+            <div class="bar-lbl">5月</div>
+          </div>
+          <div class="bar-col" style="opacity:.35;">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:72%;background:var(--bdr-d,#c9d3e6);" data-val="予測"></div>
+            </div>
+            <div class="bar-lbl">6月▾</div>
+          </div>
+          <div class="bar-col" style="opacity:.2;">
+            <div class="bar-wrap">
+              <div class="bar revenue" style="height:76%;background:var(--bdr-d,#c9d3e6);" data-val="予測"></div>
+            </div>
+            <div class="bar-lbl">7月▾</div>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--indigo);"></div>売上</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>営業利益</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e4e9f2;"></div>予測（AI）</div>
+      </div>
+    </div>
+
+    <!-- PL -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ttl">損益計算書（5月）</div>
+        <div class="card-sub">前月比</div>
+      </div>
+      <table class="pl-table">
+        <tr><td class="pl-lbl">売上高</td><td class="pl-val">5,560,000円</td><td class="pl-delta up">+44万</td></tr>
+        <tr><td class="pl-lbl pl-indent">商品・役務売上</td><td class="pl-val" style="font-size:11px;color:var(--mute);">4,820,000円</td><td class="pl-delta"></td></tr>
+        <tr><td class="pl-lbl pl-indent">その他収入</td><td class="pl-val" style="font-size:11px;color:var(--mute);">740,000円</td><td class="pl-delta"></td></tr>
+        <tr class="subtotal"><td class="pl-lbl">売上原価</td><td class="pl-val neg">-2,180,000円</td><td class="pl-delta dn">+12万</td></tr>
+        <tr><td class="pl-lbl" style="padding-left:14px;font-weight:700;">粗利益</td><td class="pl-val pos">3,380,000円</td><td class="pl-delta up">+32万</td></tr>
+        <tr><td colspan="3" style="padding:4px;background:var(--bg);font-size:9px;color:var(--mute);text-align:center;letter-spacing:.05em;">— 販管費 —</td></tr>
+        <tr><td class="pl-lbl pl-indent">人件費</td><td class="pl-val neg">-2,112,000円</td><td class="pl-delta dn">+18万</td></tr>
+        <tr><td class="pl-lbl pl-indent">地代・賃料</td><td class="pl-val">-320,000円</td><td class="pl-delta">±0</td></tr>
+        <tr><td class="pl-lbl pl-indent">広告・販促</td><td class="pl-val">-458,000円</td><td class="pl-delta up">-8万</td></tr>
+        <tr><td class="pl-lbl pl-indent">その他経費</td><td class="pl-val">-192,000円</td><td class="pl-delta"></td></tr>
+        <tr class="total"><td>営業利益</td><td class="pl-val" style="color:#6ee7b7;">298,000円</td><td class="pl-delta" style="color:rgba(255,255,255,.5);">-12万</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- KPI + CF -->
+  <div class="grid2">
+    <!-- KPI -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ttl">KPI達成状況</div>
+        <div class="card-sub">目標値に対する現状</div>
+      </div>
+      <div class="card-body">
+        <div class="kpi-list">
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">月次売上</span>
+              <span class="kpi-nums"><strong>556万円</strong> / 目標 700万円</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:79%;background:var(--amber);"></div></div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">粗利率</span>
+              <span class="kpi-nums"><strong>60.8%</strong> / 目標 60%</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">人件費率</span>
+              <span class="kpi-nums" style="color:var(--red);"><strong>38%</strong> / 目標 35%以下</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:100%;background:var(--red);"></div></div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">新規顧客獲得数</span>
+              <span class="kpi-nums"><strong>7件</strong> / 目標 10件</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:70%;background:var(--indigo);"></div></div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">リピート率</span>
+              <span class="kpi-nums"><strong>84%</strong> / 目標 80%</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-head">
+              <span class="kpi-name">広告費用対効果（ROAS）</span>
+              <span class="kpi-nums"><strong>320%</strong> / 目標 300%</span>
+            </div>
+            <div class="kpi-track"><div class="kpi-fill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- キャッシュフロー -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ttl">キャッシュフロー（5月）</div>
+        <div class="card-sub">現金の動き</div>
+      </div>
+      <div class="card-body">
+        <div style="text-align:center;margin-bottom:16px;padding:14px;background:var(--green-bg);border-radius:10px;border:1px solid var(--green-bdr);">
+          <div style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:.08em;margin-bottom:4px;">TODAY — 手元残高</div>
+          <div style="font-size:32px;font-weight:800;color:var(--ink);letter-spacing:-.05em;">8,470,000<span style="font-size:14px;font-weight:400;color:var(--sub);">円</span></div>
+          <div style="font-size:10px;color:var(--green);margin-top:4px;">先月末より +620,000円 増加</div>
+        </div>
+        <div class="cf-row">
+          <div class="cf-icon">📥</div>
+          <div class="cf-info">
+            <div class="cf-name">入金合計</div>
+            <div class="cf-sub">売上入金・補助金等</div>
+          </div>
+          <div class="cf-amt" style="color:var(--green);">+5,840,000円</div>
+        </div>
+        <div class="cf-row">
+          <div class="cf-icon">📤</div>
+          <div class="cf-info">
+            <div class="cf-name">支出合計</div>
+            <div class="cf-sub">人件費・経費・仕入</div>
+          </div>
+          <div class="cf-amt" style="color:var(--red);">-5,220,000円</div>
+        </div>
+        <div class="cf-row" style="padding-top:14px;margin-top:4px;border-top:2px solid var(--bdr);border-bottom:none;">
+          <div class="cf-icon">⚠️</div>
+          <div class="cf-info">
+            <div class="cf-name" style="color:var(--amber);">来月の固定支出（予測）</div>
+            <div class="cf-sub">人件費・家賃・既存契約</div>
+          </div>
+          <div class="cf-amt" style="color:var(--amber);">-4,820,000円</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+<script>
+let tt;
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2400);}
+</script>
+</body>
+</html>

@@ -174,6 +174,8 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .tc-btn.added{background:#059669;box-shadow:0 2px 6px rgba(5,150,105,.22);}
 .tc-demo{font-size:10px;font-weight:600;padding:7px 11px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--sub);cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
 .tc-demo:hover{border-color:rgba(79,70,229,.3);color:var(--indigo);}
+.tc-mock{background:rgba(244,162,97,.1);border-color:rgba(244,162,97,.7);color:#92400e;font-weight:700;}
+.tc-mock:hover{background:rgba(244,162,97,.22);border-color:var(--gold);color:#78350f;}
 .tc-pr-lbl{font-size:9px;font-weight:400;color:var(--mute);margin-left:2px;letter-spacing:0;}
 
 /* ─── VIEW TOGGLE ─── */
@@ -622,8 +624,27 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 <script>
 const CI={info:'📡',doc:'📝',finance:'📊',hr:'👥',marketing:'📣',industry:'🏷'};
-const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱'};
+const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱',51:'💬',52:'🔔',53:'🚨',54:'📤'};
 const IC={info:'ici',doc:'icd',finance:'icf',hr:'ich',marketing:'icm',industry:'icn'};
+const MOCK={
+  1:'mocks/mock-01-hojokin.html',
+  11:'mocks/mock-02-keiei.html',
+  34:'mocks/mock-03-apo.html',
+  6:'mocks/mock-04-bizplan.html',
+  51:'mocks/mock-05-sns.html',
+  52:'mocks/mock-06-reminder.html',
+  22:'mocks/mock-07-nippou.html',
+  5:'mocks/mock-08-minutes.html',
+  53:'mocks/mock-09-incident.html',
+  31:'mocks/mock-10-label.html',
+  4:'mocks/mock-11-news.html',
+  12:'mocks/mock-12-sales.html',
+  39:'mocks/mock-13-recruit.html',
+  44:'mocks/mock-14-genka.html',
+  54:'mocks/mock-15-cover.html',
+  25:'mocks/mock-16-eventlp.html',
+  16:'mocks/mock-17-realestate.html',
+};
 
 const T=[
   {id:1,cat:'info',catL:'情報収集',name:'助成金・補助金レーダー',sym:'super',price:25000,priceL:'¥25,000〜',period:'2週間',bef:'「また締切が昨日だった…」補助金を後から知って毎回悔しい',aft:'毎週月曜、使える補助金候補がリストで届く。申請件数が増えた'},
@@ -676,6 +697,10 @@ const T=[
   {id:42,cat:'industry',catL:'業界特化',name:'カルテ・施術記録 管理',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「前回どこが気になるって言ってたっけ」と施術前に焦って紙カルテを探している',aft:'名前を入力するだけで前回の施術内容・メモが1秒で表示される'},
   {id:43,cat:'industry',catL:'業界特化',name:'生徒管理・保護者連絡ツール',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'保護者への連絡をひとりずつLINEで送る。誰に送ったか確認しながら30分かかる',aft:'対象者を選んで一斉送信。既読・未読も確認できて連絡漏れがゼロに'},
   {id:44,cat:'industry',catL:'業界特化',name:'メニュー原価計算（飲食）',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる',aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される'},
+  {id:51,cat:'hr',catL:'採用・人事',name:'社内SNS',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2〜3週間',bef:'社内の情報がLINEグループとメールに散らばって、誰が何を知っているかわからない',aft:'部門・全社のフィードが整理され、大事なお知らせも投稿も一箇所に集まった'},
+  {id:52,cat:'hr',catL:'採用・人事',name:'社内リマインダー自動配信',sym:'mid',price:25000,priceL:'¥25,000〜',period:'1〜2週間',bef:'「報告してください」と口頭・LINEで毎回同じことを言い続けている',aft:'日報・月次報告・期限前の提出物が全自動で本人に届く。追いかける手間がゼロに'},
+  {id:53,cat:'hr',catL:'採用・人事',name:'インシデント報告ツール',sym:'mid',price:30000,priceL:'¥30,000〜',period:'2週間',bef:'トラブル・クレームを聞いたのは翌日。「なんですぐ言わなかったの」が繰り返される',aft:'スマホから即報告→管理者に即通知。再発防止策もAIが提案してくれる'},
+  {id:54,cat:'doc',catL:'議事録・文書',name:'書類スキャン→送付状自動生成',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'書類を郵送するたびに送付状を1通ずつ手作り。宛名の書き間違いも怖い',aft:'書類をスキャンするだけでAIが宛先・内容を読み取り送付状が自動完成'},
 ];
 
 const QS=[
@@ -709,7 +734,7 @@ const QS=[
      {v:'LP・告知ページを作るのが面倒で機会を逃している',i:'😩',score:2,h:10,cat:'marketing'},
      {v:'ほぼ紹介だけ頼り。自分で集客する仕組みがない',i:'🔥',score:3,h:15,cat:'marketing'},
    ]},
-  {id:'budget',q:'1回あたりの予算感は？',h:'1つ選択',multi:false,
+  {id:'budget',q:'最後に1つ。改善に動けそうな予算感は？',h:'1つ選択',multi:false,
    opts:[{v:'〜 ¥50,000（まず1本試したい）',i:'💡',budget:50000},{v:'〜 ¥150,000（まとめて3〜4本）',i:'⚡',budget:150000},{v:'上限なし（課題解決を優先したい）',i:'🚀',budget:Infinity}]},
 ];
 const DEMO={
@@ -870,7 +895,7 @@ function renderT(){
   </div>
   <div style="display:flex;gap:6px;align-items:center;">
     <a class="tc-demo" href="#" onclick="event.stopPropagation();event.preventDefault();openDetail(${t.id})">詳細 →</a>
-    <a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>
+    ${MOCK[t.id]?`<a class="tc-demo tc-mock" href="${MOCK[t.id]}" onclick="event.stopPropagation()" target="_blank">🎬 デモを見る</a>`:`<a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>`}
     <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'✓ 選択中':'+ 見積もりに追加'}</button>
   </div>
 </div>`;

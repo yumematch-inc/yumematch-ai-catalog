@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新規事業リサーチチーム | YUMEMATCH AI</title>
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;
+  --indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);
+  --green:#059669;--green-bg:#ecfdf5;--green-bdr:#a7f3d0;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bdr:#fde68a;
+  --red:#e11d48;--red-bg:#fff1f2;--red-bdr:#fecdd3;
+  --gold:#f4a261;
+  --navy:#0d1b35;
+  --sh:0 1px 4px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-md:0 6px 24px rgba(15,23,42,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:var(--sh);}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;}
+.logo-txt{font-size:14px;font-weight:800;color:var(--ink);}
+.logo-sub{font-size:10px;color:var(--mute);margin-left:4px;}
+.hdr-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ══════════════════════════════
+   SCREEN 1: INPUT
+══════════════════════════════ */
+.input-wrap{max-width:760px;margin:0 auto;padding:48px 20px 80px;}
+.hero{text-align:center;margin-bottom:36px;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);margin-bottom:16px;}
+.hero-ttl{font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-.04em;margin-bottom:8px;line-height:1.2;}
+.hero-sub{font-size:14px;color:var(--sub);line-height:1.8;}
+.ex-ttl{font-size:10px;font-weight:700;color:var(--mute);margin-bottom:8px;letter-spacing:.08em;}
+.examples{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;}
+.ex-chip{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--bdr);background:var(--white);color:var(--sub);cursor:pointer;transition:all .15s;}
+.ex-chip:hover{border-color:var(--indigo-bdr);color:var(--indigo);background:var(--indigo-bg);}
+.idea-box{background:var(--white);border-radius:16px;border:1px solid var(--bdr);box-shadow:var(--sh-md);overflow:hidden;margin-bottom:16px;}
+.idea-box-hd{padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);}
+.idea-textarea{width:100%;border:none;outline:none;padding:18px 20px;font-size:14px;color:var(--ink);line-height:1.8;resize:none;min-height:130px;font-family:inherit;}
+.idea-textarea::placeholder{color:var(--mute);}
+.idea-ft{padding:10px 20px;border-top:1px solid var(--bdr);background:var(--bg);display:flex;justify-content:space-between;align-items:center;}
+.idea-ft-note{font-size:10px;color:var(--mute);}
+.agents-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.ag-chip{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:7px;box-shadow:var(--sh);}
+.ag-chip-ico{font-size:16px;}
+.ag-chip-name{font-size:10px;font-weight:600;color:var(--sub);line-height:1.35;}
+.btn-start{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--indigo),#7c3aed);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 18px rgba(79,70,229,.4);transition:all .2s;letter-spacing:-.01em;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(79,70,229,.5);}
+
+/* ══════════════════════════════
+   SCREEN 2: PROGRESS
+══════════════════════════════ */
+.prog-wrap{max-width:640px;margin:0 auto;padding:60px 20px;text-align:center;}
+.prog-ttl{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+.prog-sub{font-size:13px;color:var(--sub);margin-bottom:28px;}
+.prog-bar-outer{height:6px;background:var(--bdr);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.prog-bar-inner{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--indigo),#7c3aed);transition:width .35s ease;}
+.prog-pct{font-size:11px;font-weight:700;color:var(--indigo);margin-bottom:24px;}
+.ag-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;}
+.ag-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);transition:all .3s;}
+.ag-card.running{border-color:var(--indigo-bdr);background:var(--indigo-bg);}
+.ag-card.done{border-color:var(--green-bdr);background:var(--green-bg);}
+.ag-card-ico{font-size:20px;flex-shrink:0;}
+.ag-card-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.ag-card-status{font-size:10px;color:var(--mute);}
+.ag-card.running .ag-card-status{color:var(--indigo);}
+.ag-card.done .ag-card-status{color:var(--green);}
+.ag-dot{width:8px;height:8px;border-radius:50%;background:var(--bdr);flex-shrink:0;}
+.ag-card.running .ag-dot{background:var(--indigo);animation:blink 1s infinite;}
+.ag-card.done .ag-dot{background:var(--green);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ══════════════════════════════
+   SCREEN 3: BIZPLAN OUTPUT
+══════════════════════════════ */
+.bizplan{max-width:960px;margin:0 auto;padding:0 20px 80px;}
+
+/* 表紙 */
+.bp-cover{background:linear-gradient(150deg,var(--navy) 0%,#1a3360 60%,#0f2a50 100%);border-radius:16px;padding:40px 44px 36px;margin-bottom:24px;color:#fff;}
+.bp-cover-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.bp-go-badge{font-size:22px;font-weight:800;padding:10px 20px;border-radius:12px;background:rgba(244,162,97,.18);color:var(--gold);border:1px solid rgba(244,162,97,.3);}
+.bp-name{font-size:38px;font-weight:900;letter-spacing:-.05em;line-height:1.1;margin-bottom:8px;}
+.bp-copy{font-size:16px;color:rgba(255,255,255,.65);margin-bottom:20px;}
+.bp-experts{display:flex;flex-wrap:wrap;gap:8px;}
+.bp-expert{font-size:10px;font-weight:600;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);}
+.bp-meta{font-size:10px;color:rgba(255,255,255,.35);margin-top:16px;}
+
+/* セクション */
+.bp-sec{background:var(--white);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px;}
+.bp-sec-hd{padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.bp-sec-ttl{font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.bp-sec-ttl-ico{font-size:18px;}
+.bp-sec-by{font-size:10px;color:var(--mute);}
+.bp-sec-body{padding:20px;}
+
+/* メトリクス */
+.bp-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.bp-metric{background:var(--bg);border-radius:10px;padding:14px;text-align:center;}
+.bp-metric-ico{font-size:20px;margin-bottom:5px;}
+.bp-metric-val{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;}
+.bp-metric-lbl{font-size:9px;color:var(--mute);margin-top:4px;letter-spacing:.04em;}
+.bp-metric.hl{background:linear-gradient(135deg,var(--indigo),#7c3aed);}
+.bp-metric.hl .bp-metric-val,.bp-metric.hl .bp-metric-lbl{color:#fff;}
+
+/* TAM/SAM/SOM */
+.tam-wrap{display:flex;align-items:center;gap:24px;}
+.tam-circles{display:flex;flex-direction:column;gap:10px;flex:1;}
+.tam-row{display:flex;align-items:center;gap:10px;}
+.tam-bar{height:28px;border-radius:6px;display:flex;align-items:center;padding:0 12px;}
+.tam-bar-lbl{font-size:11px;font-weight:700;color:#fff;}
+.tam-info{font-size:12px;}
+.tam-name{font-weight:700;color:var(--ink);}
+.tam-val{font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-.03em;}
+.tam-note{font-size:10px;color:var(--mute);}
+
+/* 競合テーブル */
+.comp-tbl{width:100%;border-collapse:collapse;}
+.comp-tbl th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding:8px 12px;text-align:left;border-bottom:2px solid var(--bdr);background:var(--bg);}
+.comp-tbl td{padding:11px 12px;border-bottom:1px solid var(--bdr);font-size:12px;vertical-align:top;}
+.comp-tbl tr:last-child td{border-bottom:none;}
+.comp-tbl tr:hover td{background:#fafbff;}
+.comp-str{background:var(--green-bg);color:var(--green);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;}
+.comp-wk{background:var(--red-bg);color:var(--red);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;}
+
+/* 財務テーブル */
+.fin-tbl{width:100%;border-collapse:collapse;}
+.fin-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:8px 12px;text-align:right;border-bottom:2px solid var(--bdr);}
+.fin-tbl th:first-child{text-align:left;}
+.fin-tbl th.opt{background:var(--green-bg);color:var(--green);border-radius:4px;}
+.fin-tbl th.base{background:var(--bg);}
+.fin-tbl th.pes{background:var(--red-bg);color:var(--red);border-radius:4px;}
+.fin-tbl td{padding:9px 12px;border-bottom:1px solid var(--bdr);font-size:12px;text-align:right;}
+.fin-tbl td:first-child{text-align:left;font-weight:600;color:var(--ink);}
+.fin-tbl tr.total td{font-weight:800;background:var(--bg);}
+.fin-tbl tr.profit td{font-size:14px;font-weight:800;}
+
+/* 補助金テーブル */
+.hojo-tbl{width:100%;border-collapse:collapse;}
+.hojo-tbl th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding:8px 12px;text-align:left;border-bottom:2px solid var(--bdr);background:var(--bg);}
+.hojo-tbl td{padding:11px 12px;border-bottom:1px solid var(--bdr);font-size:12px;vertical-align:middle;}
+.hojo-tbl tr:last-child td{border-bottom:none;}
+.hojo-tbl tr.top td{background:rgba(244,162,97,.07);border-left:3px solid var(--gold);}
+.stars{color:#f59e0b;letter-spacing:1px;}
+
+/* ロードマップ */
+.roadmap{display:flex;gap:0;overflow-x:auto;}
+.rm-phase{flex:1;min-width:160px;}
+.rm-phase-hd{padding:10px 14px;font-size:11px;font-weight:700;color:#fff;border-radius:8px 8px 0 0;text-align:center;}
+.rm-phase-body{border:1px solid var(--bdr);border-top:none;border-radius:0 0 8px 8px;padding:10px;}
+.rm-item{font-size:11px;color:var(--sub);padding:5px 0;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;gap:5px;}
+.rm-item:last-child{border-bottom:none;}
+.rm-item::before{content:'◉';font-size:8px;color:var(--indigo);flex-shrink:0;margin-top:3px;}
+
+/* 専門家コメント */
+.comments{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.comment-card{border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;}
+.comment-hd{display:flex;align-items:center;gap:8px;}
+.comment-ico{font-size:20px;flex-shrink:0;}
+.comment-role{font-size:10px;font-weight:700;color:var(--sub);}
+.comment-txt{font-size:11px;line-height:1.75;color:var(--sub);}
+
+/* アクション */
+.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.action-week{background:var(--bg);border-radius:10px;padding:12px;}
+.action-week-lbl{font-size:10px;font-weight:800;color:var(--indigo);margin-bottom:8px;letter-spacing:.04em;}
+.action-item{font-size:11px;color:var(--ink);padding:5px 0;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;gap:6px;line-height:1.45;}
+.action-item:last-child{border-bottom:none;}
+.action-cb{width:12px;height:12px;border:1.5px solid var(--bdr);border-radius:3px;flex-shrink:0;margin-top:2px;}
+
+/* リスクマトリクス */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.risk-cell{border-radius:10px;padding:14px;}
+.risk-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.risk-item{font-size:11px;padding:4px 0;display:flex;align-items:flex-start;gap:5px;line-height:1.45;}
+.risk-item::before{content:'▸';flex-shrink:0;margin-top:1px;}
+
+/* 戻るボタン */
+.back-bar{display:flex;gap:10px;margin-bottom:20px;padding-top:20px;}
+.back-btn{font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;border:1px solid var(--bdr);background:var(--white);color:var(--sub);cursor:pointer;font-family:inherit;transition:all .15s;}
+.back-btn:hover{border-color:var(--indigo-bdr);color:var(--indigo);}
+.back-btn.primary{background:var(--indigo);color:#fff;border-color:var(--indigo);box-shadow:0 2px 8px rgba(79,70,229,.3);}
+.back-btn.green{background:var(--green);color:#fff;border-color:var(--green);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-mark">🔬</div>
+    <div>
+      <span class="logo-txt">新規事業リサーチチーム</span>
+      <span class="logo-sub">by YUMEMATCH AI</span>
+    </div>
+  </div>
+  <div class="hdr-badge">👥 AIエージェント 11名常駐</div>
+</header>
+
+<!-- ══ SCREEN 1: INPUT ══ -->
+<div class="screen active" id="s-input">
+<div class="input-wrap">
+  <div class="hero">
+    <div class="hero-badge">💡 思いついたことを一行書くだけ</div>
+    <div class="hero-ttl">そのアイデア、<br>本当に事業になるか調べてみよう</div>
+    <div class="hero-sub">11名のAIエージェントが市場・競合・財務・法務・補助金を同時に分析。<br>数分で本格的な事業計画書として出力されます。</div>
+  </div>
+  <div class="ex-ttl">▼ 入力例（クリックで即リサーチ結果を確認）</div>
+  <div class="examples">
+    <div class="ex-chip" style="border-color:rgba(244,162,97,.5);color:#92400e;background:#fffbeb;font-weight:600;" onclick="fillAndRun('花咲くプリン — 旬の素材を使った手作りプリン・焼き菓子ブランド。産地直送の素材にこだわりEC×催事で展開。ギフト需要を軸にした菓子事業。')">🌸 花咲くプリン（焼き菓子ブランド）← サンプルを見る</div>
+    <div class="ex-chip" onclick="fillIdea(this)">地方農家と都市消費者をつなぐ野菜の産地直送サブスク</div>
+    <div class="ex-chip" onclick="fillIdea(this)">AIを使った飲食店向け原価管理・発注自動化SaaS</div>
+    <div class="ex-chip" onclick="fillIdea(this)">高齢者向けスマートフォン操作支援の訪問サービス</div>
+  </div>
+  <div class="idea-box">
+    <div class="idea-box-hd">✏️　事業アイデアを入力してください</div>
+    <textarea class="idea-textarea" id="idea-input" placeholder="例：旬の素材を使った手作りプリン・焼き菓子のブランドを立ち上げたい。産地直送の卵・牛乳にこだわり、ECとイベント出店で展開。ギフト需要を軸に。"></textarea>
+    <div class="idea-ft">
+      <div class="idea-ft-note">どんな一行でもOK。「〇〇向けの〇〇サービス」くらいで十分です。</div>
+      <div style="font-size:10px;color:var(--mute);" id="char-count">0文字</div>
+    </div>
+  </div>
+  <div class="agents-row">
+    <div class="ag-chip"><div class="ag-chip-ico">🔍</div><div class="ag-chip-name">リサーチャー<br>市場調査</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">📣</div><div class="ag-chip-name">マーケター<br>GTM戦略</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">✍️</div><div class="ag-chip-name">コピーライター<br>命名・コピー</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">📋</div><div class="ag-chip-name">PM<br>ロードマップ</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">💰</div><div class="ag-chip-name">財務アドバイザー<br>収益モデル</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">⚖️</div><div class="ag-chip-name">弁護士<br>法務リスク</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">🧾</div><div class="ag-chip-name">税理士<br>節税・会計</div></div>
+    <div class="ag-chip"><div class="ag-chip-ico">🏛</div><div class="ag-chip-name">補助金<br>コーディネーター</div></div>
+  </div>
+  <button class="btn-start" onclick="startAnalysis()">🚀 11名のAIチームでリサーチ開始</button>
+</div>
+</div>
+
+<!-- ══ SCREEN 2: PROGRESS ══ -->
+<div class="screen" id="s-progress">
+<div class="prog-wrap">
+  <div class="prog-ttl">AIチームが並列分析中...</div>
+  <div class="prog-sub" id="prog-idea-txt"></div>
+  <div class="prog-bar-outer"><div class="prog-bar-inner" id="prog-bar" style="width:0%"></div></div>
+  <div class="prog-pct" id="prog-pct">0%</div>
+  <div class="ag-grid" id="ag-grid"></div>
+</div>
+</div>
+
+<!-- ══ SCREEN 3: BIZPLAN OUTPUT ══ -->
+<div class="screen" id="s-result">
+<div class="bizplan">
+
+  <div class="back-bar">
+    <button class="back-btn" onclick="showScreen('s-input')">← 別のアイデアを試す</button>
+    <button class="back-btn primary" onclick="alert('PDF出力（モック）')">📄 PDF出力</button>
+    <button class="back-btn green" onclick="alert('Notionに保存しました（モック）')">💾 Notionに保存</button>
+  </div>
+
+  <!-- 表紙 -->
+  <div class="bp-cover">
+    <div class="bp-cover-top">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.1em;margin-bottom:8px;">焼き菓子 × EC × 催事</div>
+        <div class="bp-name">花咲くプリン</div>
+        <div class="bp-copy" style="color:var(--gold);">HANASAKU PUDDING — 「素材の声が聞こえる、手のひらサイズの幸せ」</div>
+      </div>
+      <div class="bp-go-badge">🟢 GO</div>
+    </div>
+    <div class="bp-experts">
+      <span class="bp-expert">🔍 リサーチャー</span>
+      <span class="bp-expert">📣 マーケター</span>
+      <span class="bp-expert">✍️ コピーライター</span>
+      <span class="bp-expert">📋 PM</span>
+      <span class="bp-expert">💰 財務アドバイザー</span>
+      <span class="bp-expert">⚖️ 弁護士</span>
+      <span class="bp-expert">🧾 税理士</span>
+      <span class="bp-expert">🏛 補助金コーディネーター</span>
+      <span class="bp-expert">🍰 パティシエ</span>
+      <span class="bp-expert">📱 SNSインフルエンサー</span>
+    </div>
+    <div class="bp-meta">作成日：2026年5月20日　　YUMEMATCH AI 新規事業リサーチチーム</div>
+  </div>
+
+  <!-- エグゼクティブサマリー -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">⚡</span>エグゼクティブサマリー</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="bp-metrics">
+        <div class="bp-metric hl">
+          <div class="bp-metric-ico">📊</div>
+          <div class="bp-metric-val">3.5兆円</div>
+          <div class="bp-metric-lbl">市場規模（TAM）</div>
+        </div>
+        <div class="bp-metric">
+          <div class="bp-metric-ico">💴</div>
+          <div class="bp-metric-val">120〜200万円</div>
+          <div class="bp-metric-lbl">初期投資概算</div>
+        </div>
+        <div class="bp-metric">
+          <div class="bp-metric-ico">📈</div>
+          <div class="bp-metric-val">480万円</div>
+          <div class="bp-metric-lbl">1年後売上目標（標準）</div>
+        </div>
+        <div class="bp-metric">
+          <div class="bp-metric-ico">🏛</div>
+          <div class="bp-metric-val">最大400万円</div>
+          <div class="bp-metric-lbl">活用可能な補助金総額</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:10px;font-size:12px;line-height:1.75;">
+        <strong>🟢 VCからの判定：GO</strong><br>
+        初期投資が小さく、手作り菓子×SNSという王道かつ再現性の高いモデル。ギフト需要・催事の単価を活かせば1年目から黒字化が見込める。<strong>ブランドの世界観づくり（Instagram）と催事初出店の早期実施</strong>が最重要アクション。個人事業から始めてキャッシュを確認しながら法人化を検討するのが最適。
+      </div>
+    </div>
+  </div>
+
+  <!-- 市場分析 -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">📊</span>市場分析</div>
+      <div class="bp-sec-by">🔍 リサーチャー</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="tam-wrap">
+        <div class="tam-circles" style="flex:2;">
+          <div class="tam-row">
+            <div class="tam-bar" style="width:100%;background:linear-gradient(90deg,var(--indigo),#7c3aed);"><span class="tam-bar-lbl">TAM</span></div>
+            <div class="tam-info" style="min-width:200px;">
+              <div class="tam-name">国内菓子市場（小売含む）</div>
+              <div class="tam-val">3.5兆円</div>
+              <div class="tam-note">焼き菓子・プリン・スイーツ全体。安定成長市場</div>
+            </div>
+          </div>
+          <div class="tam-row">
+            <div class="tam-bar" style="width:60%;background:linear-gradient(90deg,#059669,#34d399);"><span class="tam-bar-lbl">SAM</span></div>
+            <div class="tam-info">
+              <div class="tam-name">手土産・ギフト菓子EC市場</div>
+              <div class="tam-val">380億円</div>
+              <div class="tam-note">SNS発・個人ブランド菓子の需要が急増中</div>
+            </div>
+          </div>
+          <div class="tam-row">
+            <div class="tam-bar" style="width:25%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"><span class="tam-bar-lbl">SOM</span></div>
+            <div class="tam-info">
+              <div class="tam-name">3年以内に狙える現実的市場</div>
+              <div class="tam-val">1.2億円</div>
+              <div class="tam-note">月平均100万円 × 12ヶ月（3年目）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px;">
+        <div style="font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.08em;margin-bottom:10px;">主要競合比較</div>
+        <table class="comp-tbl">
+          <thead><tr><th>競合名</th><th>強み</th><th>弱み</th><th>単価帯</th><th>特徴</th></tr></thead>
+          <tbody>
+            <tr><td><strong>東京ミルクチーズ工場</strong></td><td><span class="comp-str">駅ナカ展開・ブランド力</span></td><td><span class="comp-wk">個人感・温度感が薄い</span></td><td>¥1,500〜</td><td>ギフト菓子大手</td></tr>
+            <tr><td><strong>Instagramスイーツ作家</strong></td><td><span class="comp-str">世界観・ファンコミュニティ</span></td><td><span class="comp-wk">量産しにくい</span></td><td>¥800〜</td><td>個人ブランド先行組</td></tr>
+            <tr><td><strong>BASE出店者（焼菓子）</strong></td><td><span class="comp-str">手軽さ・価格</span></td><td><span class="comp-wk">差別化が見えにくい</span></td><td>¥500〜</td><td>乱立市場</td></tr>
+            <tr><td><strong>地域催事ブランド</strong></td><td><span class="comp-str">地元客の信頼</span></td><td><span class="comp-wk">オンライン弱い</span></td><td>¥1,000〜</td><td>催事特化型</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 財務計画 -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">💰</span>財務計画（3年間）</div>
+      <div class="bp-sec-by">💰 財務アドバイザー</div>
+    </div>
+    <div class="bp-sec-body">
+      <table class="fin-tbl">
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th class="opt">1年目（楽観）</th>
+            <th class="base">1年目（標準）</th>
+            <th class="pes">1年目（悲観）</th>
+            <th class="base">2年目</th>
+            <th class="base">3年目</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>EC月商（年末）</td><td style="color:var(--green);">25万円</td><td>15万円</td><td style="color:var(--red);">5万円</td><td>45万円</td><td>80万円</td></tr>
+          <tr><td>催事出店回数</td><td style="color:var(--green);">12回</td><td>8回</td><td style="color:var(--red);">4回</td><td>20回</td><td>36回</td></tr>
+          <tr><td>催事平均売上</td><td>20万円/回</td><td>15万円/回</td><td>10万円/回</td><td>25万円/回</td><td>30万円/回</td></tr>
+          <tr class="total"><td>年間売上合計</td><td style="color:var(--green);">780万円</td><td>480万円</td><td style="color:var(--red);">168万円</td><td>1,440万円</td><td>2,376万円</td></tr>
+          <tr><td>材料・製造原価（38%）</td><td>-296万円</td><td>-182万円</td><td>-64万円</td><td>-547万円</td><td>-903万円</td></tr>
+          <tr><td>包材・配送費</td><td>-80万円</td><td>-55万円</td><td>-22万円</td><td>-160万円</td><td>-280万円</td></tr>
+          <tr><td>催事出店費・交通費</td><td>-120万円</td><td>-80万円</td><td>-40万円</td><td>-200万円</td><td>-360万円</td></tr>
+          <tr><td>広告・SNS運用費</td><td>-60万円</td><td>-40万円</td><td>-20万円</td><td>-80万円</td><td>-100万円</td></tr>
+          <tr class="profit"><td>営業利益</td><td style="color:var(--green);">+224万円</td><td style="color:var(--green);">+123万円</td><td style="color:var(--red);">+22万円</td><td>+453万円</td><td>+733万円</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:11px;color:var(--mute);">※ 催事の単価・集客力が収益の鍵。EC単体では規模に限界があるため、催事×EC×ギフトの複合展開が標準〜楽観シナリオの前提。</div>
+    </div>
+  </div>
+
+  <!-- 補助金 -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">🏛</span>活用可能な補助金・助成金</div>
+      <div class="bp-sec-by">🏛 補助金コーディネーター</div>
+    </div>
+    <div class="bp-sec-body">
+      <table class="hojo-tbl">
+        <thead><tr><th>制度名</th><th>上限額</th><th>管轄</th><th>申請時期</th><th>おすすめ度</th></tr></thead>
+        <tbody>
+          <tr class="top"><td><strong>小規模事業者持続化補助金</strong></td><td>¥200万円</td><td>中小企業庁</td><td>随時（年4回）</td><td><span class="stars">★★★</span></td></tr>
+          <tr class="top"><td><strong>IT導入補助金（EC・受発注）</strong></td><td>¥150万円</td><td>経済産業省</td><td>6月締切</td><td><span class="stars">★★★</span></td></tr>
+          <tr><td>創業融資（日本政策金融公庫）</td><td>¥1,000万円</td><td>公庫</td><td>随時</td><td><span class="stars">★★☆</span></td></tr>
+          <tr><td>地域中小企業応援ファンド</td><td>¥50万円</td><td>各都道府県</td><td>通年</td><td><span class="stars">★★☆</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ロードマップ -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">🗺</span>実行ロードマップ</div>
+      <div class="bp-sec-by">📋 PM</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="roadmap" style="gap:8px;">
+        <div class="rm-phase">
+          <div class="rm-phase-hd" style="background:var(--indigo);">Month 1〜2<br>ブランド立上げ</div>
+          <div class="rm-phase-body">
+            <div class="rm-item">ロゴ・パッケージデザイン制作</div>
+            <div class="rm-item">Instagram・BASE開設</div>
+            <div class="rm-item">試作10種を友人に試食</div>
+            <div class="rm-item">食品衛生責任者資格の取得</div>
+          </div>
+        </div>
+        <div class="rm-phase">
+          <div class="rm-phase-hd" style="background:#be185d;">Month 3〜5<br>初出店・EC開始</div>
+          <div class="rm-phase-body">
+            <div class="rm-item">地域マルシェに初出店</div>
+            <div class="rm-item">EC（BASE）で正式販売開始</div>
+            <div class="rm-item">持続化補助金申請</div>
+            <div class="rm-item">Instagramフォロワー1,000人</div>
+          </div>
+        </div>
+        <div class="rm-phase">
+          <div class="rm-phase-hd" style="background:var(--green);">Month 6〜9<br>催事拡大</div>
+          <div class="rm-phase-body">
+            <div class="rm-item">百貨店催事・クリスマス市へ</div>
+            <div class="rm-item">ギフトセット商品を追加</div>
+            <div class="rm-item">LINE公式アカウント開設</div>
+            <div class="rm-item">リピーター向け先行予約導入</div>
+          </div>
+        </div>
+        <div class="rm-phase">
+          <div class="rm-phase-hd" style="background:var(--amber);">Month 10〜12<br>法人化検討</div>
+          <div class="rm-phase-body">
+            <div class="rm-item">月商20万円安定を確認</div>
+            <div class="rm-item">合同会社設立の検討</div>
+            <div class="rm-item">卸・OEM交渉を開始</div>
+            <div class="rm-item">翌年の催事カレンダー確定</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 30日To-Do -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">✅</span>最初の30日 アクションリスト</div>
+      <div class="bp-sec-by">📋 PM</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="action-grid">
+        <div class="action-week">
+          <div class="action-week-lbl">WEEK 1</div>
+          <div class="action-item"><div class="action-cb"></div>食品衛生責任者の講習を予約</div>
+          <div class="action-item"><div class="action-cb"></div>競合Instagramを10アカウント分析</div>
+          <div class="action-item"><div class="action-cb"></div>試作レシピ3種を決定</div>
+        </div>
+        <div class="action-week">
+          <div class="action-week-lbl">WEEK 2</div>
+          <div class="action-item"><div class="action-cb"></div>ロゴ・ブランドカラーを決める</div>
+          <div class="action-item"><div class="action-cb"></div>Instagram開設・世界観投稿5本</div>
+          <div class="action-item"><div class="action-cb"></div>パッケージ素材の見積もり取得</div>
+        </div>
+        <div class="action-week">
+          <div class="action-week-lbl">WEEK 3</div>
+          <div class="action-item"><div class="action-cb"></div>友人・知人20人に試食依頼</div>
+          <div class="action-item"><div class="action-cb"></div>価格設定（原価率38%以内）を確定</div>
+          <div class="action-item"><div class="action-cb"></div>近隣のマルシェ・催事を3件リストアップ</div>
+        </div>
+        <div class="action-week">
+          <div class="action-week-lbl">WEEK 4</div>
+          <div class="action-item"><div class="action-cb"></div>BASE出店ページ公開</div>
+          <div class="action-item"><div class="action-cb"></div>初回マルシェへの出店申込</div>
+          <div class="action-item"><div class="action-cb"></div>持続化補助金の申請書類を取り寄せ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- リスクマトリクス -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">⚠️</span>リスク分析</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="risk-grid">
+        <div class="risk-cell" style="background:var(--red-bg);border:1px solid var(--red-bdr);">
+          <div class="risk-cell-lbl" style="color:var(--red);">🔴 高影響 × 高確率</div>
+          <div class="risk-item" style="color:#9f1239;">製造キャパが需要に追いつかない</div>
+          <div class="risk-item" style="color:#9f1239;">催事の売上が天候・立地に左右される</div>
+        </div>
+        <div class="risk-cell" style="background:var(--amber-bg);border:1px solid var(--amber-bdr);">
+          <div class="risk-cell-lbl" style="color:var(--amber);">🟠 高影響 × 低確率</div>
+          <div class="risk-item" style="color:#92400e;">食品事故・異物混入クレーム</div>
+          <div class="risk-item" style="color:#92400e;">類似ブランドによる商標トラブル</div>
+        </div>
+        <div class="risk-cell" style="background:var(--amber-bg);border:1px solid var(--amber-bdr);">
+          <div class="risk-cell-lbl" style="color:var(--amber);">🟡 低影響 × 高確率</div>
+          <div class="risk-item" style="color:#92400e;">原材料費の高騰（バター・卵）</div>
+          <div class="risk-item" style="color:#92400e;">SNSアルゴリズム変更による集客減</div>
+        </div>
+        <div class="risk-cell" style="background:var(--green-bg);border:1px solid var(--green-bdr);">
+          <div class="risk-cell-lbl" style="color:var(--green);">🟢 低影響 × 低確率</div>
+          <div class="risk-item" style="color:#065f46;">食品衛生法の規制強化</div>
+          <div class="risk-item" style="color:#065f46;">配送業者の値上げ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 専門家コメント -->
+  <div class="bp-sec">
+    <div class="bp-sec-hd">
+      <div class="bp-sec-ttl"><span class="bp-sec-ttl-ico">💬</span>専門家チームからの一言</div>
+    </div>
+    <div class="bp-sec-body">
+      <div class="comments">
+        <div class="comment-card" style="background:#fdf2f8;">
+          <div class="comment-hd"><div class="comment-ico">🍰</div><div class="comment-role">パティシエ</div></div>
+          <div class="comment-txt">原価率38%以内に抑えるには「プリン＋焼き菓子の詰め合わせ」構成が最適。プリンは単体で売るより、賞味期限の長い焼き菓子とセット化することで廃棄ロスを減らせます。最初の看板商品を1つ決めて、それに全力投球してください。</div>
+        </div>
+        <div class="comment-card" style="background:#fce7f3;">
+          <div class="comment-hd"><div class="comment-ico">📱</div><div class="comment-role">SNSインフルエンサー</div></div>
+          <div class="comment-txt">Instagramは「製造過程の動画」が圧倒的に伸びます。完成品より「作っている手元」を見せてください。最初の100人のフォロワーは知人からで構いません。催事前に投稿数を増やして「行きたい」という雰囲気を作るのが鉄則です。</div>
+        </div>
+        <div class="comment-card" style="background:#ecfdf5;">
+          <div class="comment-hd"><div class="comment-ico">💰</div><div class="comment-role">財務アドバイザー</div></div>
+          <div class="comment-txt">初年度は黒字化できる構造です。ただし催事出店費（場所代・交通費）が想定外に膨らむケースが多い。出店1回あたりの損益を必ず計算して、赤字催事は翌年から外す判断をしてください。</div>
+        </div>
+        <div class="comment-card" style="background:#fffbeb;">
+          <div class="comment-hd"><div class="comment-ico">🏛</div><div class="comment-role">補助金コーディネーター</div></div>
+          <div class="comment-txt">小規模事業者持続化補助金は「EC開設費用・パッケージデザイン費・催事出展費」が対象になります。今すぐ申請要件を確認して、初回の催事出店費を補助金で賄う計画を立てましょう。採択率は約60%と高め！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-bar">
+    <button class="back-btn" onclick="showScreen('s-input')">← 別のアイデアを試す</button>
+    <button class="back-btn primary" onclick="alert('PDF出力（モック）')">📄 PDF出力</button>
+    <button class="back-btn green" onclick="alert('Notionに保存しました（モック）')">💾 Notionに保存</button>
+  </div>
+
+</div><!-- /bizplan -->
+</div><!-- /s-result -->
+
+<script>
+const AGENTS=[
+  {ico:'🔍',name:'リサーチャー',tasks:['市場規模を調査中...','競合5社を分析中...','TAM/SAM/SOMを算出中...']},
+  {ico:'📣',name:'マーケター',tasks:['GTM戦略を設計中...','ターゲットを特定中...','チャネルを選定中...']},
+  {ico:'✍️',name:'コピーライター',tasks:['事業名を考案中...','キャッチコピーを生成中...','エレベーターピッチを作成中...']},
+  {ico:'📋',name:'PM',tasks:['MVP定義を設計中...','ロードマップを作成中...','30日Todoを生成中...']},
+  {ico:'💰',name:'財務アドバイザー',tasks:['収益モデルを設計中...','3年財務予測を算出中...','ユニットエコノミクスを計算中...']},
+  {ico:'⚖️',name:'弁護士',tasks:['法的リスクを洗い出し中...','必要許認可を確認中...','知財戦略を検討中...']},
+  {ico:'🧾',name:'税理士',tasks:['節税スキームを検討中...','法人形態を比較中...','キャップテーブルを設計中...']},
+  {ico:'🏛',name:'補助金コーディネーター',tasks:['補助金候補を検索中...','採択率を算出中...','申請スケジュールを作成中...']},
+];
+function fillIdea(el){document.getElementById('idea-input').value=el.textContent;updateCount();}
+document.getElementById('idea-input').addEventListener('input',updateCount);
+function updateCount(){document.getElementById('char-count').textContent=document.getElementById('idea-input').value.length+'文字';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function fillAndRun(text){
+  document.getElementById('idea-input').value=text;
+  updateCount();
+  setTimeout(()=>startAnalysis(),200);
+}
+function startAnalysis(){
+  const idea=document.getElementById('idea-input').value.trim();
+  if(!idea){document.getElementById('idea-input').style.borderColor='var(--red)';setTimeout(()=>document.getElementById('idea-input').style.borderColor='',1500);return;}
+  showScreen('s-progress');
+  document.getElementById('prog-idea-txt').textContent='「'+idea.slice(0,50)+(idea.length>50?'…':'')+'」';
+  renderAgents();runProgress();
+}
+function renderAgents(){
+  document.getElementById('ag-grid').innerHTML=AGENTS.map((a,i)=>`
+    <div class="ag-card" id="ag-${i}">
+      <div class="ag-card-ico">${a.ico}</div>
+      <div style="flex:1"><div class="ag-card-name">${a.name}</div><div class="ag-card-status" id="ag-st-${i}">待機中...</div></div>
+      <div class="ag-dot" id="ag-dot-${i}"></div>
+    </div>`).join('');
+}
+function runProgress(){
+  let pct=0;
+  const donePct=AGENTS.map((_,i)=>72+i*4);
+  const startPct=AGENTS.map((_,i)=>i*9+2);
+  const timer=setInterval(()=>{
+    pct=Math.min(pct+1,100);
+    document.getElementById('prog-bar').style.width=pct+'%';
+    document.getElementById('prog-pct').textContent=pct+'%';
+    AGENTS.forEach((a,i)=>{
+      const card=document.getElementById('ag-'+i);
+      if(pct>=startPct[i]&&pct<donePct[i]){
+        if(!card.classList.contains('running')&&!card.classList.contains('done'))card.classList.add('running');
+        const ti=Math.floor((pct-startPct[i])/(donePct[i]-startPct[i])*a.tasks.length);
+        document.getElementById('ag-st-'+i).textContent=a.tasks[Math.min(ti,a.tasks.length-1)];
+      }
+      if(pct>=donePct[i]&&!card.classList.contains('done')){
+        card.classList.remove('running');card.classList.add('done');
+        document.getElementById('ag-st-'+i).textContent='✓ 分析完了';
+      }
+    });
+    if(pct>=100){clearInterval(timer);setTimeout(()=>showScreen('s-result'),600);}
+  },38);
+}
+</script>
+</body>
+</html>

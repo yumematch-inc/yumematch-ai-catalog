@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>イベントLP生成 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.h-badge{background:rgba(139,92,246,.2);color:#c4b5fd;border:1px solid rgba(139,92,246,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+/* Split layout */
+.layout{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 58px);}
+
+/* Left: input panel */
+.input-panel{background:#fff;border-right:1px solid #e2e8f0;padding:22px;overflow-y:auto;}
+.ip-title{font-size:16px;font-weight:900;color:var(--navy);margin-bottom:4px;}
+.ip-sub{font-size:12px;color:#64748b;margin-bottom:18px;}
+
+.field{margin-bottom:14px;}
+label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+input,select,textarea{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+textarea{resize:vertical;}
+
+.example-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.ec-chip{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.ec-chip:hover{border-color:var(--navy);color:var(--navy);}
+
+.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.tpl-card{padding:10px;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;text-align:center;transition:.1s;}
+.tpl-card.active{border-color:var(--navy);background:#f8fafc;}
+.tpl-card:hover:not(.active){border-color:#cbd5e1;}
+.tpl-ico{font-size:20px;margin-bottom:4px;}
+.tpl-name{font-size:11px;font-weight:700;color:#374151;}
+
+.gen-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;}
+.gen-btn:hover{background:#1e3a5f;}
+
+.theme-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.theme-btn{padding:6px 12px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.theme-btn.active{border-color:var(--purple);background:var(--purple);color:#fff;}
+
+/* Right: LP preview */
+.preview-pane{overflow-y:auto;background:#e2e8f0;position:relative;}
+.preview-toolbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.pt-left{display:flex;align-items:center;gap:8px;}
+.pt-label{font-size:12px;font-weight:700;color:#374151;}
+.device-btns{display:flex;gap:4px;background:#f4f6fb;border-radius:6px;padding:3px;}
+.db-btn{padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;color:#64748b;border:none;background:none;}
+.db-btn.active{background:#fff;color:var(--navy);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.publish-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+.dl-btn{background:none;border:1px solid #e2e8f0;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;color:#374151;}
+
+/* LP content */
+.lp-frame{margin:16px auto;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.15);overflow:hidden;width:720px;}
+
+/* LP Hero */
+.lp-hero{background:linear-gradient(135deg,#0d1b35 0%,#1e3a5f 50%,#0d1b35 100%);padding:60px 40px;text-align:center;position:relative;overflow:hidden;}
+.lp-hero::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;background:rgba(244,162,97,.1);border-radius:50%;}
+.lp-hero::after{content:'';position:absolute;bottom:-80px;right:-40px;width:250px;height:250px;background:rgba(139,92,246,.1);border-radius:50%;}
+.lp-event-label{display:inline-block;background:rgba(244,162,97,.2);color:var(--gold);border:1px solid rgba(244,162,97,.4);border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;margin-bottom:14px;position:relative;z-index:1;}
+.lp-h-title{font-size:30px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:10px;position:relative;z-index:1;}
+.lp-h-subtitle{font-size:14px;color:#94a3b8;margin-bottom:20px;position:relative;z-index:1;line-height:1.6;}
+.lp-h-meta{display:flex;justify-content:center;gap:20px;margin-bottom:24px;position:relative;z-index:1;}
+.lp-meta-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#e2e8f0;}
+.lp-cta{background:var(--gold);color:var(--navy);border:none;border-radius:12px;padding:14px 36px;font-size:15px;font-weight:900;cursor:pointer;position:relative;z-index:1;box-shadow:0 4px 20px rgba(244,162,97,.4);}
+.lp-limit{font-size:11px;color:#fca5a5;margin-top:10px;position:relative;z-index:1;}
+
+/* LP sections */
+.lp-section{padding:40px;}
+.lp-section.gray{background:#f8fafc;}
+.lp-sec-title{font-size:20px;font-weight:900;color:var(--navy);text-align:center;margin-bottom:6px;}
+.lp-sec-sub{font-size:13px;color:#64748b;text-align:center;margin-bottom:24px;}
+
+.lp-points{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.lp-point{text-align:center;padding:16px 12px;}
+.lp-point-ico{font-size:32px;margin-bottom:8px;}
+.lp-point-title{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:4px;}
+.lp-point-body{font-size:12px;color:#64748b;line-height:1.6;}
+
+.lp-schedule{width:100%;}
+.lp-schedule tr{border-bottom:1px solid #f1f5f9;}
+.lp-schedule td{padding:10px 14px;font-size:13px;}
+.lp-sch-time{font-weight:700;color:var(--navy);width:80px;}
+.lp-sch-tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;margin-right:6px;}
+
+.lp-speakers{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.lp-speaker{display:flex;gap:12px;background:#fff;border-radius:10px;padding:14px;border:1px solid #f1f5f9;}
+.ls-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;}
+.ls-meta{}
+.ls-name{font-size:13px;font-weight:700;color:#1e293b;}
+.ls-role{font-size:11px;color:#64748b;margin-top:2px;}
+.ls-bio{font-size:11px;color:#374151;margin-top:6px;line-height:1.5;}
+
+.lp-cta-bottom{background:var(--navy);padding:40px;text-align:center;}
+.lp-cta-bottom .lp-h-title{font-size:20px;}
+.lp-register-btn{background:var(--gold);color:var(--navy);border:none;border-radius:12px;padding:14px 40px;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(244,162,97,.4);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">イベント<span>LP</span>生成</div>
+  <div class="h-badge">✨ AIが3分で作成</div>
+</div>
+
+<div class="layout">
+
+  <!-- Left input panel -->
+  <div class="input-panel">
+    <div class="ip-title">イベント情報を入力</div>
+    <div class="ip-sub">入力すると右側のLPがリアルタイムで更新されます</div>
+
+    <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">サンプルを試す</div>
+    <div class="example-chips">
+      <div class="ec-chip">📊 経営セミナー</div>
+      <div class="ec-chip">🤖 AI活用勉強会</div>
+      <div class="ec-chip">🤝 交流会・懇親会</div>
+      <div class="ec-chip">🎓 採用説明会</div>
+    </div>
+
+    <div class="field">
+      <label>イベントタイトル</label>
+      <input type="text" value="中小企業のためのAI活用実践セミナー 2026">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>開催日時</label>
+        <input type="text" value="2026年6月15日 14:00">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>形式</label>
+        <select><option>オンライン</option><option>オフライン</option><option>ハイブリッド</option></select>
+      </div>
+    </div>
+    <div style="height:14px;"></div>
+    <div class="field">
+      <label>イベントの説明・ターゲット</label>
+      <textarea rows="3" placeholder="参加してほしい人、解決する課題">AI導入を検討しているが何から始めれば良いかわからない経営者・管理職向け。具体的な事例と実践的な活用方法をお伝えします。</textarea>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>参加費</label>
+        <input type="text" value="無料">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>定員</label>
+        <input type="text" value="50名（先着）">
+      </div>
+    </div>
+    <div style="height:14px;"></div>
+
+    <div class="field">
+      <label>デザインテーマ</label>
+      <div class="theme-row">
+        <div class="theme-btn active">🌌 ダークネイビー</div>
+        <div class="theme-btn">🌿 ナチュラルグリーン</div>
+        <div class="theme-btn">❤️ ビビッドレッド</div>
+        <div class="theme-btn">🌸 ライトピンク</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">セクション構成</div>
+    <div class="template-grid">
+      <div class="tpl-card active">
+        <div class="tpl-ico">🗺️</div>
+        <div class="tpl-name">登壇者紹介</div>
+      </div>
+      <div class="tpl-card active">
+        <div class="tpl-ico">📋</div>
+        <div class="tpl-name">プログラム</div>
+      </div>
+      <div class="tpl-card active">
+        <div class="tpl-ico">✅</div>
+        <div class="tpl-name">参加メリット</div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-ico">💬</div>
+        <div class="tpl-name">参加者の声</div>
+      </div>
+    </div>
+
+    <button class="gen-btn">🚀 LPを再生成する</button>
+    <div style="font-size:11px;color:#94a3b8;text-align:center;">生成完了後、URLをコピーして即公開できます</div>
+  </div>
+
+  <!-- Right: LP preview -->
+  <div class="preview-pane">
+    <div class="preview-toolbar">
+      <div class="pt-left">
+        <div class="pt-label">プレビュー</div>
+        <div class="device-btns">
+          <button class="db-btn active">🖥️ PC</button>
+          <button class="db-btn">📱 スマホ</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="dl-btn">📋 HTMLをコピー</button>
+        <button class="publish-btn">🌐 即公開する</button>
+      </div>
+    </div>
+
+    <div class="lp-frame">
+
+      <!-- Hero -->
+      <div class="lp-hero">
+        <div class="lp-event-label">🤖 無料セミナー · オンライン開催</div>
+        <div class="lp-h-title">中小企業のための<br>AI活用実践セミナー 2026</div>
+        <div class="lp-h-subtitle">「AIって何から始めればいいの？」<br>その疑問に、実例と数字でお答えします。</div>
+        <div class="lp-h-meta">
+          <div class="lp-meta-item">📅 2026年6月15日（月）</div>
+          <div class="lp-meta-item">🕐 14:00〜16:00</div>
+          <div class="lp-meta-item">💻 オンライン</div>
+          <div class="lp-meta-item">👥 先着50名</div>
+        </div>
+        <button class="lp-cta">無料で申し込む →</button>
+        <div class="lp-limit">⚠️ 残り23席 · 締め切り間近</div>
+      </div>
+
+      <!-- Points -->
+      <div class="lp-section">
+        <div class="lp-sec-title">こんな方におすすめ</div>
+        <div class="lp-sec-sub">参加者の87%が「即実践できた」と回答</div>
+        <div class="lp-points">
+          <div class="lp-point">
+            <div class="lp-point-ico">🤔</div>
+            <div class="lp-point-title">AIが気になるが<br>何から始めるか不明</div>
+            <div class="lp-point-body">具体的なツールと導入ステップを解説します</div>
+          </div>
+          <div class="lp-point">
+            <div class="lp-point-ico">⏰</div>
+            <div class="lp-point-title">毎日の業務が<br>忙しすぎる</div>
+            <div class="lp-point-body">AIで週10時間の削減を実現した事例を紹介</div>
+          </div>
+          <div class="lp-point">
+            <div class="lp-point-ico">💰</div>
+            <div class="lp-point-title">コストをかけずに<br>効率化したい</div>
+            <div class="lp-point-body">無料ツールで始める最初の一手を教えます</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="lp-section gray">
+        <div class="lp-sec-title">プログラム</div>
+        <div class="lp-sec-sub">充実の2時間</div>
+        <table class="lp-schedule">
+          <tr><td class="lp-sch-time">14:00</td><td><span class="lp-sch-tag" style="background:#dbeafe;color:#1e40af;">基礎</span>AIの基本と中小企業での活用事例</td></tr>
+          <tr><td class="lp-sch-time">14:40</td><td><span class="lp-sch-tag" style="background:#dcfce7;color:#166534;">実践</span>今日から使えるツール実演デモ</td></tr>
+          <tr><td class="lp-sch-time">15:20</td><td><span class="lp-sch-tag" style="background:#fef3c7;color:#92400e;">事例</span>導入企業3社の成功・失敗事例</td></tr>
+          <tr><td class="lp-sch-time">15:50</td><td><span class="lp-sch-tag" style="background:#ede9fe;color:#6b21a8;">Q&A</span>個別質問タイム（自由参加）</td></tr>
+        </table>
+      </div>
+
+      <!-- Speakers -->
+      <div class="lp-section">
+        <div class="lp-sec-title">登壇者</div>
+        <div class="lp-speakers">
+          <div class="lp-speaker">
+            <div class="ls-avatar" style="background:#6366f1;">山田</div>
+            <div class="ls-meta">
+              <div class="ls-name">山田 太郎</div>
+              <div class="ls-role">YUMEMATCH AI事業部長</div>
+              <div class="ls-bio">中小企業向けAI導入支援300社以上。著書「AI経営入門」</div>
+            </div>
+          </div>
+          <div class="lp-speaker">
+            <div class="ls-avatar" style="background:#ec4899;">鈴木</div>
+            <div class="ls-meta">
+              <div class="ls-name">鈴木 花子</div>
+              <div class="ls-role">業務効率化コンサルタント</div>
+              <div class="ls-bio">製造業・サービス業中心に業務改革を支援。実践事例多数。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Bottom -->
+      <div class="lp-cta-bottom">
+        <div class="lp-h-title">今すぐ無料で申し込む</div>
+        <div class="lp-h-subtitle" style="margin-bottom:20px;">先着50名 · 残り23席</div>
+        <button class="lp-register-btn">無料参加を申し込む →</button>
+      </div>
+
+    </div><!-- /lp-frame -->
+  </div><!-- /preview-pane -->
+</div><!-- /layout -->
+</body>
+</html>

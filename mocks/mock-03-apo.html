@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アポイント自動予約 | YUMEMATCH AI</title>
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--bdr:#e4e9f2;--ink:#0f172a;--sub:#475569;--mute:#94a3b8;
+  --indigo:#4f46e5;--indigo-d:#3730a3;--indigo-bg:#eef2ff;--indigo-bdr:rgba(79,70,229,.18);
+  --green:#059669;--green-bg:#ecfdf5;--green-bdr:#a7f3d0;
+  --sh:0 1px 4px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-md:0 8px 28px rgba(15,23,42,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── PAGE ── */
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 16px;}
+.container{background:var(--white);border-radius:20px;box-shadow:var(--sh-md);border:1px solid var(--bdr);width:100%;max-width:860px;display:grid;grid-template-columns:260px 1fr;overflow:hidden;}
+
+/* ── LEFT PANEL ── */
+.left{background:linear-gradient(160deg,#0d1b35 0%,#1e3a6e 100%);padding:32px 28px;display:flex;flex-direction:column;gap:20px;}
+.host-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,.2);}
+.host-name{font-size:16px;font-weight:800;color:#fff;margin-bottom:2px;}
+.host-role{font-size:11px;color:rgba(255,255,255,.5);}
+.meeting-info{display:flex;flex-direction:column;gap:10px;}
+.mi-row{display:flex;align-items:flex-start;gap:8px;}
+.mi-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.mi-body{}
+.mi-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1px;}
+.mi-val{font-size:12px;font-weight:600;color:#fff;line-height:1.4;}
+.divider{height:1px;background:rgba(255,255,255,.08);}
+.confirm-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;}
+.confirm-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:8px;}
+.confirm-date{font-size:18px;font-weight:800;color:#fff;line-height:1.2;}
+.confirm-time{font-size:14px;font-weight:600;color:#f4a261;margin-top:4px;}
+.confirm-box.empty .confirm-date{font-size:12px;color:rgba(255,255,255,.35);font-weight:400;}
+
+/* ── RIGHT PANEL ── */
+.right{padding:32px 28px;display:flex;flex-direction:column;gap:0;}
+
+/* STEPS */
+.steps{display:flex;gap:0;margin-bottom:24px;}
+.step{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.step.done .step-num{background:var(--green);color:#fff;}
+.step.active .step-num{background:var(--indigo);color:#fff;}
+.step.idle .step-num{background:var(--bg);color:var(--mute);border:1px solid var(--bdr);}
+.step.done .step-lbl{color:var(--green);}
+.step.active .step-lbl{color:var(--indigo);}
+.step.idle .step-lbl{color:var(--mute);}
+.step-arrow{color:var(--mute);font-size:10px;margin:0 6px;}
+
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-month{font-size:15px;font-weight:800;color:var(--ink);}
+.cal-arrow{width:30px;height:30px;border-radius:7px;border:1px solid var(--bdr);background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--sub);transition:all .15s;}
+.cal-arrow:hover{background:var(--bg);color:var(--ink);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-dow{font-size:9px;font-weight:700;letter-spacing:.08em;text-align:center;color:var(--mute);padding:4px 0;text-transform:uppercase;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.cal-day:hover:not(.disabled):not(.empty){background:var(--indigo-bg);color:var(--indigo);}
+.cal-day.available{color:var(--ink);font-weight:600;}
+.cal-day.available:hover{border-color:var(--indigo-bdr);}
+.cal-day.selected{background:var(--indigo);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(79,70,229,.35);}
+.cal-day.disabled{color:var(--mute);cursor:default;opacity:.4;}
+.cal-day.empty{cursor:default;}
+.cal-day.today{border:2px solid var(--indigo);color:var(--indigo);font-weight:700;}
+
+/* TIME SLOTS */
+.slots-ttl{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.slot{padding:9px 6px;border-radius:8px;border:1px solid var(--bdr);text-align:center;cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--sub);}
+.slot:hover:not(.taken){border-color:var(--indigo-bdr);background:var(--indigo-bg);color:var(--indigo);}
+.slot.selected{background:var(--indigo);color:#fff;border-color:var(--indigo);box-shadow:0 2px 8px rgba(79,70,229,.3);}
+.slot.taken{background:var(--bg);color:var(--mute);cursor:not-allowed;opacity:.5;text-decoration:line-through;}
+.slots-note{font-size:10px;color:var(--mute);margin-top:8px;}
+
+/* FORM */
+.form-grid{display:flex;flex-direction:column;gap:14px;}
+.field{}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px;letter-spacing:.04em;}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--ink);outline:none;font-family:inherit;background:var(--white);transition:border .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,.08);}
+.field textarea{resize:vertical;min-height:72px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* BUTTONS */
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
+.btn-back{font-size:12px;font-weight:600;padding:10px 16px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);cursor:pointer;font-family:inherit;}
+.btn-next{font-size:12px;font-weight:700;padding:10px 24px;border-radius:8px;border:none;background:var(--indigo);color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(79,70,229,.3);transition:all .2s;}
+.btn-next:hover{background:var(--indigo-d);transform:translateY(-1px);}
+.btn-next:disabled{background:var(--mute);box-shadow:none;transform:none;cursor:not-allowed;}
+
+/* CONFIRM */
+.confirm-card{background:var(--bg);border-radius:12px;border:1px solid var(--bdr);padding:18px;margin-bottom:14px;}
+.cc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:12px;}
+.cc-row:last-child{border-bottom:none;}
+.cc-lbl{color:var(--mute);}
+.cc-val{font-weight:600;color:var(--ink);}
+
+/* DONE */
+.done-wrap{text-align:center;padding:20px 0;}
+.done-icon{font-size:52px;margin-bottom:14px;}
+.done-ttl{font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+.done-sub{font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:20px;}
+.done-detail{background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:12px;padding:16px;text-align:left;margin-bottom:18px;}
+.done-detail-row{display:flex;gap:8px;align-items:center;padding:5px 0;font-size:12px;}
+.done-detail-icon{font-size:14px;flex-shrink:0;}
+.done-detail-txt{font-weight:600;color:var(--ink);}
+.done-btn{width:100%;padding:12px;border-radius:9px;border:none;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="container">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div>
+        <div class="host-avatar">🏢</div>
+        <div style="margin-top:10px;">
+          <div class="host-name">株式会社YUMEMATCH</div>
+          <div class="host-role">小池 裕吾 / AI業務改善コンサルタント</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="meeting-info">
+        <div class="mi-row">
+          <div class="mi-icon">⏱</div>
+          <div class="mi-body">
+            <div class="mi-lbl">所要時間</div>
+            <div class="mi-val">30分（無料）</div>
+          </div>
+        </div>
+        <div class="mi-row">
+          <div class="mi-icon">🖥</div>
+          <div class="mi-body">
+            <div class="mi-lbl">開催方法</div>
+            <div class="mi-val">オンライン（Zoom）<br>予約後にURLをお送りします</div>
+          </div>
+        </div>
+        <div class="mi-row">
+          <div class="mi-icon">📋</div>
+          <div class="mi-body">
+            <div class="mi-lbl">相談内容</div>
+            <div class="mi-val">AI業務改善ツールの<br>ご要望・ご質問なんでも</div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="confirm-box empty" id="sel-box">
+        <div class="confirm-lbl">選択中の日時</div>
+        <div class="confirm-date" id="sel-date">まだ選択されていません</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step active" id="s1"><div class="step-num">1</div><div class="step-lbl">日時選択</div></div>
+        <div class="step-arrow">›</div>
+        <div class="step idle" id="s2"><div class="step-num">2</div><div class="step-lbl">情報入力</div></div>
+        <div class="step-arrow">›</div>
+        <div class="step idle" id="s3"><div class="step-num">3</div><div class="step-lbl">確認・予約</div></div>
+      </div>
+
+      <!-- PANEL 1: カレンダー -->
+      <div class="panel active" id="p1">
+        <div class="cal-nav">
+          <button class="cal-arrow" onclick="return false;">‹</button>
+          <div class="cal-month">2026年 6月</div>
+          <button class="cal-arrow" onclick="return false;">›</button>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-dow">日</div><div class="cal-dow">月</div><div class="cal-dow">火</div>
+          <div class="cal-dow">水</div><div class="cal-dow">木</div><div class="cal-dow">金</div><div class="cal-dow">土</div>
+          <!-- week 1 -->
+          <div class="cal-day empty"></div>
+          <div class="cal-day available" onclick="selectDate(this,'6月2日（月）')">2</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月3日（火）')">3</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月4日（水）')">4</div>
+          <div class="cal-day disabled">5</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月6日（金）')">6</div>
+          <div class="cal-day disabled">7</div>
+          <!-- week 2 -->
+          <div class="cal-day disabled">8</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月9日（月）')">9</div>
+          <div class="cal-day available today" onclick="selectDate(this,'6月10日（火）')">10</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月11日（水）')">11</div>
+          <div class="cal-day disabled">12</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月13日（金）')">13</div>
+          <div class="cal-day disabled">14</div>
+          <!-- week 3 -->
+          <div class="cal-day disabled">15</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月16日（月）')">16</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月17日（火）')">17</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月18日（水）')">18</div>
+          <div class="cal-day disabled">19</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月20日（金）')">20</div>
+          <div class="cal-day disabled">21</div>
+          <!-- week 4 -->
+          <div class="cal-day disabled">22</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月23日（月）')">23</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月24日（火）')">24</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月25日（水）')">25</div>
+          <div class="cal-day disabled">26</div>
+          <div class="cal-day available" onclick="selectDate(this,'6月27日（金）')">27</div>
+          <div class="cal-day disabled">28</div>
+        </div>
+
+        <div style="margin-top:20px;" id="slot-wrap" style="display:none;">
+          <div class="slots-ttl" id="slot-ttl"></div>
+          <div class="slots" id="slots"></div>
+          <div class="slots-note">※ 日本時間（JST）で表示しています</div>
+        </div>
+
+        <div class="btn-row">
+          <div></div>
+          <button class="btn-next" id="btn-to2" disabled onclick="goStep(2)">次へ：情報入力 →</button>
+        </div>
+      </div>
+
+      <!-- PANEL 2: フォーム -->
+      <div class="panel" id="p2">
+        <div class="form-grid">
+          <div class="field-row">
+            <div class="field">
+              <label>お名前 *</label>
+              <input type="text" placeholder="山田 太郎" id="f-name">
+            </div>
+            <div class="field">
+              <label>会社名</label>
+              <input type="text" placeholder="株式会社〇〇" id="f-company">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>メールアドレス *</label>
+              <input type="email" placeholder="example@company.com" id="f-email">
+            </div>
+            <div class="field">
+              <label>電話番号（任意）</label>
+              <input type="tel" placeholder="090-0000-0000" id="f-tel">
+            </div>
+          </div>
+          <div class="field">
+            <label>業種</label>
+            <select id="f-industry">
+              <option value="">選択してください</option>
+              <option>調剤薬局・クリニック</option>
+              <option>福祉・介護事業所</option>
+              <option>飲食・食品製造</option>
+              <option>コンサル・FP・士業</option>
+              <option>美容・サロン</option>
+              <option>教育・学習塾</option>
+              <option>不動産</option>
+              <option>その他・一般企業</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>相談内容・気になること（任意）</label>
+            <textarea placeholder="例：議事録の自動化に興味があります。現在5名のチームで毎回1時間かかっています。" id="f-memo"></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="goStep(1)">← 戻る</button>
+          <button class="btn-next" onclick="goStep(3)">内容を確認する →</button>
+        </div>
+      </div>
+
+      <!-- PANEL 3: 確認 -->
+      <div class="panel" id="p3">
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">予約内容の確認</div>
+        <div class="confirm-card">
+          <div class="cc-row"><span class="cc-lbl">日時</span><span class="cc-val" id="c-datetime">—</span></div>
+          <div class="cc-row"><span class="cc-lbl">所要時間</span><span class="cc-val">30分（無料）</span></div>
+          <div class="cc-row"><span class="cc-lbl">開催方法</span><span class="cc-val">Zoom（予約後にURLをお送りします）</span></div>
+          <div class="cc-row"><span class="cc-lbl">お名前</span><span class="cc-val" id="c-name">—</span></div>
+          <div class="cc-row"><span class="cc-lbl">メールアドレス</span><span class="cc-val" id="c-email">—</span></div>
+          <div class="cc-row"><span class="cc-lbl">会社名</span><span class="cc-val" id="c-company">—</span></div>
+          <div class="cc-row"><span class="cc-lbl">業種</span><span class="cc-val" id="c-industry">—</span></div>
+        </div>
+        <div style="font-size:11px;color:var(--mute);line-height:1.7;margin-bottom:16px;">予約確定後、<strong>登録メールアドレスに確認メールとZoom URLをお送りします。</strong>前日にリマインドメールも自動送信されます。</div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="goStep(2)">← 戻る</button>
+          <button class="btn-next" onclick="goStep(4)" style="background:var(--green);box-shadow:0 2px 8px rgba(5,150,105,.3);">✓ 予約を確定する</button>
+        </div>
+      </div>
+
+      <!-- PANEL 4: 完了 -->
+      <div class="panel" id="p4">
+        <div class="done-wrap">
+          <div class="done-icon">🎉</div>
+          <div class="done-ttl">予約が確定しました！</div>
+          <div class="done-sub">確認メールを送信しました。<br>当日はZoomのURLよりご参加ください。</div>
+          <div class="done-detail">
+            <div class="done-detail-row"><div class="done-detail-icon">📅</div><div class="done-detail-txt" id="d-datetime">—</div></div>
+            <div class="done-detail-row"><div class="done-detail-icon">🖥</div><div class="done-detail-txt">Zoom（ミーティングURL：自動送付済み）</div></div>
+            <div class="done-detail-row"><div class="done-detail-icon">🔔</div><div class="done-detail-txt">前日18:00にリマインドメールをお送りします</div></div>
+          </div>
+          <button class="done-btn" onclick="goStep(1);resetAll()">別の日時で予約する</button>
+        </div>
+      </div>
+
+    </div><!-- /right -->
+  </div>
+</div>
+
+<script>
+let selDate='', selTime='', selDateEl=null, selTimeEl=null;
+
+const SLOTS_BY_DOW={
+  '月':['10:00','10:30','11:00','13:00','13:30','14:00','15:00','16:00','16:30'],
+  '火':['10:00','10:30','11:00','14:00','14:30','15:00','16:00'],
+  '水':['10:00','11:00','13:00','14:00','15:00','15:30','16:00'],
+  '金':['10:00','10:30','11:00','13:00','14:00','15:00','16:00','16:30'],
+};
+const TAKEN={
+  '6月3日（火）':['10:00','14:30'],
+  '6月10日（火）':['10:00','10:30','14:00'],
+  '6月16日（月）':['13:00','15:00'],
+};
+
+function selectDate(el, dateStr){
+  document.querySelectorAll('.cal-day.selected').forEach(d=>d.classList.remove('selected'));
+  el.classList.add('selected');
+  selDate=dateStr; selTime='';
+  document.getElementById('btn-to2').disabled=true;
+  if(selTimeEl){selTimeEl.classList.remove('selected');selTimeEl=null;}
+  const dow=dateStr.match(/（(.+?)）/)[1];
+  const slots=SLOTS_BY_DOW[dow]||SLOTS_BY_DOW['月'];
+  const taken=TAKEN[dateStr]||[];
+  const wrap=document.getElementById('slot-wrap');
+  wrap.style.display='block';
+  document.getElementById('slot-ttl').textContent=dateStr+'の空き時間';
+  document.getElementById('slots').innerHTML=slots.map(t=>{
+    const tk=taken.includes(t);
+    return `<div class="slot${tk?' taken':''}" ${tk?'':'onclick="selectTime(this,\''+t+'\')"'}>${t}${tk?'<br><span style="font-size:9px;">予約済</span>':''}</div>`;
+  }).join('');
+  updateConfirmBox();
+}
+
+function selectTime(el,t){
+  document.querySelectorAll('.slot.selected').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selTime=t; selTimeEl=el;
+  document.getElementById('btn-to2').disabled=false;
+  updateConfirmBox();
+}
+
+function updateConfirmBox(){
+  const box=document.getElementById('sel-box');
+  const dateEl=document.getElementById('sel-date');
+  if(selDate && selTime){
+    box.classList.remove('empty');
+    dateEl.innerHTML=`<div class="confirm-date">${selDate}</div><div class="confirm-time">${selTime}〜${addMin(selTime,30)}</div>`;
+  } else if(selDate){
+    box.classList.add('empty');
+    dateEl.innerHTML=`<div class="confirm-date">${selDate}</div><div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:4px;">時間を選んでください</div>`;
+  }
+}
+
+function addMin(t,m){
+  const [h,min]=t.split(':').map(Number);
+  const tot=h*60+min+m;
+  return `${Math.floor(tot/60)}:${String(tot%60).padStart(2,'0')}`;
+}
+
+function goStep(n){
+  for(let i=1;i<=4;i++){
+    document.getElementById('p'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('s'+i);
+    if(s){s.className='step '+(i<n?'done':i===n?'active':'idle');}
+  }
+  if(n===3){
+    document.getElementById('c-datetime').textContent=selDate+' '+selTime+'〜'+addMin(selTime,30);
+    document.getElementById('c-name').textContent=document.getElementById('f-name').value||'—';
+    document.getElementById('c-email').textContent=document.getElementById('f-email').value||'—';
+    document.getElementById('c-company').textContent=document.getElementById('f-company').value||'（未入力）';
+    document.getElementById('c-industry').textContent=document.getElementById('f-industry').value||'（未選択）';
+  }
+  if(n===4){
+    document.getElementById('d-datetime').textContent=selDate+' '+selTime+'〜'+addMin(selTime,30);
+  }
+}
+
+function resetAll(){
+  selDate='';selTime='';selTimeEl=null;selDateEl=null;
+  document.querySelectorAll('.cal-day.selected').forEach(d=>d.classList.remove('selected'));
+  document.getElementById('slot-wrap').style.display='none';
+  document.getElementById('btn-to2').disabled=true;
+  document.getElementById('sel-box').classList.add('empty');
+  document.getElementById('sel-date').textContent='まだ選択されていません';
+  ['f-name','f-company','f-email','f-tel','f-memo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-industry').value='';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>売上集計ツール — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.last-update{font-size:11px;color:#94a3b8;}
+.sync-btn{background:rgba(34,197,94,.2);color:#86efac;border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+.container{max-width:1100px;margin:0 auto;padding:24px;}
+
+/* Period selector */
+.period-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;background:#fff;border-radius:12px;padding:12px 20px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.period-tabs{display:flex;gap:4px;background:#f4f6fb;border-radius:8px;padding:4px;}
+.pt{padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;color:#64748b;}
+.pt.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.period-label{font-size:13px;font-weight:600;color:#374151;}
+
+/* KPI cards */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.kc-label{font-size:11px;color:#64748b;margin-bottom:6px;font-weight:600;}
+.kc-val{font-size:24px;font-weight:900;color:var(--navy);line-height:1;}
+.kc-sub{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px;}
+.up{color:var(--green);}
+.down{color:var(--red);}
+.kpi-card.highlight{background:var(--navy);border-bottom:3px solid var(--gold);}
+.kpi-card.highlight .kc-label{color:#94a3b8;}
+.kpi-card.highlight .kc-val{color:#fff;}
+
+/* Progress bar for goal */
+.goal-bar{margin-top:8px;}
+.gb-track{background:#e2e8f0;border-radius:4px;height:6px;overflow:hidden;}
+.gb-fill{height:100%;border-radius:4px;background:var(--green);}
+.gb-label{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px;}
+
+/* Chart area */
+.chart-section{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px;}
+.cs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cs-title{font-size:14px;font-weight:700;color:#1e293b;}
+.legend{display:flex;gap:16px;}
+.lg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b;}
+.lg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* Bar chart CSS only */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:180px;padding-bottom:4px;}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px;}
+.bar{border-radius:4px 4px 0 0;min-height:4px;transition:.3s;}
+.bar-label{font-size:10px;color:#94a3b8;text-align:center;}
+.bar-actual{background:var(--navy);}
+.bar-target{background:#e2e8f0;opacity:.7;}
+.bar-forecast{background:var(--blue);opacity:.6;}
+
+/* Table */
+.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;margin-bottom:20px;}
+.ts-header{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
+.ts-title{font-size:14px;font-weight:700;color:#1e293b;}
+.dl-btn{background:none;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#64748b;}
+table{width:100%;border-collapse:collapse;}
+th{background:#f8fafc;padding:10px 18px;text-align:right;font-size:11px;font-weight:700;color:#64748b;letter-spacing:.5px;border-bottom:1px solid #e2e8f0;}
+th:first-child{text-align:left;}
+td{padding:12px 18px;font-size:13px;border-bottom:1px solid #f8fafc;text-align:right;}
+td:first-child{text-align:left;font-weight:700;color:#1e293b;}
+tr:hover td{background:#fafafa;}
+.delta-up{color:var(--green);font-weight:700;}
+.delta-down{color:var(--red);font-weight:700;}
+.achievement{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.ach-good{background:#dcfce7;color:#166534;}
+.ach-warn{background:#fef3c7;color:#92400e;}
+.ach-bad{background:#fee2e2;color:#991b1b;}
+
+/* AI insight */
+.ai-insight{background:var(--navy);border-radius:14px;padding:18px 22px;border-left:4px solid var(--gold);}
+.ai-i-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ai-i-body{font-size:13px;color:#e2e8f0;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">売上<span>集計</span>ツール</div>
+  <div class="header-right">
+    <div class="last-update">最終更新: 今日 08:00</div>
+    <div class="sync-btn">🔄 Google Sheets同期</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="period-bar">
+    <div class="period-tabs">
+      <div class="pt">日次</div>
+      <div class="pt active">月次</div>
+      <div class="pt">四半期</div>
+      <div class="pt">年次</div>
+    </div>
+    <div class="period-label">📅 2026年5月（1〜20日）</div>
+    <div style="display:flex;gap:8px;">
+      <button style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;">◀ 前月</button>
+      <button style="border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;">翌月 ▶</button>
+    </div>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-row">
+    <div class="kpi-card highlight">
+      <div class="kc-label">今月の売上（速報）</div>
+      <div class="kc-val">¥2,340<span style="font-size:14px;font-weight:500;color:#94a3b8;">万</span></div>
+      <div class="goal-bar">
+        <div class="gb-track"><div class="gb-fill" style="width:92%;"></div></div>
+        <div class="gb-label"><span>0</span><span>目標 2,540万（92%達成）</span></div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kc-label">前月比</div>
+      <div class="kc-val" style="color:var(--green);">+22%</div>
+      <div class="kc-sub up">▲ +420万円</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kc-label">粗利益</div>
+      <div class="kc-val">¥1,053万</div>
+      <div class="kc-sub">粗利率 <strong>45%</strong></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kc-label">新規売上</div>
+      <div class="kc-val">¥480<span style="font-size:14px;font-weight:500;color:#94a3b8;">万</span></div>
+      <div class="kc-sub">3件 / 目標5件</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kc-label">既存顧客売上</div>
+      <div class="kc-val">¥1,860<span style="font-size:14px;font-weight:500;color:#94a3b8;">万</span></div>
+      <div class="kc-sub up">▲ +15%</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-section">
+    <div class="cs-header">
+      <div class="cs-title">📊 月別売上推移（単位：百万円）</div>
+      <div class="legend">
+        <div class="lg-item"><div class="lg-dot" style="background:var(--navy);"></div>実績</div>
+        <div class="lg-item"><div class="lg-dot" style="background:#e2e8f0;"></div>目標</div>
+        <div class="lg-item"><div class="lg-dot" style="background:var(--blue);opacity:.6;"></div>AI予測</div>
+      </div>
+    </div>
+    <div class="bar-chart">
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:80px;"></div>
+          <div class="bar bar-target" style="width:16px;height:100px;"></div>
+        </div>
+        <div class="bar-label">12月</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:95px;"></div>
+          <div class="bar bar-target" style="width:16px;height:100px;"></div>
+        </div>
+        <div class="bar-label">1月</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:108px;"></div>
+          <div class="bar bar-target" style="width:16px;height:100px;"></div>
+        </div>
+        <div class="bar-label">2月</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:115px;"></div>
+          <div class="bar bar-target" style="width:16px;height:110px;"></div>
+        </div>
+        <div class="bar-label">3月</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:102px;"></div>
+          <div class="bar bar-target" style="width:16px;height:115px;"></div>
+        </div>
+        <div class="bar-label">4月</div>
+      </div>
+      <div class="bar-group" style="position:relative;">
+        <div class="bar-wrap">
+          <div class="bar bar-actual" style="width:32px;height:130px;background:var(--gold);"></div>
+          <div class="bar bar-target" style="width:16px;height:142px;"></div>
+          <div class="bar bar-forecast" style="width:16px;height:155px;"></div>
+        </div>
+        <div class="bar-label" style="font-weight:700;color:var(--navy);">5月▶</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-forecast" style="width:40px;height:145px;opacity:.4;"></div>
+        </div>
+        <div class="bar-label" style="color:var(--blue);">6月AI</div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-wrap">
+          <div class="bar bar-forecast" style="width:40px;height:160px;opacity:.4;"></div>
+        </div>
+        <div class="bar-label" style="color:var(--blue);">7月AI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-section">
+    <div class="ts-header">
+      <div class="ts-title">📋 担当者別売上（5月）</div>
+      <button class="dl-btn">📥 CSV出力</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>担当者</th>
+          <th>今月売上</th>
+          <th>目標</th>
+          <th>達成率</th>
+          <th>前月比</th>
+          <th>新規件数</th>
+          <th>評価</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>山田 太郎</td>
+          <td>¥8,200,000</td>
+          <td>¥8,000,000</td>
+          <td><span class="achievement ach-good">102.5%</span></td>
+          <td class="delta-up">▲+18%</td>
+          <td>2件</td>
+          <td>🏆</td>
+        </tr>
+        <tr>
+          <td>高橋 健</td>
+          <td>¥6,100,000</td>
+          <td>¥7,000,000</td>
+          <td><span class="achievement ach-warn">87.1%</span></td>
+          <td class="delta-up">▲+5%</td>
+          <td>1件</td>
+          <td>📈</td>
+        </tr>
+        <tr>
+          <td>中村 さくら</td>
+          <td>¥4,800,000</td>
+          <td>¥5,000,000</td>
+          <td><span class="achievement ach-warn">96.0%</span></td>
+          <td class="delta-up">▲+32%</td>
+          <td>0件</td>
+          <td>⭐</td>
+        </tr>
+        <tr>
+          <td>木村 誠</td>
+          <td>¥3,200,000</td>
+          <td>¥5,000,000</td>
+          <td><span class="achievement ach-bad">64.0%</span></td>
+          <td class="delta-down">▼-12%</td>
+          <td>0件</td>
+          <td>⚠️</td>
+        </tr>
+        <tr style="background:#f8fafc;font-weight:700;">
+          <td>合計</td>
+          <td>¥22,300,000</td>
+          <td>¥25,000,000</td>
+          <td><span class="achievement ach-warn">89.2%</span></td>
+          <td class="delta-up">▲+14%</td>
+          <td>3件</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ai-insight">
+    <div class="ai-i-title">🤖 AIインサイト</div>
+    <div class="ai-i-body">
+      <strong style="color:var(--gold);">今月のポイント：</strong>山田さんが目標超過で好調。木村さんの達成率が64%と低調です。過去3ヶ月の傾向から、<strong style="color:var(--gold);">6月末達成に向けて週15件以上の商談が必要</strong>と試算されます。中村さんは前月比+32%と大きく伸びており、来月の期待値が上がっています。
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

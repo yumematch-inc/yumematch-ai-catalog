@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ラベル自動生成ツール — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.h-badge{background:rgba(244,162,97,.2);color:var(--gold);border:1px solid rgba(244,162,97,.4);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+.container{max-width:1100px;margin:0 auto;padding:24px;}
+
+/* Step flow */
+.step-flow{display:flex;align-items:center;gap:0;margin-bottom:28px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.sf-step{flex:1;padding:14px 20px;display:flex;align-items:center;gap:10px;border-right:1px solid #f1f5f9;}
+.sf-step:last-child{border-right:none;}
+.sf-num{width:28px;height:28px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sf-step.done .sf-num{background:var(--green);color:#fff;}
+.sf-step.active .sf-num{background:var(--navy);color:#fff;}
+.sf-step.inactive .sf-num{background:#e2e8f0;color:#94a3b8;}
+.sf-label{font-size:13px;font-weight:600;}
+.sf-step.done .sf-label,.sf-step.active .sf-label{color:#1e293b;}
+.sf-step.inactive .sf-label{color:#94a3b8;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+
+/* Input panel */
+.panel{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.panel-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+
+.field{margin-bottom:14px;}
+label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+input,select,textarea{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+
+.template-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.tpl-chip{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#374151;transition:.1s;}
+.tpl-chip:hover,.tpl-chip.active{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+.gen-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.gen-btn:hover{background:#1e3a5f;}
+
+/* Label preview */
+.label-preview-area{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.lpa-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.print-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* The label itself */
+.label-wrapper{background:#f8fafc;border-radius:10px;padding:20px;display:flex;justify-content:center;margin-bottom:16px;}
+.label-card{width:220px;background:#fff;border:2px solid #1e293b;border-radius:6px;padding:0;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12);}
+.lc-header{background:var(--navy);color:#fff;padding:8px 12px;text-align:center;}
+.lc-brand{font-size:15px;font-weight:900;letter-spacing:2px;}
+.lc-sub{font-size:9px;color:#94a3b8;letter-spacing:1px;}
+.lc-body{padding:12px;}
+.lc-product{font-size:14px;font-weight:900;color:#1e293b;text-align:center;margin-bottom:8px;line-height:1.3;}
+.lc-divider{border:none;border-top:1px solid #e2e8f0;margin:8px 0;}
+.lc-nutrients{width:100%;}
+.lc-nutrients td{font-size:9px;padding:2px 4px;color:#374151;border-bottom:1px solid #f1f5f9;}
+.lc-nutrients .nt-label{color:#64748b;}
+.lc-nutrients .nt-val{text-align:right;font-weight:700;}
+.lc-footer{background:#f8fafc;padding:8px 12px;text-align:center;}
+.lc-expire{font-size:9px;color:#64748b;}
+.lc-barcode{margin-top:4px;font-family:monospace;font-size:14px;letter-spacing:2px;color:#1e293b;}
+
+.label-sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.size-option{padding:10px 8px;border:2px solid #e2e8f0;border-radius:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:#64748b;}
+.size-option.active{border-color:var(--navy);background:#f8fafc;color:var(--navy);}
+.size-label{font-size:11px;color:#94a3b8;margin-top:2px;}
+
+.action-row{display:flex;gap:8px;}
+.act-btn{flex:1;border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:9px 8px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;text-align:center;}
+.act-btn:hover{background:#f8fafc;}
+.act-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* History */
+.history-section{margin-top:20px;}
+.hs-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px;}
+.hist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.hist-item{background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;border:2px solid transparent;text-align:center;}
+.hist-item:hover{border-color:var(--gold);}
+.hi-thumb{height:60px;background:var(--navy);border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;}
+.hi-name{font-size:12px;font-weight:600;color:#374151;}
+.hi-date{font-size:10px;color:#94a3b8;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ラベル<span>自動生成</span>ツール</div>
+  <div class="h-badge">🖨️ 即印刷対応</div>
+</div>
+
+<div class="container">
+
+  <div class="step-flow">
+    <div class="sf-step done"><div class="sf-num">✓</div><div class="sf-label">商品情報を入力</div></div>
+    <div class="sf-step done"><div class="sf-num">✓</div><div class="sf-label">テンプレート選択</div></div>
+    <div class="sf-step active"><div class="sf-num">3</div><div class="sf-label">ラベル完成！</div></div>
+    <div class="sf-step inactive"><div class="sf-num">4</div><div class="sf-label">印刷・ダウンロード</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Input panel -->
+    <div class="panel">
+      <div class="panel-title">📦 商品情報</div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;">テンプレート（業種）</div>
+        <div class="template-chips">
+          <div class="tpl-chip active">🍰 食品・菓子</div>
+          <div class="tpl-chip">💊 薬・サプリ</div>
+          <div class="tpl-chip">🧴 化粧品</div>
+          <div class="tpl-chip">📦 小売商品</div>
+          <div class="tpl-chip">🌱 農産物</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>ブランド名</label>
+        <input type="text" value="花咲くプリン" placeholder="ブランド名">
+      </div>
+      <div class="field">
+        <label>商品名</label>
+        <input type="text" value="ほうじ茶プリン" placeholder="商品名">
+      </div>
+      <div class="field">
+        <label>内容量・規格</label>
+        <input type="text" value="80g × 1個" placeholder="例: 80g × 1個">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="field" style="margin-bottom:0;">
+          <label>賞味期限</label>
+          <input type="text" value="製造から14日間" placeholder="製造から○日">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>保存方法</label>
+          <input type="text" value="要冷蔵（10℃以下）">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <label>原材料</label>
+        <textarea rows="2" placeholder="砂糖、卵、牛乳...">砂糖、卵（国産）、牛乳、ほうじ茶、生クリーム</textarea>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">栄養成分（100gあたり）— AIが自動計算</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div><div style="font-size:10px;color:#94a3b8;">エネルギー</div><input type="text" value="152kcal" style="padding:6px 8px;font-size:12px;"></div>
+          <div><div style="font-size:10px;color:#94a3b8;">たんぱく質</div><input type="text" value="4.2g" style="padding:6px 8px;font-size:12px;"></div>
+          <div><div style="font-size:10px;color:#94a3b8;">脂質</div><input type="text" value="5.8g" style="padding:6px 8px;font-size:12px;"></div>
+          <div><div style="font-size:10px;color:#94a3b8;">炭水化物</div><input type="text" value="20.1g" style="padding:6px 8px;font-size:12px;"></div>
+          <div><div style="font-size:10px;color:#94a3b8;">食塩相当量</div><input type="text" value="0.08g" style="padding:6px 8px;font-size:12px;"></div>
+        </div>
+      </div>
+
+      <button class="gen-btn">🤖 ラベルを生成する</button>
+    </div>
+
+    <!-- Preview panel -->
+    <div class="label-preview-area">
+      <div class="lpa-title">
+        <span>🏷️ プレビュー</span>
+        <button class="print-btn">🖨️ 印刷する</button>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">サイズ</div>
+        <div class="label-sizes">
+          <div class="size-option active">A-ONE 31275<div class="size-label">48×24mm</div></div>
+          <div class="size-option">A-ONE 72224<div class="size-label">72×36mm</div></div>
+          <div class="size-option">カスタム<div class="size-label">サイズ指定</div></div>
+        </div>
+      </div>
+
+      <div class="label-wrapper">
+        <div class="label-card">
+          <div class="lc-header">
+            <div class="lc-brand">HANASAKU</div>
+            <div class="lc-sub">花咲くプリン</div>
+          </div>
+          <div class="lc-body">
+            <div class="lc-product">ほうじ茶プリン</div>
+            <div style="font-size:9px;color:#64748b;text-align:center;margin-bottom:6px;">80g × 1個</div>
+            <div class="lc-divider"></div>
+            <table class="lc-nutrients">
+              <tr><td class="nt-label">エネルギー</td><td class="nt-val">152kcal</td></tr>
+              <tr><td class="nt-label">たんぱく質</td><td class="nt-val">4.2g</td></tr>
+              <tr><td class="nt-label">脂質</td><td class="nt-val">5.8g</td></tr>
+              <tr><td class="nt-label">炭水化物</td><td class="nt-val">20.1g</td></tr>
+              <tr><td class="nt-label">食塩相当量</td><td class="nt-val">0.08g</td></tr>
+            </table>
+            <div class="lc-divider"></div>
+            <div style="font-size:8px;color:#374151;line-height:1.5;">原材料：砂糖、卵（国産）、牛乳、ほうじ茶、生クリーム</div>
+          </div>
+          <div class="lc-footer">
+            <div class="lc-expire">要冷蔵（10℃以下） | 製造から14日間</div>
+            <div class="lc-barcode">|||||||||||||||</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="act-btn primary">📥 PDF保存</button>
+        <button class="act-btn">📋 複製する</button>
+        <button class="act-btn">✏️ 編集</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section">
+    <div class="hs-title">📂 最近作成したラベル</div>
+    <div class="hist-grid">
+      <div class="hist-item">
+        <div class="hi-thumb">🍮</div>
+        <div class="hi-name">バニラプリン</div>
+        <div class="hi-date">2026/05/18</div>
+      </div>
+      <div class="hist-item">
+        <div class="hi-thumb">🍓</div>
+        <div class="hi-name">いちごタルト</div>
+        <div class="hi-date">2026/05/15</div>
+      </div>
+      <div class="hist-item">
+        <div class="hi-thumb">🍫</div>
+        <div class="hi-name">チョコフォンダン</div>
+        <div class="hi-date">2026/05/12</div>
+      </div>
+      <div class="hist-item">
+        <div class="hi-thumb">🧁</div>
+        <div class="hi-name">レモンマドレーヌ</div>
+        <div class="hi-date">2026/05/08</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

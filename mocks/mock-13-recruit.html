@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>採用フロー管理ツール — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.new-btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+
+.layout{display:flex;min-height:calc(100vh - 58px);}
+
+/* Sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid #e2e8f0;padding:16px 12px;flex-shrink:0;}
+.sb-section{margin-bottom:20px;}
+.sb-label{font-size:10px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding:0 4px;}
+
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:8px;cursor:pointer;color:#64748b;font-size:13px;font-weight:500;transition:.1s;}
+.nav-item.active,.nav-item:hover{background:#f8fafc;color:var(--navy);}
+.nav-item.active{font-weight:700;}
+.nav-count{background:#f1f5f9;color:#475569;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;}
+.nav-count.red{background:#fee2e2;color:#991b1b;}
+.nav-count.gold{background:#fef3c7;color:#92400e;}
+
+.stat-mini{padding:12px;background:#f8fafc;border-radius:10px;margin-bottom:8px;}
+.sm-val{font-size:22px;font-weight:900;color:var(--navy);}
+.sm-label{font-size:11px;color:#64748b;}
+
+/* Kanban */
+.main{flex:1;padding:20px;overflow:auto;}
+.board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.board-title{font-size:17px;font-weight:900;color:var(--navy);}
+.board-sub{font-size:13px;color:#64748b;margin-top:2px;}
+.filter-row{display:flex;gap:8px;}
+.filter-btn{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#64748b;}
+
+/* Kanban board */
+.kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;}
+.kanban-col{min-width:220px;max-width:240px;flex-shrink:0;}
+.kc-header{background:var(--navy);border-radius:10px 10px 0 0;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.kc-title{font-size:13px;font-weight:700;color:#fff;}
+.kc-count{background:rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700;}
+.kc-body{background:#f4f6fb;border-radius:0 0 10px 10px;padding:10px;min-height:200px;}
+
+/* Candidate card */
+.candidate-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;border-left:3px solid transparent;transition:.1s;}
+.candidate-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.candidate-card.hot{border-left-color:var(--gold);}
+.candidate-card.watch{border-left-color:var(--orange);}
+.cc-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.cc-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.cc-meta{flex:1;}
+.cc-name{font-size:13px;font-weight:700;color:#1e293b;}
+.cc-role{font-size:11px;color:#64748b;}
+.cc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;}
+.cc-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;background:#f1f5f9;color:#64748b;}
+.cc-tag.hot{background:#fef3c7;color:#92400e;}
+.cc-tag.ai{background:#dbeafe;color:#1e40af;}
+.cc-footer{display:flex;align-items:center;justify-content:space-between;}
+.cc-date{font-size:10px;color:#94a3b8;}
+.cc-action{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;}
+
+/* AI match score */
+.match-score{display:flex;align-items:center;gap:4px;}
+.ms-bar{height:4px;border-radius:2px;background:#e2e8f0;overflow:hidden;width:40px;}
+.ms-fill{height:100%;border-radius:2px;background:var(--green);}
+.ms-num{font-size:10px;font-weight:700;color:var(--green);}
+
+/* Detail panel */
+.detail-panel{width:320px;background:#fff;border-left:1px solid #e2e8f0;padding:20px;flex-shrink:0;}
+.dp-header{margin-bottom:16px;}
+.dp-name{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:4px;}
+.dp-role{font-size:13px;color:#64748b;margin-bottom:10px;}
+.dp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.dp-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;}
+.dp-section{margin-bottom:16px;}
+.dp-sec-title{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.dp-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f8fafc;font-size:13px;}
+.dp-item-label{color:#64748b;}
+.dp-item-val{font-weight:600;color:#1e293b;}
+
+.ai-comment{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px;margin-bottom:14px;}
+.aic-title{font-size:11px;font-weight:700;color:#1e40af;margin-bottom:4px;}
+.aic-body{font-size:12px;color:#1e40af;line-height:1.6;}
+
+.action-btns{display:flex;flex-direction:column;gap:8px;}
+.dp-btn{width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-success{background:var(--green);color:#fff;}
+.btn-danger{background:#fee2e2;color:var(--red);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">採用フロー<span>管理</span>ツール</div>
+  <div class="header-right">
+    <button class="new-btn">＋ 新規応募者を登録</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">採用ポジション</div>
+      <div class="nav-item active">📊 営業職（東京）<span class="nav-count gold">12</span></div>
+      <div class="nav-item">💻 エンジニア<span class="nav-count">5</span></div>
+      <div class="nav-item">🎨 デザイナー<span class="nav-count">3</span></div>
+      <div class="nav-item">📣 マーケター<span class="nav-count red">8</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">今月のサマリー</div>
+      <div class="stat-mini"><div class="sm-val">12</div><div class="sm-label">応募者（今月）</div></div>
+      <div class="stat-mini"><div class="sm-val" style="color:var(--green);">3</div><div class="sm-label">一次面接通過</div></div>
+      <div class="stat-mini"><div class="sm-val" style="color:var(--gold);">1</div><div class="sm-label">内定予定</div></div>
+    </div>
+  </div>
+
+  <!-- Kanban -->
+  <div class="main">
+    <div class="board-header">
+      <div>
+        <div class="board-title">営業職（東京） — 採用フロー</div>
+        <div class="board-sub">12名の応募者 · 最終更新: 1時間前</div>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn">🔍 検索</button>
+        <button class="filter-btn">🤖 AIスコア順</button>
+      </div>
+    </div>
+
+    <div class="kanban">
+      <!-- 書類選考 -->
+      <div class="kanban-col">
+        <div class="kc-header"><div class="kc-title">📄 書類選考</div><div class="kc-count">5</div></div>
+        <div class="kc-body">
+          <div class="candidate-card">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#8b5cf6;">松本</div>
+              <div class="cc-meta"><div class="cc-name">松本 陽介</div><div class="cc-role">前職: メーカー営業 5年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag">BtoB経験</span><span class="cc-tag ai">AIスコア 72</span></div>
+            <div class="cc-footer"><div class="cc-date">5/20 応募</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:72%;"></div></div><span class="ms-num">72%</span></div></div>
+          </div>
+          <div class="candidate-card">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#06b6d4;">川口</div>
+              <div class="cc-meta"><div class="cc-name">川口 真奈</div><div class="cc-role">前職: 保険営業 3年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag">新規開拓</span><span class="cc-tag ai">AIスコア 65</span></div>
+            <div class="cc-footer"><div class="cc-date">5/19 応募</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:65%;background:var(--gold);"></div></div><span class="ms-num" style="color:var(--gold);">65%</span></div></div>
+          </div>
+          <div class="candidate-card">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#64748b;">石川</div>
+              <div class="cc-meta"><div class="cc-name">石川 健司</div><div class="cc-role">前職: 小売販売 2年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag ai">AIスコア 41</span></div>
+            <div class="cc-footer"><div class="cc-date">5/18 応募</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:41%;background:var(--red);"></div></div><span class="ms-num" style="color:var(--red);">41%</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 一次面接 -->
+      <div class="kanban-col">
+        <div class="kc-header" style="background:#1e40af;"><div class="kc-title">🎤 一次面接</div><div class="kc-count">4</div></div>
+        <div class="kc-body">
+          <div class="candidate-card hot">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#f59e0b;">田村</div>
+              <div class="cc-meta"><div class="cc-name">田村 美咲</div><div class="cc-role">前職: SaaS営業 4年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag hot">🔥 おすすめ</span><span class="cc-tag ai">AIスコア 91</span></div>
+            <div class="cc-footer"><div class="cc-date">5/21 面接予定</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:91%;"></div></div><span class="ms-num">91%</span></div></div>
+          </div>
+          <div class="candidate-card">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#10b981;">吉田</div>
+              <div class="cc-meta"><div class="cc-name">吉田 拓也</div><div class="cc-role">前職: 商社営業 6年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag">法人営業</span><span class="cc-tag ai">AIスコア 78</span></div>
+            <div class="cc-footer"><div class="cc-date">5/22 面接予定</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:78%;"></div></div><span class="ms-num">78%</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 二次面接 -->
+      <div class="kanban-col">
+        <div class="kc-header" style="background:#7c3aed;"><div class="kc-title">👔 二次面接</div><div class="kc-count">2</div></div>
+        <div class="kc-body">
+          <div class="candidate-card hot">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#ec4899;">佐々木</div>
+              <div class="cc-meta"><div class="cc-name">佐々木 彩</div><div class="cc-role">前職: IT営業 7年</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag hot">🔥 最有力</span><span class="cc-tag ai">AIスコア 95</span></div>
+            <div class="cc-footer"><div class="cc-date">5/23 面接予定</div><div class="match-score"><div class="ms-bar"><div class="ms-fill" style="width:95%;"></div></div><span class="ms-num">95%</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 内定調整 -->
+      <div class="kanban-col">
+        <div class="kc-header" style="background:#166534;"><div class="kc-title">✅ 内定調整</div><div class="kc-count">1</div></div>
+        <div class="kc-body">
+          <div class="candidate-card" style="border-left-color:var(--green);">
+            <div class="cc-header">
+              <div class="cc-avatar" style="background:#16a34a;">山口</div>
+              <div class="cc-meta"><div class="cc-name">山口 健太</div><div class="cc-role">前職: スタートアップ営業</div></div>
+            </div>
+            <div class="cc-tags"><span class="cc-tag" style="background:#dcfce7;color:#166534;">✅ 内定予定</span></div>
+            <div class="cc-footer"><div class="cc-date">6/1 入社予定</div><button class="cc-action" style="background:var(--green);">内定書送付</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 不採用 -->
+      <div class="kanban-col">
+        <div class="kc-header" style="background:#475569;"><div class="kc-title">❌ 不採用</div><div class="kc-count">0</div></div>
+        <div class="kc-body" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;">
+          今月は不採用なし
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-name">佐々木 彩</div>
+      <div class="dp-role">👔 二次面接 · IT営業 7年</div>
+      <div class="dp-tags">
+        <span class="dp-tag" style="background:#dcfce7;color:#166534;">🔥 最有力候補</span>
+        <span class="dp-tag" style="background:#dbeafe;color:#1e40af;">AIスコア 95%</span>
+      </div>
+    </div>
+
+    <div class="ai-comment">
+      <div class="aic-title">🤖 AIの評価コメント</div>
+      <div class="aic-body">SaaS営業での数字実績と、BtoB新規開拓の経験が当社ポジションと高マッチ。コミュニケーション能力は書類・一次面接ともに高評価。強くおすすめします。</div>
+    </div>
+
+    <div class="dp-section">
+      <div class="dp-sec-title">基本情報</div>
+      <div class="dp-item"><span class="dp-item-label">年齢</span><span class="dp-item-val">32歳</span></div>
+      <div class="dp-item"><span class="dp-item-label">応募ルート</span><span class="dp-item-val">Indeed</span></div>
+      <div class="dp-item"><span class="dp-item-label">希望年収</span><span class="dp-item-val">450〜500万円</span></div>
+      <div class="dp-item"><span class="dp-item-label">入社可能日</span><span class="dp-item-val">6/1〜</span></div>
+    </div>
+
+    <div class="dp-section">
+      <div class="dp-sec-title">面接スケジュール</div>
+      <div class="dp-item"><span class="dp-item-label">二次面接</span><span class="dp-item-val">5/23 14:00</span></div>
+      <div class="dp-item"><span class="dp-item-label">担当</span><span class="dp-item-val">山田 + 佐藤</span></div>
+    </div>
+
+    <div class="action-btns">
+      <button class="dp-btn btn-primary">📅 面接日程を調整</button>
+      <button class="dp-btn btn-success">✅ 内定通知を送る</button>
+      <button class="dp-btn btn-danger">❌ 不採用通知</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
