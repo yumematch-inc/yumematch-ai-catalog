@@ -342,7 +342,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="hdiv"></div>
     <div class="hdr-lbl">AI業務改善ツール カタログ</div>
     <div class="hdr-r">
-      <span class="hpill">50本のツール</span>
+      <span class="hpill">52本のツール</span>
       <span class="hpill">最短1日〜導入</span>
       <button onclick="showApo()" style="padding:6px 14px;border-radius:7px;background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(5,150,105,.3);">📅 無料相談を予約</button>
     </div>
@@ -517,7 +517,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 <script>
 const CI={info:'📡',doc:'📝',finance:'📊',hr:'👥',marketing:'📣',industry:'🏷'};
-const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱'};
+const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱',51:'🔎',52:'📒'};
 const IC={info:'ici',doc:'icd',finance:'icf',hr:'ich',marketing:'icm',industry:'icn'};
 
 const T=[
@@ -571,6 +571,8 @@ const T=[
   {id:42,cat:'industry',catL:'業界特化',name:'カルテ・施術記録 管理',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「前回どこが気になるって言ってたっけ」と施術前に焦って紙カルテを探している',aft:'名前を入力するだけで前回の施術内容・メモが1秒で表示される'},
   {id:43,cat:'industry',catL:'業界特化',name:'生徒管理・保護者連絡ツール',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'保護者への連絡をひとりずつLINEで送る。誰に送ったか確認しながら30分かかる',aft:'対象者を選んで一斉送信。既読・未読も確認できて連絡漏れがゼロに'},
   {id:44,cat:'industry',catL:'業界特化',name:'メニュー原価計算（飲食）',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる',aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される'},
+  {id:51,cat:'info',catL:'情報収集',name:'業界事例リサーチ',sym:'mid',price:25000,priceL:'¥25,000〜',period:'1〜2週間',bef:'「他の事業所はどうやって乗り越えたんだろう」。ネットで調べても断片的な情報しか出てこない',aft:'業種と課題を指定するだけで全国の成功事例がまとめて届く。自社への応用ポイント付き'},
+  {id:52,cat:'hr',catL:'採用・人事',name:'育成カルテ',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'「あの方、前回どんな目標でしたっけ」。面談記録がバラバラで継続的なサポートができていない',aft:'担当者ごとの目標・進捗・次のアクションが一画面で見える。継続支援の質が上がった'},
 ];
 
 const QS=[
@@ -587,7 +589,8 @@ const DEMO={
   11:'dashboard',12:'dashboard',13:'list',14:'list',15:'form',16:'calc',17:'list',38:'dashboard',45:'form',46:'alert',
   18:'list',19:'form',20:'dashboard',21:'list',22:'alert',35:'list',39:'list',
   23:'form',24:'form',25:'form',26:'list',27:'list',28:'list',29:'chat',30:'chat',34:'form',36:'chat',37:'form',49:'form',50:'list',
-  31:'calc',32:'dashboard',33:'list',40:'form',41:'list',42:'list',43:'chat',44:'calc'
+  31:'calc',32:'dashboard',33:'list',40:'form',41:'list',42:'list',43:'chat',44:'calc',
+  51:'list',52:'dashboard'
 };
 const IND={
   '調剤薬局・クリニック':['industry','finance','doc'],
