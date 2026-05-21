@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>メンバー育成カルテ｜デモ</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --r:7px;
+  --font:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+  --green:#4ADE80;--yellow:#FACC15;--orange:#FB923C;--red:#F87171;
+  --bg:#111214;--sidebar:#171719;--panel:#1c1d20;--card:#242527;
+  --card-hover:#2c2d30;--border:#2e2f33;--accent:#5B9EFF;
+  --text1:#e4e5e9;--text2:#9b9da6;--text3:#5c5e67;
+  --ring:#1c1d20;
+}
+html[data-theme="light"]{
+  --bg:#f4f5f7;--sidebar:#eceef1;--panel:#ffffff;--card:#f0f1f4;
+  --card-hover:#e5e7eb;--border:#d1d5db;--accent:#2563eb;
+  --text1:#1a1b1e;--text2:#5c5e6b;--text3:#9ca3af;
+  --ring:#ffffff;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text1);font-family:var(--font);font-size:13px;line-height:1.5;transition:background .2s,color .2s}
+
+/* App grid */
+#app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:42px 1fr;height:100vh;overflow:hidden}
+
+/* Topbar */
+#topbar{grid-column:1/-1;background:var(--sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:10px;transition:background .2s}
+.logo{font-size:13px;font-weight:700;letter-spacing:-.3px}
+.demo-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(251,146,60,.18);border:1px solid rgba(251,146,60,.35);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:600;color:var(--orange);margin-left:6px}
+#tbtn{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--text2);cursor:pointer;font-family:var(--font);margin-left:auto;display:flex;align-items:center;gap:4px;transition:background .15s}
+#tbtn:hover{background:var(--card-hover);color:var(--text1)}
+
+/* Sidebar */
+#sidebar{background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:background .2s}
+.sv-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.sv-tab{flex:1;padding:8px 0;text-align:center;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;transition:color .12s,background .12s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.sv-tab:hover{color:var(--text1);background:var(--card-hover)}
+.sv-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+#sw{padding:7px;border-bottom:1px solid var(--border)}
+#search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:6px 9px;color:var(--text1);font-size:12px;font-family:var(--font);outline:none;transition:border-color .14s}
+#search::placeholder{color:var(--text3)}#search:focus{border-color:var(--accent)}
+#mlist{flex:1;overflow-y:auto;padding:4px}
+#mlist::-webkit-scrollbar{width:3px}#mlist::-webkit-scrollbar-thumb{background:var(--border)}
+.mi{display:flex;align-items:center;gap:7px;padding:7px 6px;border-radius:5px;cursor:pointer;transition:background .1s;margin-bottom:1px;border:1px solid transparent}
+.mi:hover{background:var(--card-hover)}.mi.on{background:var(--card);border-color:var(--border)}
+.mav{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.mn{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms{font-size:10px;color:var(--text2);margin-top:1px;display:flex;align-items:center;gap:4px}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dg{background:var(--green)}.dy{background:var(--yellow)}.do{background:var(--orange)}.dr{background:var(--red)}.dx{background:var(--text3)}
+
+/* Main */
+#main{display:flex;flex-direction:column;overflow:hidden;background:var(--panel)}
+#empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text3)}
+#empty .ei{font-size:38px}
+#mdetail{display:none;flex-direction:column;height:100%;overflow:hidden}
+#allactions{display:none;flex-direction:column;height:100%;overflow:hidden}
+
+/* Header */
+#mhdr{flex-shrink:0;border-bottom:1px solid var(--border);padding:14px 18px 12px;display:flex;gap:20px;align-items:flex-start}
+.hdr-left{min-width:0;flex:0 0 auto}
+.hr1{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.hav{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.hname{font-size:17px;font-weight:700;line-height:1.2}
+.hanim{font-size:11px;color:var(--text2);margin-top:2px}
+.hbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;background:var(--card);border:1px solid var(--border);color:var(--text2)}
+.badge.p-立ち上げ{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.3);color:var(--orange)}
+.badge.p-軌道に乗せる{background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.3);color:var(--yellow)}
+.badge.p-拡大{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:var(--green)}
+.hstats{display:flex;gap:14px;margin-top:2px}
+.st .sl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
+.st .sv{font-size:12px;font-weight:500}
+.hdr-right{flex:1;min-width:0}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.pf-row{display:flex;align-items:baseline;gap:5px;min-height:22px}
+.pf-lbl{font-size:9px;color:var(--text3);white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px;width:60px}
+.pf-val{font-size:11px;color:var(--text1);padding:1px 4px;border-radius:3px;border:1px solid transparent;min-width:60px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Meeting button */
+.mt-btn{background:rgba(91,158,255,.1);border:1px solid rgba(91,158,255,.25);border-radius:5px;padding:4px 11px;font-size:11px;color:var(--accent);cursor:pointer;font-family:var(--font);transition:background .12s;margin-top:8px;display:inline-flex;align-items:center;gap:4px}
+.mt-btn:hover{background:rgba(91,158,255,.2)}
+
+/* 4 Panes */
+#panes{flex:1;display:grid;grid-template-columns:1fr 250px 240px;overflow:hidden}
+.pane{overflow-y:auto;padding:14px 14px 40px}
+.pane::-webkit-scrollbar{width:3px}
+.pane::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.ptitle{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:12px}
+
+#p1{border-right:1px solid var(--border);padding:14px 16px 40px 18px}
+#p2{border-right:1px solid var(--border);background:rgba(0,0,0,.06)}
+html[data-theme="light"] #p2{background:rgba(0,0,0,.02)}
+
+/* Note fields */
+.nf{margin-bottom:14px}
+.nl{font-size:9px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+textarea.ni{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;color:var(--text1);font-size:12px;font-family:var(--font);resize:none;min-height:60px;outline:none;transition:border-color .13s;line-height:1.6}
+textarea.ni::placeholder{color:var(--text3)}
+textarea.ni:focus{border-color:var(--accent);background:rgba(91,158,255,.03)}
+html[data-theme="light"] textarea.ni:focus{background:rgba(37,99,235,.03)}
+
+/* Action list */
+.al-wrap{margin-bottom:14px}
+.al-hd{font-size:9px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.al-add{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--accent);cursor:pointer;padding:1px 6px;border-radius:3px;border:1px solid var(--accent);transition:background .12s}
+.al-add:hover{background:rgba(91,158,255,.1)}
+.al-list{display:flex;flex-direction:column;gap:4px}
+.al-item{display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--card);border:1px solid var(--border);border-radius:5px;transition:border-color .12s}
+.al-cb{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s}
+.al-cb.done{background:var(--green);border-color:var(--green)}
+.al-cb.done::after{content:'✓';font-size:9px;color:#000;font-weight:700}
+.al-text{flex:1;background:transparent;border:none;font-size:12px;font-family:var(--font);color:var(--text1);outline:none;line-height:1.4}
+.al-text.done{text-decoration:line-through;color:var(--text3)}
+.al-text::placeholder{color:var(--text3)}
+.al-del{font-size:14px;color:var(--text3);cursor:pointer;opacity:.5;transition:opacity .12s;flex-shrink:0;line-height:1;padding:0 2px}
+.al-del:hover{opacity:1;color:var(--red)}
+.al-empty{font-size:11px;color:var(--text3);padding:8px 0}
+.al-due{background:transparent;border:1px solid transparent;border-radius:3px;padding:1px 4px;font-size:10px;font-family:var(--font);color:var(--text3);cursor:pointer;outline:none;flex-shrink:0;width:88px;transition:border-color .12s,background .12s;-webkit-appearance:none}
+.al-due:hover,.al-due:focus{border-color:var(--border);background:var(--bg)}
+.al-due::-webkit-calendar-picker-indicator{opacity:.35;cursor:pointer;margin-left:2px}
+.al-due.overdue{color:var(--red)!important;background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25)}
+.al-due.today{color:var(--yellow)!important;background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.25)}
+.al-due.soon{color:var(--orange)!important;background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.2)}
+
+/* Timeline */
+.timeline{padding-left:12px;position:relative}
+.timeline::before{content:'';position:absolute;left:2px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.tli{position:relative;margin-bottom:13px;padding-left:15px}
+.tli::before{content:'';position:absolute;left:-10px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--accent);border:2px solid var(--ring)}
+.tld{font-size:9px;color:var(--text3);margin-bottom:3px}
+.tlc{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 9px}
+.tlh{margin-bottom:2px}
+.tlh span{color:var(--text1);font-size:11px;font-weight:500;line-height:1.4}
+.tls{font-size:10px;color:var(--text2);line-height:1.5}
+.nomt{color:var(--text3);font-size:11px;text-align:center;padding:20px 0}
+
+/* Pane 3 – sticky notes board */
+#p3{background:var(--panel);border-left:1px solid var(--border)}
+.sticky-hd{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.sticky-add{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--accent);cursor:pointer;padding:2px 7px;border-radius:3px;border:1px solid var(--accent);transition:background .12s}
+.sticky-add:hover{background:rgba(91,158,255,.1)}
+.sticky-list{display:flex;flex-direction:column;gap:8px}
+.sticky-empty{font-size:11px;color:var(--text3);text-align:center;padding:24px 8px;line-height:1.8}
+.sticky{border-radius:5px;padding:9px 10px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:box-shadow .15s}
+.sticky:hover{box-shadow:0 2px 10px rgba(0,0,0,.28)}
+html[data-theme="light"] .sticky[data-color="yellow"]{background:#fefce8;border:1px solid #fde68a;color:#1c1917}
+html[data-theme="light"] .sticky[data-color="pink"]  {background:#fdf2f8;border:1px solid #fbcfe8;color:#1c1917}
+html[data-theme="light"] .sticky[data-color="blue"]  {background:#eff6ff;border:1px solid #bfdbfe;color:#1c1917}
+html[data-theme="light"] .sticky[data-color="green"] {background:#f0fdf4;border:1px solid #bbf7d0;color:#1c1917}
+html[data-theme="light"] .sticky[data-color="purple"]{background:#faf5ff;border:1px solid #e9d5ff;color:#1c1917}
+html[data-theme="dark"] .sticky[data-color="yellow"]{background:#2a260c;border:1px solid #4a4212;color:#fef9c3}
+html[data-theme="dark"] .sticky[data-color="pink"]  {background:#2a1022;border:1px solid #4a1a38;color:#fce7f3}
+html[data-theme="dark"] .sticky[data-color="blue"]  {background:#0d1e3c;border:1px solid #1e3a6c;color:#dbeafe}
+html[data-theme="dark"] .sticky[data-color="green"] {background:#0d2a18;border:1px solid #1a4a2c;color:#dcfce7}
+html[data-theme="dark"] .sticky[data-color="purple"]{background:#1a1030;border:1px solid #2c1852;color:#f3e8ff}
+.sticky-quote{font-size:10px;border-left:2px solid currentColor;padding:2px 6px;margin-bottom:7px;font-style:italic;opacity:.65;line-height:1.5;white-space:pre-wrap;word-break:break-word;border-radius:0 3px 3px 0}
+.sticky-ta{width:100%;background:transparent;border:none;outline:none;font-family:var(--font);font-size:12px;resize:none;color:inherit;min-height:50px;line-height:1.65;margin-top:2px}
+.sticky-ta::placeholder{opacity:.4;font-style:italic}
+.sticky-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.sticky-dots{display:flex;gap:4px}
+.sticky-dot{width:11px;height:11px;border-radius:50%;cursor:pointer;border:1.5px solid transparent;transition:transform .1s,border-color .1s;flex-shrink:0}
+.sticky-dot:hover{transform:scale(1.25)}
+.sticky-dot.cur{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(0,0,0,.3)}
+html[data-theme="light"] .sticky-dot.cur{border-color:rgba(0,0,0,.5)}
+.sticky-del{font-size:12px;cursor:pointer;opacity:.3;transition:opacity .12s;padding:0 2px;line-height:1}
+.sticky-del:hover{opacity:1;color:var(--red)}
+
+/* All Actions View */
+.aa-hdr{flex-shrink:0;padding:14px 18px 11px;border-bottom:1px solid var(--border)}
+.aa-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.aa-meta{font-size:11px;color:var(--text3)}
+.aa-body{flex:1;overflow-y:auto;padding:14px 18px 40px}
+.aa-body::-webkit-scrollbar{width:3px}.aa-body::-webkit-scrollbar-thumb{background:var(--border)}
+.aa-section{margin-bottom:20px}
+.aa-slbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.aa-cnt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)!important}
+.aa-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:5px;cursor:pointer;transition:border-color .12s}
+.aa-item:hover{border-color:var(--accent)}
+.aa-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.aa-info{flex:1;min-width:0}
+.aa-mname{font-size:10px;color:var(--text3);margin-bottom:2px}
+.aa-text{font-size:12px;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aa-due{font-size:10px;padding:2px 7px;border-radius:3px;flex-shrink:0;font-weight:500;border:1px solid var(--border);color:var(--text3);background:var(--bg)}
+.aa-due.overdue{background:rgba(248,113,113,.12);color:var(--red);border-color:rgba(248,113,113,.3)}
+.aa-due.today{background:rgba(250,204,21,.12);color:var(--yellow);border-color:rgba(250,204,21,.3)}
+.aa-due.soon{background:rgba(251,146,60,.12);color:var(--orange);border-color:rgba(251,146,60,.25)}
+.aa-empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px;line-height:2}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <span class="logo">🏆 メンバー育成カルテ</span>
+    <span class="demo-badge">🎬 デモデータ</span>
+    <button id="tbtn" onclick="toggleTheme()"><span id="tico">☀️</span><span id="tlbl">Light</span></button>
+  </header>
+  <aside id="sidebar">
+    <div class="sv-tabs">
+      <div class="sv-tab on" id="tab-members" onclick="switchTab('members')">👥 メンバー</div>
+      <div class="sv-tab" id="tab-actions" onclick="switchTab('actions')">⚡ アクション</div>
+    </div>
+    <div id="sw"><input id="search" type="text" placeholder="検索..." autocomplete="off"></div>
+    <div id="mlist"></div>
+  </aside>
+  <main id="main">
+    <div id="empty"><div class="ei">👥</div><p>メンバーを選択してください</p></div>
+    <div id="allactions"></div>
+    <div id="mdetail">
+      <div id="mhdr"></div>
+      <div id="panes">
+        <div class="pane" id="p1"></div>
+        <div class="pane" id="p2"></div>
+        <div class="pane" id="p3"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+const TODAY = new Date('2026-05-21T00:00:00');
+
+const MEMBERS = [
+  {
+    id:'m1', name:'田中 健一', role:'調剤薬局 経営', phase:'拡大', color:'#3B82F6',
+    birth:'1982-09-12', kumiai:'チームA',
+    goal:'2号店の開業と売上1億円達成。スタッフ採用を3名完了させる。',
+    target:'新店舗の物件契約を5月末までに完了。採用媒体への掲載準備。',
+    issue:'人手不足で既存店のオペレーションが回っていない。採用に時間が割けない。',
+    actions:[
+      {text:'物件3件の内覧',done:false,due:'2026-05-28'},
+      {text:'ハローワーク登録',done:true,due:''},
+      {text:'採用ページ作成依頼',done:false,due:'2026-06-10'},
+    ],
+    meetings:[
+      {date:'2026-05-14',title:'260514 田中さんMT',summary:'2号店候補地2件確認。6月末契約目標に調整。'},
+      {date:'2026-04-22',title:'260422 田中さんMT',summary:'採用戦略の見直し。Indeedとハローワーク両方活用する方針に。'},
+      {date:'2026-03-10',title:'260310 田中さんMT',summary:'年間計画レビュー。Q1売上達成、Q2は採用がカギ。'},
+    ],
+    stickies:[{id:'s1',quote:'採用は今すぐ動かないと間に合わない',text:'人材紹介会社も検討。相場確認する。',color:'yellow'}],
+  },
+  {
+    id:'m2', name:'山本 美咲', role:'訪問介護 管理者', phase:'軌道に乗せる', color:'#10B981',
+    birth:'1987-03-25', kumiai:'チームA',
+    goal:'利用者数を現在の18名から30名に増やし、黒字化を達成する。',
+    target:'地域包括支援センターへの挨拶回りを完了。ケアマネ3名との関係構築。',
+    issue:'新規受け入れの余力はあるが、紹介ルートが弱い。マーケティング経験がない。',
+    actions:[
+      {text:'包括センター訪問（5ヶ所）',done:false,due:'2026-05-30'},
+      {text:'事業所チラシ作成',done:false,due:'2026-06-15'},
+      {text:'ケアプラン勉強会参加',done:true,due:''},
+    ],
+    meetings:[
+      {date:'2026-05-07',title:'260507 山本さんMT',summary:'紹介活動の進め方を整理。まず包括5ヶ所を優先攻略。'},
+      {date:'2026-04-09',title:'260409 山本さんMT',summary:'人員配置の見直し。サービス提供責任者を1名増員検討。'},
+    ],
+    stickies:[{id:'s2',quote:null,text:'医療連携も視野に。近隣クリニックへのアプローチを次回MTGで相談',color:'blue'}],
+  },
+  {
+    id:'m3', name:'佐藤 浩二', role:'飲食店 オーナー', phase:'立ち上げ', color:'#F59E0B',
+    birth:'1990-11-03', kumiai:'チームB',
+    goal:'カフェの月商100万円突破。SNSフォロワー1,000人達成。',
+    target:'Instagram投稿を週3本に増やす。テイクアウトメニューの拡充。',
+    issue:'オペレーション改善とSNS発信が追いつかない。一人でやっている限界。',
+    actions:[
+      {text:'メニュー表デザイン更新',done:false,due:'2026-06-05'},
+      {text:'Instagram週3投稿テスト',done:false,due:'2026-05-31'},
+      {text:'POSレジ導入',done:true,due:''},
+    ],
+    meetings:[
+      {date:'2026-05-19',title:'260519 佐藤さんMT',summary:'POSレジ導入完了。次はSNS運用ルーティン確立がテーマ。'},
+      {date:'2026-04-15',title:'260415 佐藤さんMT',summary:'売上分析。ランチが強い。ディナー強化 vs テイクアウト強化を検討中。'},
+      {date:'2026-03-18',title:'260318 佐藤さんMT',summary:'開業3ヶ月振り返り。客単価を上げる施策を議論。'},
+    ],
+    stickies:[
+      {id:'s3',quote:'一人でやっている限界',text:'副業スタッフ採用か業務委託か。来月までに方向性決める。',color:'pink'},
+      {id:'s4',quote:null,text:'ケータリング需要あり？近隣オフィスへの営業も検討',color:'green'},
+    ],
+  },
+  {
+    id:'m4', name:'鈴木 あかね', role:'FP事務所 代表', phase:'拡大', color:'#8B5CF6',
+    birth:'1985-07-18', kumiai:'チームB',
+    goal:'顧客数50名達成・セミナー事業立ち上げ・売上1,500万円。',
+    target:'セミナーの第1回開催（6月）。集客30名目標。LP作成を完了。',
+    issue:'個別相談はいっぱいだが単価が上がらない。グループ商品・セミナーへの転換が課題。',
+    actions:[
+      {text:'セミナーLP公開',done:false,due:'2026-05-25'},
+      {text:'LINE告知文作成',done:false,due:'2026-05-28'},
+      {text:'会場予約',done:true,due:''},
+    ],
+    meetings:[
+      {date:'2026-05-12',title:'260512 鈴木さんMT',summary:'セミナー設計完了。価格設定19,800円に決定。'},
+      {date:'2026-04-28',title:'260428 鈴木さんMT',summary:'顧客属性分析。30-40代女性が7割。訴求メッセージを絞る。'},
+      {date:'2026-04-07',title:'260407 鈴木さんMT',summary:'グループ商品の設計議論。まずセミナーから始めることに。'},
+    ],
+    stickies:[{id:'s5',quote:'個別相談はいっぱいだが単価が上がらない',text:'レバレッジがきくモデルへの転換が今年の最重要テーマ',color:'purple'}],
+  },
+  {
+    id:'m5', name:'中村 大輝', role:'Web制作 代表', phase:'軌道に乗せる', color:'#EF4444',
+    birth:'1992-04-27', kumiai:'チームB',
+    goal:'月商200万円の安定化。外注ネットワーク構築。LP制作パッケージの販売。',
+    target:'新規2社との契約締結。外注パートナー2名との業務委託契約締結。',
+    issue:'受注の波が激しい。閑散期のキャッシュが不安。営業活動が後回しになりがち。',
+    actions:[
+      {text:'外注パートナー面談（2名）',done:false,due:'2026-05-27'},
+      {text:'営業メール30社送付',done:false,due:'2026-06-03'},
+      {text:'ポートフォリオ更新',done:true,due:''},
+    ],
+    meetings:[
+      {date:'2026-05-20',title:'260520 中村さんMT',summary:'外注体制の整備が最優先。5月中に2名と契約締結目標。'},
+      {date:'2026-04-16',title:'260416 中村さんMT',summary:'Q1振り返り。売上170万→目標200万への道筋を整理。'},
+    ],
+    stickies:[{id:'s6',quote:null,text:'ストックビジネス要素を加えたい。保守契約→月額課金モデルの検討',color:'yellow'}],
+  },
+];
+
+// Local state
+let localData = {};
+MEMBERS.forEach(m => {
+  localData[m.id] = {
+    goal: m.goal,
+    target: m.target,
+    issue: m.issue,
+    actions: m.actions.map(a => ({...a})),
+    stickies: m.stickies.map(s => ({...s})),
+  };
+});
+
+const SC = {yellow:'#fbbf24',pink:'#f472b6',blue:'#60a5fa',green:'#4ade80',purple:'#a78bfa'};
+let cur = null, curTab = 'members';
+
+const ini = n => n ? n[0] : '?';
+const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
+function dsi(d) {
+  if (!d) return null;
+  const diff = Math.floor((TODAY - new Date(d + 'T00:00:00')) / 86400000);
+  return diff;
+}
+const dc = d => d===null?'dx':d<=7?'dg':d<=14?'dy':d<=30?'do':'dr';
+const dl = d => d===null?'記録なし':d===0?'本日':d===1?'昨日':`${d}日前`;
+function lmt(m) {
+  const mts = m.meetings || [];
+  return mts.length ? mts[0].date : null;
+}
+function dueCls(due) {
+  if (!due) return '';
+  const d = new Date(due + 'T00:00:00');
+  const diff = Math.round((d - TODAY) / 86400000);
+  if (diff < 0) return 'overdue';
+  if (diff === 0) return 'today';
+  if (diff <= 3) return 'soon';
+  return '';
+}
+function calcAge(b) {
+  if (!b) return null;
+  const [y, mo, d] = b.split('-').map(Number);
+  let a = TODAY.getFullYear() - y;
+  if (TODAY.getMonth()+1 < mo || (TODAY.getMonth()+1 === mo && TODAY.getDate() < d)) a--;
+  return a;
+}
+function autoH(ta) { ta.style.height='auto'; ta.style.height=Math.max(60,ta.scrollHeight)+'px'; }
+
+/* Sidebar */
+function renderSidebar(q='') {
+  const mlist = document.getElementById('mlist');
+  const ms = MEMBERS
+    .filter(m => !q || m.name.includes(q))
+    .slice().sort((a, b) => (dsi(lmt(a)) ?? 9999) - (dsi(lmt(b)) ?? 9999));
+  mlist.innerHTML = ms.map(m => {
+    const d = dsi(lmt(m));
+    return `<div class="mi${cur?.id===m.id?' on':''}" onclick="sel('${m.id}')">
+      <div class="mav" style="background:${m.color}">${ini(m.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="mn">${m.name}</div>
+        <div class="ms"><span class="dot ${dc(d)}"></span><span>${dl(d)}</span>${m.phase?`<span style="color:var(--text3)">·</span><span>${m.phase}</span>`:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Select */
+function sel(id) {
+  cur = MEMBERS.find(m => m.id === id);
+  if (!cur) return;
+  renderSidebar(document.getElementById('search').value);
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('allactions').style.display = 'none';
+  document.getElementById('mdetail').style.display = 'flex';
+  renderAll();
+  if (curTab === 'actions') {
+    document.getElementById('tab-members').className = 'sv-tab on';
+    document.getElementById('tab-actions').className = 'sv-tab';
+    curTab = 'members';
+  }
+}
+function renderAll() { renderHeader(); renderP1(); renderP2(); renderP3(); }
+
+/* Header */
+function renderHeader() {
+  const m = cur;
+  const d = dsi(lmt(m));
+  const dc2 = d!==null?(d<=7?'var(--green)':d<=14?'var(--yellow)':d<=30?'var(--orange)':'var(--red)'):'var(--text3)';
+  const age = calcAge(m.birth);
+  const pfRows = [
+    {lbl:'役割', val:m.role},
+    {lbl:'組合',  val:m.kumiai},
+    {lbl:'生年月日', val:m.birth},
+    {lbl:'年齢', val:age!==null?`${age}歳`:''},
+  ];
+  document.getElementById('mhdr').innerHTML = `
+    <div class="hdr-left">
+      <div class="hr1">
+        <div class="hav" style="background:${m.color}">${ini(m.name)}</div>
+        <div>
+          <div class="hname">${m.name}</div>
+          <div class="hanim">${m.role}</div>
+          <div class="hbadges">
+            ${m.phase?`<span class="badge p-${m.phase}">${m.phase}</span>`:''}
+            ${age!==null?`<span class="badge">${age}歳</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="hstats">
+        <div class="st"><div class="sl">最終MT</div>
+          <div class="sv" style="color:${dc2}">${lmt(m)?`${lmt(m)}（${dl(d)}）`:'記録なし'}</div>
+        </div>
+        <div class="st"><div class="sl">MT件数</div><div class="sv">${m.meetings.length}件</div></div>
+        <div class="st"><div class="sl">アクション</div><div class="sv">${localData[m.id].actions.filter(a=>!a.done).length}件未完了</div></div>
+      </div>
+      <button class="mt-btn" onclick="alert('デモモードでは利用できません')">＋ 打ち合わせ作成</button>
+    </div>
+    <div class="hdr-right">
+      <div class="pf-grid">
+        ${pfRows.map(r=>`<div class="pf-row"><span class="pf-lbl">${r.lbl}</span><span class="pf-val">${esc(r.val||'')}</span></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* Pane 1 */
+function renderP1() {
+  const el = document.getElementById('p1');
+  const d = localData[cur.id];
+  el.innerHTML = `<div class="ptitle">現状・目標</div>
+    <div class="nf">
+      <div class="nl"><span>今年のゴール</span></div>
+      <textarea class="ni" id="ta-goal-${cur.id}" rows="2" placeholder="2026年末に向けたゴールを記入...">${esc(d.goal)}</textarea>
+    </div>
+    <div class="nf">
+      <div class="nl"><span>直近の目標</span></div>
+      <textarea class="ni" id="ta-target-${cur.id}" rows="2" placeholder="直近1〜3ヶ月の具体的な目標...">${esc(d.target)}</textarea>
+    </div>
+    <div class="nf">
+      <div class="nl"><span>現在の課題・取り組み</span></div>
+      <textarea class="ni" id="ta-issue-${cur.id}" rows="2" placeholder="現在の課題と取り組んでいることを記入...">${esc(d.issue)}</textarea>
+    </div>`;
+
+  // Action list
+  const alWrap = document.createElement('div'); alWrap.className = 'al-wrap';
+  alWrap.innerHTML = `<div class="al-hd"><span>アクションリスト</span><span class="al-add" onclick="addAction('${cur.id}')">+ 追加</span></div><div class="al-list" id="al-${cur.id}"></div>`;
+  el.appendChild(alWrap);
+  renderActionList(cur.id);
+
+  setTimeout(() => {
+    el.querySelectorAll('textarea.ni').forEach(ta => {
+      autoH(ta);
+      const key = ta.id.split('-')[1];
+      ta.addEventListener('input', () => {
+        autoH(ta);
+        const mid = ta.id.split('-')[2] || cur.id;
+        if (localData[mid]) localData[mid][key] = ta.value;
+      });
+    });
+  }, 0);
+}
+
+/* Action list */
+function renderActionList(mid) {
+  const list = document.getElementById(`al-${mid}`); if (!list) return;
+  const items = localData[mid].actions;
+  if (!items.length) { list.innerHTML = `<div class="al-empty">アクションはまだありません</div>`; return; }
+  list.innerHTML = items.map((it, i) => `
+    <div class="al-item">
+      <div class="al-cb${it.done?' done':''}" onclick="toggleAction('${mid}',${i})"></div>
+      <input class="al-text${it.done?' done':''}" value="${esc(it.text)}" placeholder="アクション..." onblur="editActionText('${mid}',${i},this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+      <input type="date" class="al-due ${dueCls(it.due)}" value="${it.due||''}" onchange="editActionDue('${mid}',${i},this.value)" title="期限">
+      <span class="al-del" onclick="delAction('${mid}',${i})">×</span>
+    </div>`).join('');
+}
+function toggleAction(mid, i) {
+  localData[mid].actions[i].done = !localData[mid].actions[i].done;
+  renderActionList(mid);
+  renderHeader();
+}
+function editActionText(mid, i, val) { localData[mid].actions[i].text = val.trim(); }
+function editActionDue(mid, i, val) {
+  localData[mid].actions[i].due = val;
+  const list = document.getElementById(`al-${mid}`);
+  const inp = list?.querySelectorAll('.al-due')[i];
+  if (inp) inp.className = 'al-due ' + dueCls(val);
+}
+function addAction(mid) {
+  localData[mid].actions.push({text:'',done:false,due:''});
+  renderActionList(mid);
+  setTimeout(() => {
+    const list = document.getElementById(`al-${mid}`);
+    const last = list?.querySelectorAll('.al-text');
+    if (last?.length) last[last.length-1].focus();
+  }, 50);
+}
+function delAction(mid, i) {
+  localData[mid].actions.splice(i, 1);
+  renderActionList(mid);
+  renderHeader();
+}
+
+/* Pane 2 – Timeline */
+function renderP2() {
+  const el = document.getElementById('p2');
+  const m = cur;
+  const list = m.meetings || [];
+  el.innerHTML = `<div class="ptitle">議事録 <span style="font-weight:400;color:var(--text3)">(${list.length}件)</span></div>`;
+  if (!list.length) { el.innerHTML += `<div class="nomt">議事録はまだありません</div>`; return; }
+  const tl = document.createElement('div'); tl.className = 'timeline';
+  tl.innerHTML = list.map(mt => `
+    <div class="tli">
+      <div class="tld">${mt.date}（${dl(dsi(mt.date))}）</div>
+      <div class="tlc">
+        <div class="tlh"><span>${esc(mt.title)}</span></div>
+        ${mt.summary?`<div class="tls">${esc(mt.summary)}</div>`:''}
+      </div>
+    </div>`).join('');
+  el.appendChild(tl);
+}
+
+/* Pane 3 – Stickies */
+function renderP3() {
+  const el = document.getElementById('p3');
+  el.innerHTML = `
+    <div class="sticky-hd">
+      <span>付箋メモ</span>
+      <span class="sticky-add" onclick="addSticky('${cur.id}')">+ 追加</span>
+    </div>
+    <div class="sticky-list" id="sl-${cur.id}"></div>`;
+  renderStickyList(cur.id);
+}
+function renderStickyList(mid) {
+  const list = document.getElementById(`sl-${mid}`); if (!list) return;
+  const stickies = localData[mid].stickies;
+  if (!stickies.length) {
+    list.innerHTML = `<div class="sticky-empty">「+ 追加」でメモを作れます</div>`;
+    return;
+  }
+  list.innerHTML = stickies.map((s, i) => {
+    const color = s.color || 'yellow';
+    const dots = Object.keys(SC).map(c => `<div class="sticky-dot${color===c?' cur':''}" style="background:${SC[c]}" onclick="changeColor('${mid}',${i},'${c}')" title="${c}"></div>`).join('');
+    return `<div class="sticky" data-color="${color}">
+      ${s.quote?`<div class="sticky-quote">"${esc(s.quote.slice(0,120))}${s.quote.length>120?'…':''}"</div>`:''}
+      <textarea class="sticky-ta" rows="2" placeholder="メモを入力..."
+        onblur="editSticky('${mid}',${i},this.value)"
+        onkeydown="if(event.key==='Escape')this.blur()">${esc(s.text||'')}</textarea>
+      <div class="sticky-footer">
+        <div class="sticky-dots">${dots}</div>
+        <span class="sticky-del" onclick="delSticky('${mid}',${i})">✕</span>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.sticky-ta').forEach(ta => { autoH(ta); ta.addEventListener('input', () => autoH(ta)); });
+}
+function addSticky(mid) {
+  localData[mid].stickies.unshift({id:Date.now().toString(36),quote:null,text:'',color:'yellow'});
+  renderStickyList(mid);
+  setTimeout(() => { document.getElementById(`sl-${mid}`)?.querySelector('.sticky-ta')?.focus(); }, 40);
+}
+function editSticky(mid, i, val) { localData[mid].stickies[i].text = val; }
+function delSticky(mid, i) { localData[mid].stickies.splice(i, 1); renderStickyList(mid); }
+function changeColor(mid, i, color) {
+  localData[mid].stickies[i].color = color;
+  renderStickyList(mid);
+}
+
+/* All Actions View */
+function switchTab(tab) {
+  curTab = tab;
+  document.getElementById('tab-members').className = 'sv-tab' + (tab==='members'?' on':'');
+  document.getElementById('tab-actions').className = 'sv-tab' + (tab==='actions'?' on':'');
+  if (tab === 'actions') {
+    document.getElementById('empty').style.display = 'none';
+    document.getElementById('mdetail').style.display = 'none';
+    document.getElementById('allactions').style.display = 'flex';
+    renderAllActions();
+  } else {
+    document.getElementById('allactions').style.display = 'none';
+    if (cur) {
+      document.getElementById('empty').style.display = 'none';
+      document.getElementById('mdetail').style.display = 'flex';
+    } else {
+      document.getElementById('empty').style.display = 'flex';
+    }
+  }
+}
+function renderAllActions() {
+  const el = document.getElementById('allactions');
+  const all = [];
+  for (const m of MEMBERS) {
+    for (const a of localData[m.id].actions) {
+      if (!a.done) all.push({m, ...a});
+    }
+  }
+  const uScore = item => { const c = dueCls(item.due); return c==='overdue'?0:c==='today'?1:c==='soon'?2:item.due?3:4; };
+  all.sort((a, b) => { const s=uScore(a)-uScore(b); if(s!==0) return s; if(a.due&&b.due) return a.due.localeCompare(b.due); return (a.m.name||'').localeCompare(b.m.name||''); });
+  const totalDone = MEMBERS.reduce((acc, m) => acc + localData[m.id].actions.filter(a=>a.done).length, 0);
+
+  const sec = (label, color, items) => {
+    if (!items.length) return '';
+    return `<div class="aa-section">
+      <div class="aa-slbl" style="color:${color}">${label}<span class="aa-cnt"> ${items.length}件</span></div>
+      ${items.map(i => {
+        const cls = dueCls(i.due);
+        const dlbl = i.due ? (cls==='overdue'?`超過 ${i.due}`:i.due) : '期限なし';
+        return `<div class="aa-item" onclick="sel('${i.m.id}')">
+          <div class="aa-av" style="background:${i.m.color}">${ini(i.m.name)}</div>
+          <div class="aa-info">
+            <div class="aa-mname">${i.m.name}</div>
+            <div class="aa-text">${esc(i.text||'（未入力）')}</div>
+          </div>
+          <span class="aa-due ${cls||''}">${dlbl}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  };
+
+  const overdue = all.filter(i => dueCls(i.due)==='overdue');
+  const urgent  = all.filter(i => { const c=dueCls(i.due); return c==='today'||c==='soon'; });
+  const rest    = all.filter(i => { const c=dueCls(i.due); return c!=='overdue'&&c!=='today'&&c!=='soon'; });
+
+  el.innerHTML = `
+    <div class="aa-hdr">
+      <div class="aa-title">⚡ 全アクション横断ビュー</div>
+      <div class="aa-meta">未完了 ${all.length}件 · 完了済み ${totalDone}件</div>
+    </div>
+    <div class="aa-body">
+      ${!all.length?'<div class="aa-empty">未完了のアクションはありません 🎉<br><br>全メンバーのアクションが完了しています</div>':''}
+      ${sec('🔴 期限超過','var(--red)',overdue)}
+      ${sec('🟡 本日・直近3日','var(--yellow)',urgent)}
+      ${sec('📋 それ以降・期限なし','var(--text3)',rest)}
+    </div>`;
+}
+
+/* Theme */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const dark = t === 'dark';
+  document.getElementById('tico').textContent = dark ? '☀️' : '🌙';
+  document.getElementById('tlbl').textContent = dark ? 'Light' : 'Dark';
+  localStorage.setItem('karte-theme', t);
+}
+function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'); }
+
+/* Init */
+(function init() {
+  applyTheme(localStorage.getItem('karte-theme') || 'dark');
+  renderSidebar();
+  document.getElementById('search').addEventListener('input', e => renderSidebar(e.target.value));
+  // Auto-select first member
+  sel(MEMBERS[0].id);
+})();
+</script>
+</body>
+</html>
