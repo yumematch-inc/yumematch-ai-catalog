@@ -32,7 +32,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 /* ─── HEADER ─── */
 .hdr{height:var(--hdr-h);background:var(--white);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:300;}
-.hdr-in{max-width:1340px;margin:0 auto;padding:0 20px;height:100%;display:flex;align-items:center;gap:12px;}
+.hdr-in{padding:0 28px;height:100%;display:flex;align-items:center;gap:12px;}
 .logo{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--indigo);}
 .logo-m{width:22px;height:22px;border-radius:6px;background:var(--indigo);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .hdiv{width:1px;height:14px;background:var(--bdr);}
@@ -41,7 +41,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .hpill{font-size:10px;font-weight:400;color:var(--mute);padding:3px 9px;border:1px solid var(--bdr);border-radius:20px;}
 
 /* ─── LAYOUT ─── */
-.layout{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:var(--diag-w) 1fr;min-height:calc(100vh - var(--hdr-h));align-items:start;}
+.layout{display:grid;grid-template-columns:var(--diag-w) 1fr;min-height:calc(100vh - var(--hdr-h));align-items:start;}
 
 /* ─── LEFT PANEL ─── */
 .diag{position:sticky;top:var(--hdr-h);height:calc(100vh - var(--hdr-h));background:var(--white);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;}
@@ -1440,7 +1440,6 @@ function renderPW(){
   if(pb)pb.innerHTML=Array.from({length:total},(_,i)=>`<div class="pd${i<done?' done':i===done?' act':''}"></div>`).join('');
   const pl=document.getElementById('ppl');
   if(pl)pl.textContent=done>=total?'診断完了':'STEP '+(done+1)+' / '+total;
-  const pff=document.getElementById('priv-foot');if(pff)pff.style.display=done>=total?'none':'';
   const area=document.getElementById('psa');if(!area)return;
   area.innerHTML='';
 
