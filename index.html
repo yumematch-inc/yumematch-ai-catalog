@@ -356,18 +356,25 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;font-size:12px;font-weight:600;padding:10px 20px;border-radius:8px;opacity:0;transition:all .25s;pointer-events:none;z-index:700;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ─── SECTION TABS ─── */
-.stab-bar{background:var(--white);border-bottom:1px solid var(--bdr);display:flex;padding:0 20px;}
-.stab{padding:11px 18px;font-size:12px;font-weight:600;color:var(--mute);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit;margin-bottom:-1px;letter-spacing:.01em;}
-.stab.on{color:var(--indigo);border-bottom-color:var(--indigo);}
-.stab:hover:not(.on){color:var(--sub);}
+/* ─── MODE TOGGLE (header) ─── */
+.mode-tog{display:flex;background:var(--bg);border-radius:8px;padding:3px;gap:2px;}
+.mtab{padding:5px 14px;border-radius:6px;border:none;background:transparent;font-size:11px;font-weight:600;color:var(--mute);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.mtab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh);}
+.mtab:hover:not(.on){color:var(--sub);}
+
+/* ─── PRIVATE SIDE PANEL ─── */
+.priv-side{position:sticky;top:var(--hdr-h);height:calc(100vh - var(--hdr-h));background:var(--white);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;}
+.pf-wrap{padding:16px 18px;flex:1;overflow-y:auto;}
+.pf-sec{margin-bottom:20px;}
+.pf-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;}
+.pf-tag{display:inline-block;margin:3px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--bdr);color:var(--sub);cursor:pointer;transition:all .15s;}
+.pf-tag.on{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+.pf-tag:hover:not(.on){background:var(--indigo-bg);color:var(--indigo);border-color:var(--indigo-bdr);}
+.pf-cnt{font-size:22px;font-weight:900;color:var(--ink);margin-bottom:2px;}
+.pf-cntl{font-size:11px;color:var(--mute);}
 
 /* ─── PRIVATE VIEW ─── */
-.priv-wrap{max-width:1340px;margin:0 auto;padding:32px 20px;}
-.priv-hd{margin-bottom:28px;}
-.priv-ttl{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
-.priv-sub{font-size:13px;color:var(--mute);margin-top:5px;}
-.priv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.priv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:28px 20px;}
 .pc{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:22px;transition:all .2s;}
 .pc:hover{box-shadow:var(--sh-md);border-color:var(--indigo-bdr);transform:translateY(-2px);}
 .pc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
@@ -420,7 +427,10 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
   <div class="hdr-in">
     <div class="logo"><div class="logo-m">Y</div>YUMEMATCH</div>
     <div class="hdiv"></div>
-    <div class="hdr-lbl">AI業務改善ツール カタログ</div>
+    <div class="mode-tog">
+      <button class="mtab on" id="tab-biz" onclick="setTab('biz')">💼 ビジネス</button>
+      <button class="mtab" id="tab-priv" onclick="setTab('priv')">🛠 プライベート</button>
+    </div>
     <div class="hdr-r">
       <span class="hpill">18本のツール</span>
       <span class="hpill">最短1日〜導入</span>
@@ -428,11 +438,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     </div>
   </div>
 </header>
-
-<div class="stab-bar">
-  <button class="stab on" id="tab-biz" onclick="setTab('biz')">💼 ビジネスツール</button>
-  <button class="stab" id="tab-priv" onclick="setTab('priv')">🛠 プライベート</button>
-</div>
 
 <div id="biz-view"><div class="layout">
 
@@ -481,12 +486,33 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 <!-- PRIVATE VIEW -->
 <div id="priv-view" style="display:none">
-  <div class="priv-wrap">
-    <div class="priv-hd">
-      <div class="priv-ttl">🛠 プライベートツール</div>
-      <div class="priv-sub">個人で作って実際に動かしているプロダクト・ツールたち</div>
-    </div>
-    <div class="priv-grid" id="priv-grid"></div>
+  <div class="layout">
+    <aside class="priv-side">
+      <div class="dh">
+        <div class="dh-tag">Portfolio</div>
+        <div class="dh-ttl">小池 雄悟</div>
+        <div class="dh-sub">個人で作って実際に<br>動かしているツールたち</div>
+      </div>
+      <div class="pf-wrap">
+        <div class="pf-sec">
+          <div class="pf-lbl">タグで絞り込む</div>
+          <div id="pf-tags"></div>
+        </div>
+        <div class="pf-sec">
+          <div class="pf-cnt" id="pf-cnt">1</div>
+          <div class="pf-cntl">本を表示中</div>
+        </div>
+      </div>
+    </aside>
+    <main class="catalog">
+      <div class="cath">
+        <div style="display:flex;align-items:baseline;gap:9px;">
+          <span class="cattl" id="pct">すべて</span>
+          <span class="catcnt" id="pcc">1本</span>
+        </div>
+      </div>
+      <div class="priv-grid" id="priv-grid"></div>
+    </main>
   </div>
 </div>
 
@@ -1355,6 +1381,8 @@ const PT=[
    status:'live'},
 ];
 
+let privFilter='all';
+
 function setTab(t){
   const isBiz=t==='biz';
   document.getElementById('biz-view').style.display=isBiz?'':'none';
@@ -1362,13 +1390,24 @@ function setTab(t){
   document.getElementById('eb').style.display='none';
   document.getElementById('tab-biz').classList.toggle('on',isBiz);
   document.getElementById('tab-priv').classList.toggle('on',!isBiz);
-  if(!isBiz)renderPrivate();
+  if(!isBiz){privFilter='all';renderPrivate();}
 }
 
 function renderPrivate(){
+  const allTags=[...new Set(PT.flatMap(p=>p.tags))];
+  const tf=document.getElementById('pf-tags');
+  if(tf){
+    tf.innerHTML=`<span class="pf-tag${privFilter==='all'?' on':''}" onclick="setPrivFilter('all')">すべて</span>`
+      +allTags.map(t=>`<span class="pf-tag${privFilter===t?' on':''}" onclick="setPrivFilter('${t}')">${t}</span>`).join('');
+  }
+  const list=privFilter==='all'?PT:PT.filter(p=>p.tags.includes(privFilter));
   const g=document.getElementById('priv-grid');
+  const cnt=document.getElementById('pcc');
+  const pcnt=document.getElementById('pf-cnt');
+  if(cnt)cnt.textContent=list.length+'本';
+  if(pcnt)pcnt.textContent=list.length;
   if(!g)return;
-  g.innerHTML=PT.map(p=>`
+  g.innerHTML=list.map(p=>`
     <div class="pc">
       <div class="pc-top">
         <div class="pc-em">${p.emoji}</div>
@@ -1382,6 +1421,11 @@ function renderPrivate(){
       ${p.url?`<a class="pc-link" href="${p.url}" target="_blank">見る →</a>`:`<span class="pc-link disabled">準備中</span>`}
     </div>
   `).join('');
+}
+
+function setPrivFilter(tag){
+  privFilter=tag;
+  renderPrivate();
 }
 </script>
 </body>
