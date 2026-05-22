@@ -375,7 +375,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 /* ─── PRIVATE VIEW ─── */
 .priv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:28px 20px;}
-.pc{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:22px;transition:all .2s;}
+.pc{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:22px;transition:all .2s;display:flex;flex-direction:column;}
 .pc:hover{box-shadow:var(--sh-md);border-color:var(--indigo-bdr);transform:translateY(-2px);}
 .pc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
 .pc-em{font-size:32px;line-height:1;flex-shrink:0;}
@@ -1471,7 +1471,7 @@ function renderPW(){
   ad.appendChild(h);ad.appendChild(optsDiv);
   const nav=document.createElement('div');nav.className='qbtns';
   if(done>0){const b=document.createElement('button');b.className='qbtn-back';b.textContent='← 戻る';b.onclick=prevP;nav.appendChild(b);}
-  const nx=document.createElement('button');nx.className='qbtn-next';nx.textContent='次へ →';nx.onclick=nxtP;nav.appendChild(nx);
+  const nx=document.createElement('button');nx.className='bnext';nx.textContent='次へ →';nx.onclick=nxtP;nav.appendChild(nx);
   ad.appendChild(nav);area.appendChild(ad);
   PQS.slice(done+1).forEach((q2,i)=>{
     const d=document.createElement('div');d.className='slck';
@@ -1511,7 +1511,12 @@ function renderPrivate(){
       </div>
       <div class="pc-desc">${p.desc}</div>
       <div class="pc-tags">${p.tags.map(tag=>`<span class="pc-tag">${tag}</span>`).join('')}</div>
-      ${p.url?`<a class="pc-link" href="${p.url}" target="_blank">見る →</a>`:`<span class="pc-link disabled">準備中</span>`}
+      <div class="tc-ft" style="margin-top:auto;padding-top:10px;">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          ${p.url?`<a class="tc-demo tc-mock" href="${p.url}" target="_blank">🎬 デモを見る</a>`:''}
+          <button class="tc-btn" onclick="alert('お問い合わせ機能は準備中です')">+ 相談する</button>
+        </div>
+      </div>
     </div>
   `).join('');
 }
