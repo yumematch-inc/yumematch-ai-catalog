@@ -487,29 +487,25 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 <!-- PRIVATE VIEW -->
 <div id="priv-view" style="display:none">
   <div class="layout">
-    <aside class="priv-side">
+    <aside class="diag" id="pp">
       <div class="dh">
-        <div class="dh-tag">Portfolio</div>
-        <div class="dh-ttl">小池 雄悟</div>
-        <div class="dh-sub">個人で作って実際に<br>動かしているツールたち</div>
+        <div class="dh-tag">Diagnosis</div>
+        <div class="dh-ttl">生活快適化診断</div>
+        <div class="dh-sub">3問に答えると<br>あなたに合うツールが見つかります</div>
       </div>
-      <div class="pf-wrap">
-        <div class="pf-sec">
-          <div class="pf-lbl">タグで絞り込む</div>
-          <div id="pf-tags"></div>
-        </div>
-        <div class="pf-sec">
-          <div class="pf-cnt" id="pf-cnt">1</div>
-          <div class="pf-cntl">本を表示中</div>
-        </div>
+      <div class="prog">
+        <div class="pbar" id="ppb"></div>
+        <div class="plbl" id="ppl">STEP 1 / 3</div>
       </div>
+      <div class="steps" id="psa"></div>
     </aside>
     <main class="catalog">
       <div class="cath">
         <div style="display:flex;align-items:baseline;gap:9px;">
-          <span class="cattl" id="pct">すべて</span>
+          <span class="cattl" id="pct">おすすめ順</span>
           <span class="catcnt" id="pcc">1本</span>
         </div>
+        <span class="catnote" id="pcn">診断すると絞り込まれます</span>
       </div>
       <div class="priv-grid" id="priv-grid"></div>
     </main>
@@ -1375,13 +1371,40 @@ renderW();
 /* ─── PRIVATE TOOLS ─── */
 const PT=[
   {id:'p1',name:'滝マップ',emoji:'🗺',
+   cats:['travel','local'],
    desc:'長野・東海エリアの滝をインタラクティブマップで探せるサービス。Notion DBと双方向同期し、情報をリアルタイム更新。',
    url:'https://taki-map.newgo-koike.workers.dev',
    tags:['地図','Notion連携','Cloudflare Worker'],
    status:'live'},
 ];
 
-let privFilter='all';
+const PQS=[
+  {id:'scene',q:'どんな場面で使いたい？',h:'複数選択OK',multi:true,
+   opts:[
+     {v:'旅・おでかけ',i:'🗺',cat:'travel'},
+     {v:'趣味・学び',i:'📚',cat:'hobby'},
+     {v:'健康・体調管理',i:'💪',cat:'health'},
+     {v:'情報収集',i:'📡',cat:'info'},
+     {v:'家計・お金',i:'💰',cat:'finance'},
+     {v:'地域・まち探索',i:'🏘',cat:'local'},
+   ]},
+  {id:'pain',q:'日常でいちばん「もったいない」と感じるのは？',h:'近いものを選んでください',multi:false,
+   opts:[
+     {v:'良い場所や体験を見逃している',i:'📍'},
+     {v:'調べ物・移動に時間がかかる',i:'⏱'},
+     {v:'情報が多すぎて整理できない',i:'🌊'},
+     {v:'習慣にしたいことが続かない',i:'🔄'},
+   ]},
+  {id:'style',q:'どのくらい活用したい？',h:'1つ選択',multi:false,
+   opts:[
+     {v:'気軽に・必要なときだけ',i:'☁️'},
+     {v:'毎日の習慣にしたい',i:'📅'},
+     {v:'がっつり生活に組み込みたい',i:'⚙️'},
+   ]},
+];
+
+const PS={step:0,ans:{scene:[],pain:null,style:null}};
+let PF='rec';
 
 function setTab(t){
   const isBiz=t==='biz';
@@ -1390,23 +1413,75 @@ function setTab(t){
   document.getElementById('eb').style.display='none';
   document.getElementById('tab-biz').classList.toggle('on',isBiz);
   document.getElementById('tab-priv').classList.toggle('on',!isBiz);
-  if(!isBiz){privFilter='all';renderPrivate();}
+  if(!isBiz)renderPW();
 }
 
-function renderPrivate(){
-  const allTags=[...new Set(PT.flatMap(p=>p.tags))];
-  const tf=document.getElementById('pf-tags');
-  if(tf){
-    tf.innerHTML=`<span class="pf-tag${privFilter==='all'?' on':''}" onclick="setPrivFilter('all')">すべて</span>`
-      +allTags.map(t=>`<span class="pf-tag${privFilter===t?' on':''}" onclick="setPrivFilter('${t}')">${t}</span>`).join('');
+function renderPW(){
+  const done=PS.step;const total=PQS.length;
+  const pb=document.getElementById('ppb');
+  if(pb)pb.innerHTML=Array.from({length:total},(_,i)=>`<div class="pd${i<done?' done':i===done?' act':''}"></div>`).join('');
+  const pl=document.getElementById('ppl');
+  if(pl)pl.textContent=done>=total?'診断完了':'STEP '+(done+1)+' / '+total;
+  const area=document.getElementById('psa');if(!area)return;
+  area.innerHTML='';
+
+  if(done>=total){
+    const scenes=PS.ans.scene||[];
+    const matched=scenes.length?PT.filter(p=>(p.cats||[]).some(c=>scenes.some(s=>PQS[0].opts.find(o=>o.v===s)?.cat===c))):PT;
+    area.innerHTML=`<div style="padding:16px 14px;">
+      <div style="font-size:11px;color:var(--mute);margin-bottom:6px;">あなたに合うツール</div>
+      <div style="font-size:32px;font-weight:900;color:var(--ink);line-height:1;">${matched.length}</div>
+      <div style="font-size:11px;color:var(--mute);margin-bottom:20px;">本が見つかりました</div>
+      <button onclick="rstP()" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">↺ やり直す</button>
+    </div>`;
+    PF='rec';renderPrivate();return;
   }
-  const list=privFilter==='all'?PT:PT.filter(p=>p.tags.includes(privFilter));
-  const g=document.getElementById('priv-grid');
-  const cnt=document.getElementById('pcc');
-  const pcnt=document.getElementById('pf-cnt');
-  if(cnt)cnt.textContent=list.length+'本';
-  if(pcnt)pcnt.textContent=list.length;
-  if(!g)return;
+
+  const q=PQS[done];
+  const ad=document.createElement('div');ad.className='sact';
+  const h=document.createElement('div');h.className='sqh';
+  h.innerHTML=`<div class="sqn">${done+1}</div><div class="sqq">${q.q}</div>${q.h?`<div class="sqhint">${q.h}</div>`:''}`;
+  const optsDiv=document.createElement('div');optsDiv.className='sopts';
+  q.opts.forEach(o=>{
+    const btn=document.createElement('button');btn.className='opt';btn.dataset.v=o.v;
+    const ca=q.multi?PS.ans[q.id]||[]:[PS.ans[q.id]].filter(Boolean);
+    if(ca.includes(o.v))btn.classList.add('sel');
+    btn.innerHTML=`<span class="oi">${o.i}</span>${o.v}`;
+    btn.addEventListener('click',()=>pickP(q.id,o.v,q.multi));
+    optsDiv.appendChild(btn);
+  });
+  ad.appendChild(h);ad.appendChild(optsDiv);
+  const nav=document.createElement('div');nav.className='qbtns';
+  if(done>0){const b=document.createElement('button');b.className='qbtn-back';b.textContent='← 戻る';b.onclick=prevP;nav.appendChild(b);}
+  const nx=document.createElement('button');nx.className='qbtn-next';nx.textContent='次へ →';nx.onclick=nxtP;nav.appendChild(nx);
+  ad.appendChild(nav);area.appendChild(ad);
+  PQS.slice(done+1).forEach((q2,i)=>{
+    const d=document.createElement('div');d.className='slck';
+    d.innerHTML=`<div class="sln">${done+i+2}</div><div class="slq">${q2.q}</div>`;
+    area.appendChild(d);
+  });
+  renderPrivate();
+}
+
+function pickP(qId,val,multi){
+  if(multi){const a=PS.ans[qId]||[];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val);PS.ans[qId]=a;}
+  else PS.ans[qId]=[val];
+  document.querySelectorAll('#psa .sact .opt').forEach(btn=>{
+    const ca=multi?PS.ans[qId]||[]:[PS.ans[qId]].filter(Boolean);
+    btn.classList.toggle('sel',ca.includes(btn.dataset.v));
+  });
+  renderPrivate();
+}
+function nxtP(){if(PS.step<PQS.length)PS.step++;renderPW();}
+function prevP(){if(PS.step>0)PS.step--;renderPW();}
+function rstP(){PS.step=0;PS.ans={scene:[],pain:null,style:null};PF='rec';renderPW();}
+
+function renderPrivate(){
+  const scenes=PS.ans.scene||[];
+  const list=(PF==='rec'&&scenes.length)?
+    PT.filter(p=>(p.cats||[]).some(c=>scenes.some(s=>PQS[0].opts.find(o=>o.v===s)?.cat===c)))||PT:PT;
+  const cnt=document.getElementById('pcc');if(cnt)cnt.textContent=list.length+'本';
+  const g=document.getElementById('priv-grid');if(!g)return;
   g.innerHTML=list.map(p=>`
     <div class="pc">
       <div class="pc-top">
@@ -1421,11 +1496,6 @@ function renderPrivate(){
       ${p.url?`<a class="pc-link" href="${p.url}" target="_blank">見る →</a>`:`<span class="pc-link disabled">準備中</span>`}
     </div>
   `).join('');
-}
-
-function setPrivFilter(tag){
-  privFilter=tag;
-  renderPrivate();
 }
 </script>
 </body>
