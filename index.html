@@ -400,6 +400,11 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 @media(max-width:1000px){.layout{grid-template-columns:1fr;}.diag{position:static;height:auto;border-right:none;border-bottom:1px solid var(--bdr);}.tg{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:580px){.tg{grid-template-columns:1fr;}.echips{display:none;}}
 
+/* ─── DIAG FOOT ─── */
+.diag-foot{padding:14px 16px;border-top:1px solid var(--bdr);background:var(--indigo-bg);flex-shrink:0;}
+.df-ttl{font-size:9px;font-weight:700;color:var(--indigo);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.df-item{font-size:11px;color:var(--sub);line-height:1.85;padding-left:2px;}
+
 /* ─── GAUGE (sidebar result) ─── */
 .res-gauge{padding:12px 14px 0;}
 .g-track{height:12px;border-radius:6px;position:relative;background:linear-gradient(90deg,#22c55e 0%,#84cc16 22%,#eab308 45%,#f97316 68%,#ef4444 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.12);}
@@ -453,6 +458,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
       <div class="plbl" id="pl">STEP 1 / 3</div>
     </div>
     <div class="steps" id="sa"></div>
+    <div class="diag-foot" id="biz-foot">
+      <div class="df-ttl">診断でわかること</div>
+      <div class="df-item">✓ 月間削減できる時間の目安</div>
+      <div class="df-item">✓ あなたの課題カテゴリ</div>
+      <div class="df-item">✓ 優先度の高いおすすめツール</div>
+    </div>
   </aside>
 
   <!-- RIGHT -->
@@ -498,6 +509,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
         <div class="plbl" id="ppl">STEP 1 / 3</div>
       </div>
       <div class="steps" id="psa"></div>
+      <div class="diag-foot" id="priv-foot">
+        <div class="df-ttl">診断でわかること</div>
+        <div class="df-item">✓ ライフスタイルに合うツール</div>
+        <div class="df-item">✓ 日常で活かせる場面</div>
+        <div class="df-item">✓ 使いはじめのヒント</div>
+      </div>
     </aside>
     <main class="catalog">
       <div class="cath">
@@ -1251,6 +1268,7 @@ function renderW(){
   const area=document.getElementById('sa');const done=S.step;const total=QS.length;
   document.getElementById('pb').innerHTML=QS.map((_,i)=>`<div class="pd ${i<done?'done':i===done?'act':''}"></div>`).join('');
   document.getElementById('pl').textContent=done>=total?'診断完了':'STEP '+(done+1)+' / '+total;
+  const bf=document.getElementById('biz-foot');if(bf)bf.style.display=done>=total?'none':'';
   area.innerHTML='';
 
   if(done>=total){
@@ -1422,6 +1440,7 @@ function renderPW(){
   if(pb)pb.innerHTML=Array.from({length:total},(_,i)=>`<div class="pd${i<done?' done':i===done?' act':''}"></div>`).join('');
   const pl=document.getElementById('ppl');
   if(pl)pl.textContent=done>=total?'診断完了':'STEP '+(done+1)+' / '+total;
+  const pff=document.getElementById('priv-foot');if(pff)pff.style.display=done>=total?'none':'';
   const area=document.getElementById('psa');if(!area)return;
   area.innerHTML='';
 
