@@ -126,7 +126,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
   cursor:pointer;transition:all .2s;box-shadow:var(--sh);
   position:relative;
 }
-.tc:hover{border-color:rgba(79,70,229,.35);box-shadow:0 8px 28px rgba(15,23,42,.12),0 3px 10px rgba(79,70,229,.1);transform:translateY(-3px);}
+.tc:hover{border-color:rgba(79,70,229,.28);box-shadow:var(--sh-md);transform:translateY(-2px);}
 .tc.sel{border-color:var(--indigo);background:var(--indigo-bg);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
 .tc.hidden{display:none;}
 
@@ -142,7 +142,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 .tc-meta{flex:1;min-width:0;}
 .tc-cat{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:3px;}
-.tc-name{font-size:15px;font-weight:700;color:var(--ink);line-height:1.35;letter-spacing:-.01em;}
+.tc-name{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35;letter-spacing:-.01em;}
 .sym{font-size:8px;font-weight:600;padding:2px 6px;border-radius:20px;flex-shrink:0;margin-top:2px;letter-spacing:.02em;}
 .ss{background:var(--red-lt);color:var(--red);border:1px solid rgba(225,29,72,.16);}
 .sh2{background:#fffbeb;color:var(--amber);border:1px solid rgba(146,64,14,.14);}
@@ -174,10 +174,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .tc-btn.added{background:#059669;box-shadow:0 2px 6px rgba(5,150,105,.22);}
 .tc-demo{font-size:10px;font-weight:600;padding:7px 11px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--sub);cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
 .tc-demo:hover{border-color:rgba(79,70,229,.3);color:var(--indigo);}
-.tc-mock{background:rgba(244,162,97,.1);border-color:rgba(244,162,97,.7);color:#92400e;font-weight:700;}
-.tc-mock:hover{background:rgba(244,162,97,.22);border-color:var(--gold);color:#78350f;}
-.tc-sample{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.5);color:#166534;font-weight:700;}
-.tc-sample:hover{background:rgba(34,197,94,.18);border-color:#22c55e;color:#14532d;}
 .tc-pr-lbl{font-size:9px;font-weight:400;color:var(--mute);margin-left:2px;letter-spacing:0;}
 
 /* ─── VIEW TOGGLE ─── */
@@ -214,35 +210,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 /* ─── 保守なし badge ─── */
 .mn-badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;white-space:nowrap;letter-spacing:.04em;}
-
-/* ─── category left border ─── */
-.tc[data-cat="info"]{border-left:4px solid #6366f1;}
-.tc[data-cat="doc"]{border-left:4px solid #7c3aed;}
-.tc[data-cat="finance"]{border-left:4px solid #059669;}
-.tc[data-cat="hr"]{border-left:4px solid #f59e0b;}
-.tc[data-cat="marketing"]{border-left:4px solid #ef4444;}
-.tc[data-cat="industry"]{border-left:4px solid #0d9488;}
-
-/* ─── before/after row bg ─── */
-.ba .ba-row:first-child{background:#fff5f5;border-radius:6px;padding:5px 7px;}
-.ba .ba-row:last-child{background:#f0fdf4;border-radius:6px;padding:5px 7px;}
-
-/* ─── detail modal ─── */
-.dm-step{display:flex;gap:10px;align-items:flex-start;}
-.dm-step-num{width:22px;height:22px;border-radius:50%;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.dm-step-txt{font-size:12px;line-height:1.6;color:var(--ink);padding-top:2px;}
-.dm-sect-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;}
-.dm-case{background:var(--bg);border-radius:10px;padding:16px;border:1px solid var(--bdr);}
-.dm-who{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
-.dm-who-chip{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
-.dm-case-txt{font-size:11px;line-height:1.75;color:var(--sub);}
-.dm-cart-btn{width:100%;padding:12px;border-radius:8px;border:none;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .2s;}
-.dm-cart-btn:hover{background:var(--indigo-d);transform:translateY(-1px);}
-.dm-cart-btn.added{background:#059669;box-shadow:0 2px 10px rgba(5,150,105,.3);}
-.dm-footer{padding-top:16px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:10px;}
-.dm-price-row{display:flex;align-items:center;justify-content:space-between;}
-.dm-price-big{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.03em;}
-.dm-period{font-size:10px;color:var(--mute);margin-top:2px;}
 
 /* ─── MODAL ─── */
 .modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fdin .18s ease;}
@@ -365,26 +332,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 @keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
 @media(max-width:1000px){.layout{grid-template-columns:1fr;}.diag{position:static;height:auto;border-right:none;border-bottom:1px solid var(--bdr);}.tg{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:580px){.tg{grid-template-columns:1fr;}.echips{display:none;}}
-
-/* ─── GAUGE (sidebar result) ─── */
-.res-gauge{padding:12px 14px 0;}
-.g-track{height:12px;border-radius:6px;position:relative;background:linear-gradient(90deg,#22c55e 0%,#84cc16 22%,#eab308 45%,#f97316 68%,#ef4444 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.12);}
-.g-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:white;border:3px solid #0f172a;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:left 1.2s cubic-bezier(.34,1.56,.64,1);left:4%;}
-.g-emojis{display:flex;justify-content:space-between;padding:4px 2px 0;font-size:13px;line-height:1;}
-.g-emoji-big{font-size:36px;line-height:1;text-align:center;margin:8px 0 2px;}
-.g-level{font-size:11px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:2px;padding:0 8px;line-height:1.4;}
-/* ─── ROI mini (sidebar) ─── */
-.res-roi{display:grid;grid-template-columns:1fr 1fr;background:#0f172a;margin:10px;border-radius:8px;overflow:hidden;}
-.rri{padding:10px 12px;text-align:center;}
-.rri+.rri{border-left:1px solid rgba(255,255,255,.1);}
-.rrl{font-size:9px;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.4);margin-bottom:4px;text-transform:uppercase;}
-.rrv{font-size:22px;font-weight:900;color:#f4a261;line-height:1;}
-.rru{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;}
-/* ─── CTA mini (sidebar) ─── */
-.res-cta{margin:0 10px 10px;padding:11px 12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:8px;text-align:center;}
-.res-cta p{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.5;}
-.res-cta-btn{display:block;width:100%;padding:8px;border-radius:7px;background:#e11d48;border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(225,29,72,.35);}
-.res-cta-btn:hover{background:#be123c;}
 </style>
 </head>
 <body>
@@ -395,7 +342,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="hdiv"></div>
     <div class="hdr-lbl">AI業務改善ツール カタログ</div>
     <div class="hdr-r">
-      <span class="hpill">50本のツール</span>
+      <span class="hpill">52本のツール</span>
       <span class="hpill">最短1日〜導入</span>
       <button onclick="showApo()" style="padding:6px 14px;border-radius:7px;background:var(--green);border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(5,150,105,.3);">📅 無料相談を予約</button>
     </div>
@@ -409,7 +356,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="dh">
       <div class="dh-tag">Diagnosis</div>
       <div class="dh-ttl">業務改善診断</div>
-      <div class="dh-sub">6問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
+      <div class="dh-sub">3問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
     </div>
     <div class="prog">
       <div class="pbar" id="pb"></div>
@@ -568,145 +515,72 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
   </div>
 </div>
 
-<!-- ─── 詳細モーダル ─── -->
-<div class="modal-ov" id="detailmodal" style="display:none" onclick="if(event.target===this)closeModal('detailmodal')">
-  <div class="modal-box" style="max-width:620px;">
-    <div class="modal-hd">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div id="dm-ico" style="width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;"></div>
-        <div>
-          <div class="modal-ttl" id="dm-name"></div>
-          <div style="font-size:10px;color:var(--mute);margin-top:1px;" id="dm-cat"></div>
-        </div>
-      </div>
-      <button class="modal-close" onclick="closeModal('detailmodal')">✕</button>
-    </div>
-    <div style="padding:22px 26px;display:flex;flex-direction:column;gap:18px;">
-      <!-- Before/After -->
-      <div>
-        <div class="dm-sect-lbl">BEFORE / AFTER</div>
-        <div class="ba" style="margin-bottom:0;">
-          <div class="ba-row">
-            <span class="ba-tag bt-b">😩 以前</span>
-            <span class="ba-txt bb-txt" id="dm-bef"></span>
-          </div>
-          <div class="ba-sep">↓ AI導入後</div>
-          <div class="ba-row">
-            <span class="ba-tag bt-a">✨ 今は</span>
-            <span class="ba-txt ga" id="dm-aft"></span>
-          </div>
-        </div>
-      </div>
-      <!-- 3ステップ -->
-      <div>
-        <div class="dm-sect-lbl">使い方の流れ（3ステップ）</div>
-        <div id="dm-steps" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
-      <!-- Case study -->
-      <div class="dm-case">
-        <div class="dm-sect-lbl">💡 こんな会社で効果が出ています</div>
-        <div id="dm-who" class="dm-who"></div>
-        <div class="dm-case-txt" id="dm-case-txt"></div>
-      </div>
-      <!-- Footer -->
-      <div class="dm-footer">
-        <div class="dm-price-row">
-          <div>
-            <div class="dm-price-big" id="dm-price"></div>
-            <div class="dm-period">工数目安：<span id="dm-period"></span></div>
-          </div>
-          <div style="font-size:10px;color:var(--mute);text-align:right;">保守なしプランも対応<br>詳細はご相談ください</div>
-        </div>
-        <button class="dm-cart-btn" id="dm-cart-btn" onclick="toggleFromDetail()">+ 見積もりに追加</button>
-        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 const CI={info:'📡',doc:'📝',finance:'📊',hr:'👥',marketing:'📣',industry:'🏷'};
-const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱',51:'💬',52:'🔔',53:'🚨',54:'📤',55:'🪪',56:'📋'};
+const TI={1:'📡',2:'🔔',3:'🔍',4:'📰',5:'🎙',6:'📋',7:'🧾',8:'✍️',9:'📚',10:'📊',47:'🎯',48:'💰',11:'📈',12:'🚨',13:'🗂',14:'💳',15:'✅',16:'🏠',17:'📑',38:'💌',45:'🧾',46:'📦',18:'🗂',19:'📋',20:'🌱',21:'🗓',22:'📊',35:'🎙',39:'📌',23:'📣',24:'📱',25:'🎫',26:'🤝',27:'🌐',28:'🗺',29:'💬',30:'🤖',34:'📅',36:'💬',37:'🎨',49:'📋',50:'⭐',31:'🏷',32:'📊',33:'🏥',40:'📝',41:'📅',42:'🗂',43:'📚',44:'🍱',51:'🔎',52:'📒'};
 const IC={info:'ici',doc:'icd',finance:'icf',hr:'ich',marketing:'icm',industry:'icn'};
-const MOCK={
-  1:'mocks/mock-01-hojokin.html',
-  11:'mocks/mock-02-keiei.html',
-  34:'mocks/mock-03-apo.html',
-  6:'mocks/mock-04-bizplan.html',
-  51:'mocks/mock-05-sns.html',
-  52:'mocks/mock-06-reminder.html',
-  22:'mocks/mock-07-nippou.html',
-  5:'mocks/mock-08-minutes.html',
-  53:'mocks/mock-09-incident.html',
-  31:'mocks/mock-10-label.html',
-  4:'mocks/mock-11-news.html',
-  12:'mocks/mock-12-sales.html',
-  39:'mocks/mock-13-recruit.html',
-  44:'mocks/mock-14-genka.html',
-  54:'mocks/mock-15-cover.html',
-  25:'https://event-lp-studio.vercel.app/',
-  16:'mocks/mock-17-realestate.html',
-  55:'https://newgo-koike.github.io/yugo-koike-profile/',
-  56:'mocks/mock-18-karte.html',
-};
-const SAMPLE={
-  25:'https://aruka-latrucros.surge.sh/',
-};
 
 const T=[
   {id:1,cat:'info',catL:'情報収集',name:'助成金・補助金レーダー',sym:'super',price:25000,priceL:'¥25,000〜',period:'2週間',bef:'「また締切が昨日だった…」補助金を後から知って毎回悔しい',aft:'毎週月曜、使える補助金候補がリストで届く。申請件数が増えた'},
-  {id:4,cat:'info',catL:'情報収集',name:'自社専用ニュース配信',sym:'mid',price:20000,priceL:'¥20,000〜',period:'1〜2週間',bef:'業界ニュースを見ようとすると気づいたら1時間経っている',aft:'毎朝7時、自分の業界に絞ったニュースがLINEに届く。5分で完了'},
-  {id:5,cat:'doc',catL:'議事録・文書',name:'MTG議事録 自動化',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'会議が終わった瞬間、本当は次の仕事をしたい。でも議事録を書かなければならない',aft:'録音するだけで3分後に完成。終わった瞬間から次の仕事に集中できる'},
-  {id:6,cat:'doc',catL:'議事録・文書',name:'新規事業リサーチチーム',sym:'high',price:50000,priceL:'¥50,000〜',period:'2〜3週間',bef:'「これ事業になるかも」と思っても調べるのが面倒で結局放置。アイデアが消えていく',aft:'思いついたことを一行書くだけ。市場規模・競合・財務・補助金まで5分で分析完了。その場で計画書になって手元に残る'},
-  {id:54,cat:'doc',catL:'議事録・文書',name:'書類スキャン→送付状自動生成',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'書類を郵送するたびに送付状を1通ずつ手作り。宛名の書き間違いも怖い',aft:'書類をスキャンするだけでAIが宛先・内容を読み取り送付状が自動完成'},
-  {id:11,cat:'finance',catL:'経営・財務',name:'経営状態分析シート',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「今月赤字？黒字？」が瞬時にわからない。数字を出すためだけに丸1日消えることがある',aft:'売上・コスト・利益がリアルタイムで一画面に。毎朝30秒で全体把握できる'},
-  {id:12,cat:'finance',catL:'経営・財務',name:'売上集計ツール',sym:'super',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'月末に数字を集めて初めて達成できてないとわかる。毎月手遅れ感がある',aft:'予算との乖離が週次でアラート通知。手を打てる時間が生まれた'},
+  {id:2,cat:'info',catL:'情報収集',name:'Googleレビュー監視＋返信下書き',sym:'high',price:30000,priceL:'¥30,000〜',period:'2週間',bef:'「悪い口コミ入ってましたよ」と翌日報告。返信に30分かかる',aft:'口コミの瞬間に通知。返信案が自動で作られて確認するだけ'},
+  {id:3,cat:'info',catL:'情報収集',name:'競合・市場モニタリング',sym:'mid',price:30000,priceL:'¥30,000〜',period:'2〜3週間',bef:'競合の新サービスを2週間後に知る。毎回「もっと早く知りたかった」',aft:'競合の動きが毎朝まとめて届く。先手を打てるようになった'},
+  {id:4,cat:'info',catL:'情報収集',name:'自分専用新聞',sym:'mid',price:20000,priceL:'¥20,000〜',period:'1〜2週間',bef:'業界ニュースを見ようとすると気づいたら1時間経っている',aft:'毎朝7時、自分の業界に絞ったニュースがLINEに届く。5分で完了'},
+  {id:5,cat:'doc',catL:'議事録・文書',name:'MTG議事録 自動化',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'会議が終わるたびに30〜40分の議事録作成が始まる',aft:'会議中に録音するだけ。3分後に整形済みの議事録が届く'},
+  {id:6,cat:'doc',catL:'議事録・文書',name:'事業計画書 ワンクリック生成',sym:'high',price:50000,priceL:'¥50,000〜',period:'2〜3週間',bef:'融資申請のたびに一から書く。どう書けばいいかも不明で何日も消える',aft:'売上・コスト・ビジョンを入力するだけで13章の計画書が完成'},
+  {id:7,cat:'doc',catL:'議事録・文書',name:'見積書・請求書 自動生成',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'毎月の請求業務に数時間消える。フォーマットもバラバラ',aft:'顧客名と金額を入力するだけでPDF請求書が自動生成・送付まで完結'},
+  {id:8,cat:'doc',catL:'議事録・文書',name:'雇用契約書・入社書類 一括生成',sym:'mid',price:35000,priceL:'¥35,000〜',period:'1〜2週間',bef:'採用のたびに契約書を手作り。記載漏れを毎回ドキドキしながら確認',aft:'氏名・条件を入力するだけで5種類の書類が5分で揃う'},
+  {id:9,cat:'doc',catL:'議事録・文書',name:'業務マニュアル 自動生成',sym:'high',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'「マニュアル作らないと」と思いながら3年。スタッフ離脱のたびに同じ説明',aft:'業務動画を撮るだけで手順書・チェックリストが自動生成される'},
+  {id:10,cat:'doc',catL:'議事録・文書',name:'月次経営会議資料 自動生成',sym:'high',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'毎月スタッフが2〜3日かけて資料を作る。会議直前まで修正が続く',aft:'データ連携するだけで自動更新。会議当日は数字を見ることに集中できる'},
+  {id:47,cat:'doc',catL:'議事録・文書',name:'提案書・プレゼン 自動生成',sym:'high',price:40000,priceL:'¥40,000〜',period:'2週間',bef:'提案書を一から作るたびに半日〜1日消える。デザインを気にし始めると止まらない',aft:'課題・提案・効果を入れるだけでデザイン済みの提案書が30分で完成'},
+  {id:48,cat:'doc',catL:'議事録・文書',name:'補助金申請書 自動作成',sym:'super',price:50000,priceL:'¥50,000〜',period:'3週間',bef:'補助金に申請したいが書類が難しくて書き始めるまでに1週間かかる',aft:'Webで質問に答えるだけで申請書の下書きが完成。確認して提出するだけ'},
+  {id:11,cat:'finance',catL:'経営・財務',name:'経営ダッシュボード',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「今月の利益っていくらだっけ」。ExcelがバラバラでPLを出すだけで1日かかる',aft:'売上・コスト・利益がリアルタイムで一画面に。毎朝30秒で把握できる'},
+  {id:12,cat:'finance',catL:'経営・財務',name:'売上予実管理・アラート',sym:'super',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'月末に数字を集めて初めて達成できてないとわかる。毎月手遅れ感がある',aft:'予算との乖離が週次でアラート通知。手を打てる時間が生まれた'},
+  {id:13,cat:'finance',catL:'経営・財務',name:'確定申告・経費仕分けサポート',sym:'super',price:50000,priceL:'¥50,000〜',period:'3〜4週間',bef:'確定申告の時期が来るたびに数日間の地獄。1年分の領収書を一気に仕分け',aft:'月次でレシートを撮るだけ。2月は確認して提出するだけの状態に'},
+  {id:14,cat:'finance',catL:'経営・財務',name:'クレカ・銀行明細→自動仕訳',sym:'super',price:45000,priceL:'¥45,000〜',period:'3週間',bef:'カード明細を会計ソフトに手入力。毎月2〜3時間かかる上に転記ミスが怖い',aft:'CSV取り込みで自動仕訳。5分で終わって転記ミスもゼロに'},
+  {id:15,cat:'finance',catL:'経営・財務',name:'インボイス対応 請求書チェッカー',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'受け取った請求書のインボイス番号を1枚ずつ検索して確認。毎回不安になる',aft:'PDFをアップするだけでインボイス番号・記載要件を自動チェック'},
   {id:16,cat:'finance',catL:'経営・財務',name:'不動産CFシミュレーター',sym:'mid',price:20000,priceL:'¥20,000〜',period:'1週間',bef:'物件を見るたびにExcelを開いてシミュレーション。数字入力だけで30分消える',aft:'物件情報を入力するだけで利回り・CF・ROIが即計算。複数比較も一瞬'},
-  {id:22,cat:'hr',catL:'採用・人事',name:'社内日報機能',sym:'high',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'スタッフの日報が毎日届くが読む時間がなくて貯まる。活かせない情報の山',aft:'毎週月曜、全スタッフの日報がカテゴリ別にまとまって届く'},
-  {id:39,cat:'hr',catL:'採用・人事',name:'採用フロー管理ツール',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'書類・面接・内定の状況がバラバラ。「あの人今どの段階？」がしょっちゅう起きる',aft:'全応募者の選考状況がワンビューで見える。連絡漏れがなくなった'},
-  {id:51,cat:'hr',catL:'採用・人事',name:'社内SNS',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2〜3週間',bef:'社内の情報がLINEグループとメールに散らばって、誰が何を知っているかわからない',aft:'部門・全社のフィードが整理され、大事なお知らせも投稿も一箇所に集まった'},
-  {id:52,cat:'hr',catL:'採用・人事',name:'社内リマインダー自動配信',sym:'mid',price:25000,priceL:'¥25,000〜',period:'1〜2週間',bef:'「報告してください」と口頭・LINEで毎回同じことを言い続けている',aft:'日報・月次報告・期限前の提出物が全自動で本人に届く。追いかける手間がゼロに'},
-  {id:53,cat:'hr',catL:'採用・人事',name:'インシデント報告ツール',sym:'mid',price:30000,priceL:'¥30,000〜',period:'2週間',bef:'トラブル・クレームを聞いたのは翌日。「なんですぐ言わなかったの」が繰り返される',aft:'スマホから即報告→管理者に即通知。再発防止策もAIが提案してくれる'},
-  {id:56,cat:'hr',catL:'採用・人事',name:'メンバー育成カルテ',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'1on1で「前回何を話したっけ？」が頻発。メンバーの目標管理が個人の記憶と感覚頼りになっている',aft:'全メンバーのゴール・課題・今月のアクションが一画面に。前回MTGの内容もその場で確認できる'},
-  {id:25,cat:'marketing',catL:'営業・マーケ',name:'イベントLP生成',sym:'high',price:35000,priceL:'¥35,000〜',period:'1〜2週間',bef:'イベントを思いついても「LP作る手間が…」と考えて、開催を諦めたことがある',aft:'開催情報を入力するだけで当日中にLP公開。申込通知・参加者管理も全自動'},
-  {id:34,cat:'marketing',catL:'営業・マーケ',name:'アポイント自動予約フォーム',sym:'super',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「来週空いていますか？」から始まる3〜5往復のメールやり取り。2日かかる',aft:'予約リンクを送るだけ。相手が空き枠を選んでその場で確定。やり取りゼロ'},
-  {id:55,cat:'marketing',catL:'営業・マーケ',name:'プロフィールページ自動生成',sym:'high',price:30000,priceL:'¥30,000〜',period:'1週間',bef:'自己紹介ページを作ろうとするたびに「何を書けばいい？」「デザインが決まらない」で止まる',aft:'実績・SNS・お問い合わせが整ったプロフィールページが即完成。名刺の代わりにURLを送れる'},
-  {id:31,cat:'industry',catL:'業界特化',name:'ラベル自動生成ツール',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'レシピが変わるたびに栄養計算をやり直してラベルを作り直す。1商品1時間以上',aft:'レシピを入力するだけで栄養計算が完了。そのまま印刷用データで出力'},
-  {id:44,cat:'industry',catL:'業界特化',name:'原価計算ツール',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる',aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される'},
+  {id:17,cat:'finance',catL:'経営・財務',name:'保険契約 一覧管理ツール',sym:'mid',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「あの保険の更新いつだっけ」。契約書を引っ張り出して毎回確認が大変',aft:'全契約が一覧で見えて更新3ヶ月前に自動アラートが届く'},
+  {id:38,cat:'finance',catL:'経営・財務',name:'月次決算サマリ 自動送信',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'毎月PLをまとめてメール送付。スタッフ・顧問への連絡に2〜3時間かかる',aft:'自動で集計・整形されたサマリが関係者に自動送信。月末作業がゼロに'},
+  {id:45,cat:'finance',catL:'経営・財務',name:'経費精算 自動化',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'月末にスタッフから領収書を集めて集計。「これ何のお金だっけ」が毎回起きる',aft:'その場でスマホ撮影→自動集計・仕分け。月末の地獄がなくなった'},
+  {id:46,cat:'finance',catL:'経営・財務',name:'在庫・発注管理ツール',sym:'high',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'気づいたら欠品または注文しすぎて余った。発注タイミングが常に感覚任せ',aft:'在庫が閾値を下回ると自動アラート。欠品と過剰在庫が同時に解消された'},
+  {id:18,cat:'hr',catL:'採用・人事',name:'採用面接記録→DB 自動登録',sym:'mid',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'面接後に評価シートを手入力。「この人どんな人だったっけ」が後から起きる',aft:'面接後に音声メモを録るだけ。テキスト化・DB登録・評価コメント付きで保存'},
+  {id:19,cat:'hr',catL:'採用・人事',name:'求人票・採用LP 自動生成',sym:'high',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'求人を出すたびに求人票を一から書いてLPを外注。完成まで3〜5日かかる',aft:'業種・条件・強みを入力するだけで求人票とLP下書きが当日完成'},
+  {id:20,cat:'hr',catL:'採用・人事',name:'スタッフ育成カルテ',sym:'mid',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「あのスタッフの目標、何だったっけ」。個人の成長状況を誰も把握できていない',aft:'全スタッフの目標・課題・進捗が一画面で見える。フォローすべき人がわかる'},
+  {id:21,cat:'hr',catL:'採用・人事',name:'シフト管理・勤怠 自動集計',sym:'super',price:45000,priceL:'¥45,000〜',period:'3週間',bef:'LINEでシフト希望を集めて手作業で調整。毎月この作業だけで2〜3日消える',aft:'希望をフォームで集めてシフト案が自動生成。確認するだけで済むように'},
+  {id:22,cat:'hr',catL:'採用・人事',name:'日報・週報 自動集計',sym:'high',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'スタッフの日報が毎日届くが読む時間がなくて貯まる。活かせない情報の山',aft:'毎週月曜、全スタッフの日報がカテゴリ別にまとまって届く'},
+  {id:35,cat:'hr',catL:'採用・人事',name:'営業ログ 音声自動記録',sym:'high',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'「あとでCRMに入力しよう」と思ってそのまま忘れる。記録が不完全になりがち',aft:'商談後すぐスマホに話すだけ。自動テキスト化・DB登録まで完結'},
+  {id:39,cat:'hr',catL:'採用・人事',name:'採用フロー 一元管理',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'書類・面接・内定の状況がバラバラ。「あの人今どの段階？」がしょっちゅう起きる',aft:'全応募者の選考状況がワンビューで見える。連絡漏れがなくなった'},
+  {id:23,cat:'marketing',catL:'営業・マーケ',name:'マーケティング戦略 提案書',sym:'high',price:50000,priceL:'¥50,000〜',period:'2〜3週間',bef:'「どう集客すればいい？」の答えを探して何日も調べ続け、方針が決まらない',aft:'現状・強み・ターゲットを入力するだけで整理された提案書が完成'},
+  {id:24,cat:'marketing',catL:'営業・マーケ',name:'SNS投稿文・広告コピー 自動生成',sym:'super',price:40000,priceL:'¥40,000〜',period:'2週間',bef:'「今日何を投稿しよう」と毎日悩む。文章を考えるだけで1時間消える',aft:'キーワードとトーンを指定するだけで量産できる。1ヶ月分を一気に作れる'},
+  {id:25,cat:'marketing',catL:'営業・マーケ',name:'イベント・セミナーLP＋申込管理',sym:'high',price:35000,priceL:'¥35,000〜',period:'1〜2週間',bef:'イベントのたびにLPを外注して3〜5日かかる。申込管理はExcelで手作業',aft:'開催情報を入力するだけで当日中にLP公開。申込通知・管理も自動化'},
+  {id:26,cat:'marketing',catL:'営業・マーケ',name:'顧客管理（CRM）Notion連携',sym:'high',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'顧客情報がメモ・メール・LINE・Excelにバラバラ。フォロー漏れが続く',aft:'全顧客の情報・履歴・次のアクションが一箇所に。フォロー漏れがゼロに'},
+  {id:27,cat:'marketing',catL:'営業・マーケ',name:'AIポートフォリオ・実績サイト',sym:'mid',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「実績を見せてほしい」と言われても古いPDFしかない。更新する時間もない',aft:'Notionに書いた実績が自動でサイトに反映。常に最新状態を見せられる'},
+  {id:28,cat:'marketing',catL:'営業・マーケ',name:'名刺管理→人脈マップ 可視化',sym:'high',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'名刺が山積み。「2年前に会ったあの人に連絡したい」が探せなくて諦める',aft:'名刺を撮るだけでDB化。業種・地域・関係性でつながりが見渡せる'},
+  {id:29,cat:'marketing',catL:'営業・マーケ',name:'メール返信下書き 自動化',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'メールの返信だけで午前中が終わることがある。考える時間が毎日もったいない',aft:'メールを開いたら返信案が既に作られている。確認して送るだけで30秒'},
+  {id:30,cat:'marketing',catL:'営業・マーケ',name:'LINE公式 FAQ自動応答',sym:'mid',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'営業時間外のLINEに翌朝まとめて返信。お客様を何時間も待たせているのがストレス',aft:'24時間よくある質問に自動で即回答。夜中でも「すぐ返ってきた」と好印象'},
+  {id:34,cat:'marketing',catL:'営業・マーケ',name:'面談・アポ 自動予約ツール',sym:'super',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「来週空いていますか？」から始まる3〜5往復のメールやり取り。2日かかる',aft:'予約リンクを送るだけ。相手が空き枠を選んでその場で確定。やり取りゼロ'},
+  {id:36,cat:'marketing',catL:'営業・マーケ',name:'LINEステップ配信 自動構築',sym:'high',price:45000,priceL:'¥45,000〜',period:'2〜3週間',bef:'LINE登録後のメッセージを「どう設計すれば」から悩んで、ずっと放置している',aft:'目的とターゲットを伝えるだけで30日間の配信シナリオが自動完成'},
+  {id:37,cat:'marketing',catL:'営業・マーケ',name:'広告クリエイティブ 自動生成',sym:'high',price:40000,priceL:'¥40,000〜',period:'2週間',bef:'広告バナーのたびにデザイナーに依頼。完成まで3〜5日かかる',aft:'商品情報とターゲットを入れるだけで複数パターンのバナーが当日中に完成'},
+  {id:49,cat:'marketing',catL:'営業・マーケ',name:'ヒアリングシート 自動生成',sym:'high',price:25000,priceL:'¥25,000〜',period:'1週間',bef:'初回面談のたびにヒアリングシートを手直し。「あれを聞き忘れた」が毎回起きる',aft:'業種を選ぶだけでその業界特有の質問が盛り込まれたシートが自動生成'},
+  {id:50,cat:'marketing',catL:'営業・マーケ',name:'口コミ・紹介 管理ツール',sym:'mid',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「〇〇さんに紹介してもらった」と来ても、お礼の連絡を忘れてしまいがち',aft:'紹介者・経路が記録されてお礼タイミングでアラートが来る。紹介が増えた'},
+  {id:31,cat:'industry',catL:'業界特化',name:'食品ラベル（栄養成分表示）自動生成',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'レシピが変わるたびに栄養計算をやり直してラベルを作り直す。1商品1時間以上',aft:'レシピを入力するだけで栄養計算が完了。そのまま印刷用データで出力'},
+  {id:32,cat:'industry',catL:'業界特化',name:'FP実績管理 ダッシュボード',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'月次の件数・コミッションをスクショから手入力。集計だけで毎月30分かかる',aft:'スクショをアップするだけで自動集計。グラフ付きで月次推移まで一発確認'},
+  {id:33,cat:'industry',catL:'業界特化',name:'福祉事業所 給付費・工賃 自動集計',sym:'super',price:50000,priceL:'¥50,000〜',period:'3〜4週間',bef:'毎月、給付費PDFから手作業で転記。1人ずつ確認して2時間かかっていた',aft:'PDFをアップするだけで自動集計・チェックまで完了。3分で終わるように'},
+  {id:40,cat:'industry',catL:'業界特化',name:'支援記録・個別支援計画 自動作成',sym:'super',price:50000,priceL:'¥50,000〜',period:'3週間',bef:'支援記録を書くために残業が続く。「記録のための支援」で本末転倒に感じる',aft:'音声メモを残すだけ。記録と計画書の下書きが自動生成。残業がなくなった'},
+  {id:41,cat:'industry',catL:'業界特化',name:'予約管理ツール',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'電話が鳴り続ける時間帯がある。手書きの予約台帳で2重予約も起こした',aft:'24時間ネット予約が可能になり電話対応が激減。2重予約もゼロになった'},
+  {id:42,cat:'industry',catL:'業界特化',name:'カルテ・施術記録 管理',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'「前回どこが気になるって言ってたっけ」と施術前に焦って紙カルテを探している',aft:'名前を入力するだけで前回の施術内容・メモが1秒で表示される'},
+  {id:43,cat:'industry',catL:'業界特化',name:'生徒管理・保護者連絡ツール',sym:'high',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'保護者への連絡をひとりずつLINEで送る。誰に送ったか確認しながら30分かかる',aft:'対象者を選んで一斉送信。既読・未読も確認できて連絡漏れがゼロに'},
+  {id:44,cat:'industry',catL:'業界特化',name:'メニュー原価計算（飲食）',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる',aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される'},
+  {id:51,cat:'info',catL:'情報収集',name:'業界事例リサーチ',sym:'mid',price:25000,priceL:'¥25,000〜',period:'1〜2週間',bef:'「他の事業所はどうやって乗り越えたんだろう」。ネットで調べても断片的な情報しか出てこない',aft:'業種と課題を指定するだけで全国の成功事例がまとめて届く。自社への応用ポイント付き'},
+  {id:52,cat:'hr',catL:'採用・人事',name:'育成カルテ',sym:'mid',price:35000,priceL:'¥35,000〜',period:'2週間',bef:'「あの方、前回どんな目標でしたっけ」。面談記録がバラバラで継続的なサポートができていない',aft:'担当者ごとの目標・進捗・次のアクションが一画面で見える。継続支援の質が上がった'},
 ];
 
 const QS=[
   {id:'industry',q:'あなたの業種を教えてください',h:'複数選択OK',multi:true,
    opts:[{v:'調剤薬局・クリニック',i:'💊'},{v:'福祉・介護事業所',i:'🏥'},{v:'飲食・食品製造',i:'🍱'},{v:'コンサル・FP・士業',i:'💼'},{v:'美容・サロン',i:'✨'},{v:'教育・学習塾',i:'📚'},{v:'人材・採用',i:'👥'},{v:'その他・一般企業',i:'🏢'}]},
-  {id:'meeting',q:'会議が終わった後、あなたは何をしていますか？',h:'現状に最も近いものを選んでください',multi:false,
-   opts:[
-     {v:'すぐ次の仕事に移れる / 既に自動化済み',i:'✅',score:0,h:0,cat:'doc'},
-     {v:'ツールはあるが整理・修正に15分はかかる',i:'🛠️',score:1,h:5,cat:'doc'},
-     {v:'毎回30〜60分かけて自分でまとめている',i:'✏️',score:2,h:10,cat:'doc'},
-     {v:'後回しにして「誰か書いた？」が始まる',i:'😰',score:3,h:15,cat:'doc'},
-   ]},
-  {id:'finance',q:'今月の利益、今すぐ言えますか？',h:'正直な現状で選んでください',multi:false,
-   opts:[
-     {v:'ダッシュボードでリアルタイムに把握している',i:'✅',score:0,h:0,cat:'finance'},
-     {v:'ツールはあるが、数字を出すのに時間がかかる',i:'🔧',score:1,h:8,cat:'finance'},
-     {v:'Excelで集計中。月末に1〜2時間かかっている',i:'📊',score:2,h:15,cat:'finance'},
-     {v:'月末に慌てて確認。正直よくわかっていない',i:'😱',score:3,h:20,cat:'finance'},
-   ]},
-  {id:'hr',q:'スタッフのことで、毎月一番時間を食っているのは？',h:'近いものを選んでください',multi:false,
-   opts:[
-     {v:'特に問題なし / 仕組みが整っている',i:'✅',score:0,h:0,cat:'hr'},
-     {v:'シフト調整・連絡のやりとりが地味に重い',i:'🗂️',score:1,h:6,cat:'hr'},
-     {v:'採用のたびに書類作業で半日以上消える',i:'📅',score:2,h:12,cat:'hr'},
-     {v:'人事全般が後手後手で、毎月時間が足りない',i:'😓',score:3,h:18,cat:'hr'},
-   ]},
-  {id:'marketing',q:'新しいお客さんは今、どこから来ていますか？',h:'現状に一番近いものを選んでください',multi:false,
-   opts:[
-     {v:'集客の仕組みが整っていて安定している',i:'✅',score:0,h:0,cat:'marketing'},
-     {v:'SNS投稿・広告文を考えるのに毎回時間がかかる',i:'📱',score:1,h:6,cat:'marketing'},
-     {v:'LP・告知ページを作るのが面倒で機会を逃している',i:'😩',score:2,h:10,cat:'marketing'},
-     {v:'ほぼ紹介だけ頼り。自分で集客する仕組みがない',i:'🔥',score:3,h:15,cat:'marketing'},
-   ]},
-  {id:'budget',q:'最後に1つ。改善に動けそうな予算感は？',h:'1つ選択',multi:false,
+  {id:'pain',q:'最も時間がかかっている業務は？',h:'複数選択OK',multi:true,
+   opts:[{v:'経理・請求・申告',i:'📊',h:20,cat:'finance'},{v:'採用・人事管理',i:'👤',h:12,cat:'hr'},{v:'集客・SNS・広告',i:'📣',h:15,cat:'marketing'},{v:'議事録・書類作成',i:'📝',h:10,cat:'doc'},{v:'情報収集・調査',i:'🔍',h:8,cat:'info'},{v:'顧客管理・フォロー',i:'🤝',h:10,cat:'marketing'}]},
+  {id:'budget',q:'1回あたりの予算感は？',h:'1つ選択',multi:false,
    opts:[{v:'〜 ¥50,000（まず1本試したい）',i:'💡',budget:50000},{v:'〜 ¥150,000（まとめて3〜4本）',i:'⚡',budget:150000},{v:'上限なし（課題解決を優先したい）',i:'🚀',budget:Infinity}]},
 ];
 const DEMO={
@@ -715,7 +589,8 @@ const DEMO={
   11:'dashboard',12:'dashboard',13:'list',14:'list',15:'form',16:'calc',17:'list',38:'dashboard',45:'form',46:'alert',
   18:'list',19:'form',20:'dashboard',21:'list',22:'alert',35:'list',39:'list',
   23:'form',24:'form',25:'form',26:'list',27:'list',28:'list',29:'chat',30:'chat',34:'form',36:'chat',37:'form',49:'form',50:'list',
-  31:'calc',32:'dashboard',33:'list',40:'form',41:'list',42:'list',43:'chat',44:'calc'
+  31:'calc',32:'dashboard',33:'list',40:'form',41:'list',42:'list',43:'chat',44:'calc',
+  51:'list',52:'dashboard'
 };
 const IND={
   '調剤薬局・クリニック':['industry','finance','doc'],
@@ -730,7 +605,7 @@ const IND={
 
 const MAINT_FREE=new Set([8,16,31,44,49]);
 
-let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null},cart:new Map()};
+let S={step:0,ans:{industry:[],pain:[],budget:null},cart:new Map()};
 let F='rec';
 let V='grid';
 
@@ -747,17 +622,10 @@ function setV(v){
   renderT();
 }
 
-const AREA_QS=['meeting','finance','hr','marketing'];
-
 function sc(){
   const b={};
   S.ans.industry.forEach(v=>(IND[v]||[]).forEach(c=>b[c]=(b[c]||0)+3));
-  AREA_QS.forEach(qid=>{
-    const q=QS.find(x=>x.id===qid);
-    const sel=(S.ans[qid]||[])[0];
-    const opt=q?.opts.find(o=>o.v===sel);
-    if(opt&&opt.score>0)b[opt.cat]=(b[opt.cat]||0)+(opt.score*1.5);
-  });
+  S.ans.pain.forEach(p=>{const o=QS[1].opts.find(x=>x.v===p);if(o)b[o.cat]=(b[o.cat]||0)+2;});
   const bud=S.ans.budget||Infinity;
   return T.map(t=>{
     let s=(b[t.cat]||0)+(t.sym==='super'?1.5:t.sym==='high'?.7:0);
@@ -766,18 +634,12 @@ function sc(){
   }).sort((a,z)=>z._s-a._s);
 }
 
-function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0)||S.ans.budget!==null;}
+function hasA(){return S.ans.industry.length>0||S.ans.pain.length>0||S.ans.budget!==null;}
 
 function pot(){
-  let totalH=0;
-  AREA_QS.forEach(qid=>{
-    const q=QS.find(x=>x.id===qid);
-    const sel=(S.ans[qid]||[])[0];
-    const opt=q?.opts.find(o=>o.v===sel);
-    if(opt)totalH+=opt.h||0;
-  });
+  let h=0;S.ans.pain.forEach(p=>{const o=QS[1].opts.find(x=>x.v===p);if(o)h+=o.h||0;});
   const m=S.ans.budget===50000?.7:S.ans.budget===Infinity?1.3:1;
-  return{h:Math.round(totalH*m),c:Math.round(totalH*m*2500)};
+  return{h:Math.round(h*m),c:Math.round(h*m*2500)};
 }
 
 function renderT(){
@@ -835,7 +697,6 @@ function renderT(){
     const ink=S.cart.has(t.id);
     const el=document.createElement('div');
     el.className='tc'+(ink?' sel':'');el.id='c'+t.id;
-    el.dataset.cat=t.cat;
     el.style.animation=`fu .28s ease ${Math.min(i,15)*22}ms both`;
     el.innerHTML=`
 <div class="tc-hd">
@@ -866,9 +727,7 @@ function renderT(){
     <div class="tc-pd">工数 ${t.period}　${MAINT_FREE.has(t.id)?'<span class="mn-badge">保守なし</span>':'保守 ¥'+mf(t).toLocaleString()+'〜/月'}</div>
   </div>
   <div style="display:flex;gap:6px;align-items:center;">
-    <a class="tc-demo" href="#" onclick="event.stopPropagation();event.preventDefault();openDetail(${t.id})">詳細 →</a>
-    ${MOCK[t.id]?`<a class="tc-demo tc-mock" href="${MOCK[t.id]}" onclick="event.stopPropagation()" target="_blank">🎬 デモを見る</a>`:`<a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>`}
-    ${SAMPLE[t.id]?`<a class="tc-demo tc-sample" href="${SAMPLE[t.id]}" onclick="event.stopPropagation()" target="_blank">📄 実際のLP</a>`:''}
+    <a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>
     <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'✓ 選択中':'+ 見積もりに追加'}</button>
   </div>
 </div>`;
@@ -909,70 +768,6 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2400);
-}
-
-// ─── Detail modal data ───
-const TD={
-  5:{who:['士業事務所','コンサル会社','医院・クリニック'],case:'月50件以上の会議がある士業事務所。議事録作成に月約25時間かかっていたが導入後は月2時間に。浮いた時間を提案書作成に充てたことで受注率が1.4倍に。',steps:['会議をスマホで録音（Zoom・対面どちらも対応）','AIが要点・決定事項・ToDoを自動抽出・整形','担当者・期限付きの議事録がLINE/メールで3分後に届く']},
-  7:{who:['FP・コンサル（1人）','士業事務所','サービス業'],case:'FP事務所（1人）。毎月20〜30件の請求書作成に月4時間かかっていた。導入後は月20分に。確認と送信だけで完結。入金漏れもゼロになった。',steps:['顧客名・サービス内容・金額を入力（テンプレ選択可）','テンプレートに自動流し込みでPDF生成','メール送付まで自動。入金確認も自動アラートで通知']},
-  8:{who:['飲食・小売','美容サロン','医療・介護'],case:'スタッフ20名の美容室チェーン。採用のたびに5種類の書類を手作りしていた。導入後は10分で全書類が揃うように。記載漏れによるトラブルもゼロに。',steps:['氏名・入社日・条件などをフォームに入力','雇用契約書・誓約書など5種類が一括生成','PDF確認・押印・メール送付まで一気通貫']},
-  9:{who:['飲食チェーン','美容サロン','福祉事業所'],case:'スタッフ15名の飲食チェーン。新人教育に毎回4〜5時間かかっていたが、マニュアル整備後は1時間のビデオ視聴で完結。OJTコストが60%削減。',steps:['業務手順をスマホで動画撮影（5〜10分）','AIが自動でテキスト手順書とチェックリストを生成','QRコードでスタッフがいつでも確認できる環境に']},
-  11:{who:['中小企業経営者','個人事業主','FP支援先'],case:'従業員8名の建設業。毎月末に数字を出すだけで半日かかっていたが、導入後は毎朝30秒で経営状態を確認。月末の資料作成から解放された。',steps:['会計ソフト・Excelとのデータ連携を設定（初回のみ）','売上・コスト・利益がリアルタイムで一画面に自動集計','週次・月次レポートが自動生成。経営判断が速くなった']},
-  24:{who:['エステ・サロン','飲食・食品','BtoC事業者'],case:'エステサロン（1人）。SNS投稿に毎日1時間かかっていたが、月1回2時間で翌月分30投稿を作り置き。投稿頻度が3倍になりフォロワーが2倍に増加。',steps:['テーマ・ターゲット・発信トーンを月1回設定','AIが30日分の投稿文・ハッシュタグを一括生成','スケジュール投稿ツールと連携して自動配信']},
-  25:{who:['コンサル・コーチ','士業','セミナー主催者'],case:'個人コンサルタント。LPを外注するたびに3〜5日かかり開催頻度が年4回だった。導入後は当日申込ページを公開できるようになり年12回に増加。',steps:['開催日・テーマ・登壇者・参加費などをフォーム入力','AIがデザイン済みLPを当日中に自動生成・公開','申込通知・参加者管理・リマインドまで全自動']},
-  29:{who:['経営者','コンサル・士業','営業職'],case:'中小企業経営者。1日平均50通のメール返信に午前中の2〜3時間を費やしていた。導入後は1時間以内に。浮いた時間を顧客面談に充て、売上が20%増加。',steps:['受信メールをAIが自動で読み込み・文脈を解析','状況と文脈に合わせた返信案を自動生成','確認・微修正して送信。使うほど精度が上がる']},
-  38:{who:['士業・コンサル','中小企業経営者','顧問先多数の税理士'],case:'顧問先を30社持つ税理士。毎月末の数字集計とメール送付に2〜3時間かかっていた。導入後は月末の作業がゼロに。顧問先からの評判も上がった。',steps:['会計データと連携して月次PLを自動集計','整形されたサマリーレポートを自動生成','関係者へのメール送付まで全自動。送付漏れもゼロに']},
-  48:{who:['中小企業経営者','士業・コンサル','製造業・小売業'],case:'従業員10名の製造業。補助金を知っても「書類が難しい」と毎年見送っていた。導入後に初申請し補助金200万円を獲得。翌年も自社で対応できるように。',steps:['業種・事業内容・課題をフォームで入力','AIが申請書の下書きを自動生成（要件に沿った文体で）','内容確認・修正して提出。申請書作成が当日中に完了']},
-};
-const DEFAULT_STEPS={
-  info:['情報ソースとキーワードを初回に設定（15分）','AIが毎日自動収集・整理・カテゴリ分類','毎朝指定の時間にLINEやメールで届く'],
-  doc:['フォームに必要な情報を入力（5分以内）','AIが自動でフォーマット・文章を生成','確認・修正して完成。テンプレートは蓄積される'],
-  finance:['会計ソフト・Excelとのデータ連携を初回設定','数字が自動で集計・可視化・グラフ化','月次・週次で自動レポート生成、関係者に共有'],
-  hr:['スタッフ情報・業務データを一元入力','AIが分析・整理・通知を自動化','管理者はアラートを確認するだけ'],
-  marketing:['目標・ターゲット・コンテンツ方針を初回設定','AIが文章・構成・画像素材を自動生成','公開・配信まで一気通貫で自動化'],
-  industry:['業種特有のフォーマットと要件を初回設定','日常業務のデータを入力または自動連携','必要なアウトプットが自動生成・整理される'],
-};
-const DEFAULT_CASES={
-  info:'情報収集・モニタリングの自動化は業種を問わず「気づくのが遅い」「見落とす」という課題を解消します。特に経営者・担当者一人が幅広い情報を追う必要がある中小企業で効果を発揮します。',
-  doc:'書類作成・文書生成の自動化は、士業・コンサル・経営者など「作る頻度が高い」業種で特に効果的です。1件あたり30〜90分の作業が10分以内になるケースが多いです。',
-  finance:'経営数字の可視化・財務自動化は月次作業に時間をかけていた中小企業で特に好評です。「数字を出すこと」から「数字を読んで動くこと」に時間を使えるようになります。',
-  hr:'採用・人事の自動化はスタッフが5名以上いる事業所で効果を発揮します。シフト管理・書類作成・連絡業務の合計時間が月20〜40時間削減されるケースがあります。',
-  marketing:'マーケティング・集客の自動化はSNS・LP・メール対応など「毎回ゼロから作っている」業務を変えます。1〜10名の少人数チームで費用対効果が最も高いジャンルです。',
-  industry:'業界特化ツールはその業種ならではの「面倒な定型作業」を狙い撃ちします。一般的な業務改善ツールでは対応できない専門的な要件に特化して設計しています。',
-};
-
-function openDetail(id){
-  const t=T.find(x=>x.id===id);if(!t)return;
-  const detail=TD[id];
-  // icon bg
-  const ico=document.getElementById('dm-ico');
-  ico.textContent=TI[id]||'🔧';
-  ico.className='';ico.style.cssText='width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;';
-  const bgMap={info:'linear-gradient(135deg,#dbeafe,#c7d2fe)',doc:'linear-gradient(135deg,#ede9fe,#ddd6fe)',finance:'linear-gradient(135deg,#fef3c7,#fde68a)',hr:'linear-gradient(135deg,#d1fae5,#a7f3d0)',marketing:'linear-gradient(135deg,#fee2e2,#fecdd3)',industry:'linear-gradient(135deg,#ccfbf1,#99f6e4)'};
-  ico.style.background=bgMap[t.cat]||'var(--bg)';
-  document.getElementById('dm-name').textContent=t.name;
-  document.getElementById('dm-cat').textContent=t.catL;
-  document.getElementById('dm-bef').textContent=t.bef;
-  document.getElementById('dm-aft').textContent=t.aft;
-  document.getElementById('dm-price').textContent=t.priceL+'〜';
-  document.getElementById('dm-period').textContent=t.period;
-  const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
-  document.getElementById('dm-steps').innerHTML=steps.map((s,i)=>`<div class="dm-step"><div class="dm-step-num">${i+1}</div><div class="dm-step-txt">${s}</div></div>`).join('');
-  const who=detail?detail.who:[];
-  document.getElementById('dm-who').innerHTML=who.map(w=>`<span class="dm-who-chip">${w}</span>`).join('');
-  document.getElementById('dm-case-txt').textContent=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
-  const btn=document.getElementById('dm-cart-btn');
-  btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
-  document.getElementById('detailmodal').dataset.toolId=id;
-  document.getElementById('detailmodal').style.display='flex';
-}
-function toggleFromDetail(){
-  const id=parseInt(document.getElementById('detailmodal').dataset.toolId);
-  tog(id);
-  const btn=document.getElementById('dm-cart-btn');
-  btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
 }
 
 function closeModal(id){document.getElementById(id).style.display='none';}
@@ -1173,7 +968,7 @@ function confirmApo(){
 }
 // ─────────────────────────────────────────────────
 
-// URL共有でカートを復元 / #apo でモーダルを開く
+// URL共有でカートを復元
 (function(){
   const h=location.hash;
   if(h.startsWith('#c=')){
@@ -1181,7 +976,6 @@ function confirmApo(){
     ids.forEach(id=>{const t=T.find(x=>x.id===id);if(t)S.cart.set(id,t);});
     if(ids.length)setTimeout(()=>{updBar();renderT();showToast(ids.length+'本のツールを復元しました');},300);
   }
-  if(h==='#apo') setTimeout(showApo,300);
 })();
 
 function renderW(){
@@ -1193,59 +987,30 @@ function renderW(){
   if(done>=total){
     const p=pot();
     const catN={finance:'経営・財務',hr:'採用・人事',marketing:'営業・マーケ',doc:'議事録・文書',info:'情報収集',industry:'業界特化'};
-    const pains=[];
-    AREA_QS.forEach(qid=>{
-      const q=QS.find(x=>x.id===qid);
-      const sel=(S.ans[qid]||[])[0];
-      const opt=q?.opts.find(o=>o.v===sel);
-      if(opt&&opt.score>0&&opt.cat&&catN[opt.cat])pains.push(catN[opt.cat]);
-    });
-    const rawScore=AREA_QS.reduce((s,qid)=>{
-      const q=QS.find(x=>x.id===qid);
-      const sel=(S.ans[qid]||[])[0];
-      const opt=q?.opts.find(o=>o.v===sel);
-      return s+(opt?.score||0);
-    },0);
-    const totalPct=Math.min(100,Math.round(rawScore/12*100));
-    const LVLS=[
-      {min:0, max:24, emoji:'😊', name:'いまのところ余裕あり'},
-      {min:25,max:44, emoji:'🙂', name:'ちょっと重い部分がある'},
-      {min:45,max:59, emoji:'😓', name:'じわじわ消耗している'},
-      {min:60,max:79, emoji:'😰', name:'かなりの時間が手作業に'},
-      {min:80,max:100,emoji:'🔥', name:'今すぐ手を打ったほうがいい！'},
-    ];
-    const lv=LVLS.find(l=>totalPct>=l.min&&totalPct<=l.max)||LVLS[0];
-    const yrMoney=Math.round(p.c*12/10000);
+    const pains=[...new Set(S.ans.pain.map(v=>QS[1].opts.find(x=>x.v===v)?.cat).filter(Boolean))].map(c=>catN[c]).filter(Boolean);
     area.innerHTML=`
 <div class="res">
   <div class="res-top">
-    <div class="rt-tag">診断完了 · 改善ポテンシャル</div>
-    <div class="rt-sub">右側にあなた向けのツールを表示中</div>
+    <div class="rt-tag">診断完了</div>
+    <div class="rt-ttl">あなたの改善ポテンシャル</div>
+    <div class="rt-sub">右側におすすめツールを表示しています</div>
   </div>
-  <div class="res-gauge">
-    <div class="g-track"><div class="g-marker" id="gm"></div></div>
-    <div class="g-emojis"><span>😊</span><span>🙂</span><span>😓</span><span>😰</span><span>🔥</span></div>
+  <div class="res-nums">
+    <div class="rn"><div class="rnl">削減できる業務時間</div><div class="rnv">約${p.h}<small>時間/月</small></div></div>
+    <div class="rn"><div class="rnl">月あたり換算コスト</div><div class="rnv">¥${(Math.round(p.c/1000)*1000).toLocaleString()}<small>〜</small></div></div>
   </div>
-  <div class="g-emoji-big">${lv.emoji}</div>
-  <div class="g-level">${lv.name}</div>
-  <div class="res-roi">
-    <div class="rri"><div class="rrl">月間削減見込み</div><div class="rrv">${p.h>0?p.h:'—'}</div><div class="rru">時間 / 月</div></div>
-    <div class="rri"><div class="rrl">年間換算削減</div><div class="rrv">${yrMoney>0?yrMoney:'—'}</div><div class="rru">万円 / 年</div></div>
+  <div style="margin:0 10px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;font-size:10px;color:#92400e;line-height:1.6;">
+    <div style="font-weight:700;margin-bottom:2px;">このまま1年放置すると…</div>
+    <div>機会損失 <strong style="font-size:13px;">¥${(Math.round(p.c*12/10000)*10000).toLocaleString()}〜/年</strong> が積み上がります</div>
   </div>
-  ${pains.length?`<div class="res-tags" style="padding:8px 10px;">${pains.map(c=>`<span class="rtag">${c}</span>`).join('')}</div>`:''}
-  <div class="res-cta">
-    <p>診断結果をもとに<br><strong style="color:#fff;">無料相談</strong>で具体策をご提案</p>
-    <button class="res-cta-btn" onclick="showApo()">📅 30分 無料相談を予約 →</button>
-  </div>
+  ${pains.length?`<div class="res-tags">${pains.map(c=>`<span class="rtag">${c}</span>`).join('')}</div>`:''}
   <div class="res-foot"><button class="breset" onclick="rst()">↩ やり直す</button></div>
 </div>`;
-    setTimeout(()=>{const gm=document.getElementById('gm');if(gm)gm.style.left=Math.min(94,Math.max(4,totalPct))+'%';},80);
     renderT();return;
   }
 
   QS.slice(0,done).forEach((q,i)=>{
-    const budQ=QS.find(x=>x.id==='budget');
-    const val=q.id==='budget'?(budQ.opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
+    const val=q.id==='budget'?(QS[2].opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
     const d=document.createElement('div');d.className='sdone';d.onclick=()=>{S.step=i;renderW();};
     d.innerHTML=`<div class="sck">✓</div><div class="sdq">${q.q}</div><div class="sda">${val}</div>`;
     area.appendChild(d);
@@ -1297,7 +1062,7 @@ function pick(qId,val,budget,multi){
 }
 function nxt(){if(S.step<QS.length)S.step++;renderW();}
 function prev(){if(S.step>0)S.step--;renderW();}
-function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null};renderW();}
+function rst(){S.step=0;S.ans={industry:[],pain:[],budget:null};renderW();}
 
 document.querySelectorAll('.ftab').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');F=btn.dataset.f;renderT();});
