@@ -443,6 +443,36 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .int-clr-btn{padding:7px;border-radius:7px;border:1px solid var(--bdr);background:transparent;font-size:11px;color:var(--mute);cursor:pointer;font-family:inherit;transition:all .15s;width:100%;}
 .int-clr-btn:hover{color:var(--sub);}
 @media(max-width:1100px){.layout{grid-template-columns:var(--diag-w) 1fr;}.int-panel{display:none;}}
+/* ─── DETAIL MODAL: dramatic redesign ─── */
+.dm-body-inner{padding:0 0 4px;}
+.dm-before-card{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden;margin:0 22px 0;}
+.dm-before-card::before{content:'"';position:absolute;top:-14px;left:14px;font-size:120px;color:rgba(239,68,68,.12);font-family:Georgia,serif;line-height:1;pointer-events:none;}
+.dm-before-tag{font-size:9px;font-weight:700;letter-spacing:.18em;color:#f87171;margin-bottom:12px;text-transform:uppercase;}
+.dm-before-quote{font-size:14px;font-weight:600;color:#f1f5f9;line-height:1.75;font-style:italic;position:relative;z-index:1;}
+.dm-arrow-sep{display:flex;align-items:center;gap:12px;padding:10px 22px;}
+.dm-arrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(79,70,229,.4),transparent);}
+.dm-arrow-label{font-size:10px;font-weight:700;color:var(--indigo);white-space:nowrap;letter-spacing:.08em;}
+.dm-after-card{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #34d399;border-radius:14px;padding:22px 24px;margin:0 22px;}
+.dm-after-tag{font-size:9px;font-weight:700;letter-spacing:.18em;color:#059669;margin-bottom:12px;text-transform:uppercase;}
+.dm-after-txt{font-size:15px;font-weight:700;color:#065f46;line-height:1.75;}
+.dm-section{padding:18px 22px 0;}
+.dm-section-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:12px;}
+.dm-steps-list{display:flex;flex-direction:column;gap:10px;}
+.dm-step-new{display:flex;gap:12px;align-items:flex-start;}
+.dm-step-num-new{width:24px;height:24px;border-radius:50%;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.dm-step-txt-new{font-size:12px;line-height:1.65;color:var(--ink);padding-top:3px;}
+.dm-case-new{margin:18px 22px 0;background:var(--bg);border-radius:12px;padding:18px;border:1px solid var(--bdr);}
+.dm-case-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.dm-case-q{font-size:32px;color:var(--indigo);font-family:Georgia,serif;line-height:1;opacity:.35;flex-shrink:0;}
+.dm-case-who{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.dm-case-txt-new{font-size:11px;line-height:1.8;color:var(--sub);}
+.dm-footer-new{padding:18px 22px 22px;display:flex;flex-direction:column;gap:8px;}
+.dm-period-new{font-size:11px;color:var(--mute);margin-bottom:2px;}
+.dm-cart-btn-new{width:100%;padding:13px;border-radius:9px;border:none;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .2s;}
+.dm-cart-btn-new:hover{background:var(--indigo-d);transform:translateY(-1px);}
+.dm-cart-btn-new.added{background:#059669;box-shadow:0 2px 10px rgba(5,150,105,.3);}
+.dm-consult-btn-new{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;}
+.dm-consult-btn-new:hover{background:var(--bg);}
 </style>
 </head>
 <body>
@@ -678,7 +708,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 <!-- ─── 詳細モーダル ─── -->
 <div class="modal-ov" id="detailmodal" style="display:none" onclick="if(event.target===this)closeModal('detailmodal')">
-  <div class="modal-box" style="max-width:620px;">
+  <div class="modal-box" style="max-width:700px;">
     <div class="modal-hd">
       <div style="display:flex;align-items:center;gap:10px;">
         <div id="dm-ico" style="width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;"></div>
@@ -689,40 +719,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
       </div>
       <button class="modal-close" onclick="closeModal('detailmodal')">✕</button>
     </div>
-    <div style="padding:22px 26px;display:flex;flex-direction:column;gap:18px;">
-      <!-- Before/After -->
-      <div>
-        <div class="dm-sect-lbl">BEFORE / AFTER</div>
-        <div class="ba" style="margin-bottom:0;">
-          <div class="ba-row">
-            <span class="ba-tag bt-b">😩 以前</span>
-            <span class="ba-txt bb-txt" id="dm-bef"></span>
-          </div>
-          <div class="ba-sep">↓ AI導入後</div>
-          <div class="ba-row">
-            <span class="ba-tag bt-a">✨ 今は</span>
-            <span class="ba-txt ga" id="dm-aft"></span>
-          </div>
-        </div>
-      </div>
-      <!-- 3ステップ -->
-      <div>
-        <div class="dm-sect-lbl">使い方の流れ（3ステップ）</div>
-        <div id="dm-steps" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
-      <!-- Case study -->
-      <div class="dm-case">
-        <div class="dm-sect-lbl">💡 こんな会社で効果が出ています</div>
-        <div id="dm-who" class="dm-who"></div>
-        <div class="dm-case-txt" id="dm-case-txt"></div>
-      </div>
-      <!-- Footer -->
-      <div class="dm-footer">
-        <div style="font-size:11px;color:var(--mute);margin-bottom:8px;">導入目安：<span id="dm-period"></span></div>
-        <button class="dm-cart-btn" id="dm-cart-btn" onclick="toggleFromDetail()">♡ 気になる</button>
-        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
-      </div>
-    </div>
+    <div id="dm-body" style="overflow-y:auto;max-height:calc(90vh - 60px);"></div>
   </div>
 </div>
 
@@ -1049,25 +1046,50 @@ const DEFAULT_CASES={
 function openDetail(id){
   const t=T.find(x=>x.id===id);if(!t)return;
   const detail=TD[id];
-  // icon bg
+  const bgMap={info:'linear-gradient(135deg,#dbeafe,#c7d2fe)',doc:'linear-gradient(135deg,#ede9fe,#ddd6fe)',finance:'linear-gradient(135deg,#fef3c7,#fde68a)',hr:'linear-gradient(135deg,#d1fae5,#a7f3d0)',marketing:'linear-gradient(135deg,#fee2e2,#fecdd3)',industry:'linear-gradient(135deg,#ccfbf1,#99f6e4)'};
+  const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
+  const who=detail?detail.who:[];
+  const caseText=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
+  const inCart=S.cart.has(id);
   const ico=document.getElementById('dm-ico');
   ico.textContent=TI[id]||'🔧';
-  ico.className='';ico.style.cssText='width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;';
-  const bgMap={info:'linear-gradient(135deg,#dbeafe,#c7d2fe)',doc:'linear-gradient(135deg,#ede9fe,#ddd6fe)',finance:'linear-gradient(135deg,#fef3c7,#fde68a)',hr:'linear-gradient(135deg,#d1fae5,#a7f3d0)',marketing:'linear-gradient(135deg,#fee2e2,#fecdd3)',industry:'linear-gradient(135deg,#ccfbf1,#99f6e4)'};
-  ico.style.background=bgMap[t.cat]||'var(--bg)';
+  ico.style.cssText=`width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;background:${bgMap[t.cat]||'var(--bg)'};`;
   document.getElementById('dm-name').textContent=t.name;
   document.getElementById('dm-cat').textContent=t.catL;
-  document.getElementById('dm-bef').textContent=t.bef;
-  document.getElementById('dm-aft').textContent=t.aft;
-  document.getElementById('dm-period').textContent=t.period;
-  const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
-  document.getElementById('dm-steps').innerHTML=steps.map((s,i)=>`<div class="dm-step"><div class="dm-step-num">${i+1}</div><div class="dm-step-txt">${s}</div></div>`).join('');
-  const who=detail?detail.who:[];
-  document.getElementById('dm-who').innerHTML=who.map(w=>`<span class="dm-who-chip">${w}</span>`).join('');
-  document.getElementById('dm-case-txt').textContent=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
-  const btn=document.getElementById('dm-cart-btn');
-  btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';
+  document.getElementById('dm-body').innerHTML=`<div class="dm-body-inner">
+<div class="dm-before-card">
+  <div class="dm-before-tag">😩 導入前・こんな状況ありませんか？</div>
+  <div class="dm-before-quote">${t.bef}</div>
+</div>
+<div class="dm-arrow-sep">
+  <div class="dm-arrow-line"></div>
+  <div class="dm-arrow-label">✦ AIが変えること</div>
+  <div class="dm-arrow-line"></div>
+</div>
+<div class="dm-after-card">
+  <div class="dm-after-tag">✨ 導入後・こう変わります</div>
+  <div class="dm-after-txt">${t.aft}</div>
+</div>
+<div class="dm-section">
+  <div class="dm-section-lbl">使い方の流れ（3ステップ）</div>
+  <div class="dm-steps-list">
+    ${steps.map((s,i)=>`<div class="dm-step-new"><div class="dm-step-num-new">${i+1}</div><div class="dm-step-txt-new">${s}</div></div>`).join('')}
+  </div>
+</div>
+<div class="dm-case-new">
+  <div class="dm-case-header">
+    <div class="dm-case-q">"</div>
+    <div class="dm-section-lbl" style="margin-bottom:0;">こんな事業者で効果が出ています</div>
+  </div>
+  ${who.length?`<div class="dm-case-who">${who.map(w=>`<span class="dm-who-chip">${w}</span>`).join('')}</div>`:''}
+  <div class="dm-case-txt-new">${caseText}</div>
+</div>
+<div class="dm-footer-new">
+  <div class="dm-period-new">導入目安：${t.period}</div>
+  <button class="dm-cart-btn-new${inCart?' added':''}" id="dm-cart-btn" onclick="toggleFromDetail()">${inCart?'★ 気になる！':'♡ 気になる'}</button>
+  <button class="dm-consult-btn-new" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
+</div>
+</div>`;
   document.getElementById('detailmodal').dataset.toolId=id;
   document.getElementById('detailmodal').style.display='flex';
 }
