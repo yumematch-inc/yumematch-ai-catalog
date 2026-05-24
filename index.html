@@ -240,8 +240,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .dm-cart-btn:hover{background:var(--indigo-d);transform:translateY(-1px);}
 .dm-cart-btn.added{background:#059669;box-shadow:0 2px 10px rgba(5,150,105,.3);}
 .dm-footer{padding-top:16px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:10px;}
-.dm-price-row{display:flex;align-items:center;justify-content:space-between;}
-.dm-price-big{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.03em;}
 .dm-period{font-size:10px;color:var(--mute);margin-top:2px;}
 
 /* ─── MODAL ─── */
@@ -317,7 +315,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .ebtn-tool .et-lbl{font-size:9px;font-weight:600;letter-spacing:.04em;opacity:.75;}
 .ebtn-tool.et-share{border-color:rgba(99,179,237,.5);background:rgba(99,179,237,.1);}
 .ebtn-tool.et-roi{border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.1);}
-.ebtn-tool.et-quote{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1);}
 
 /* アポfix */
 .apo-body{display:grid;grid-template-columns:1fr 1fr;min-height:360px;}
@@ -451,7 +448,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="dh">
       <div class="dh-tag">Diagnosis</div>
       <div class="dh-ttl">業務改善診断</div>
-      <div class="dh-sub">6問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
+      <div class="dh-sub">5問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
     </div>
     <div class="prog">
       <div class="pbar" id="pb"></div>
@@ -532,20 +529,14 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 <!-- ESTIMATE BAR -->
 <div class="ebar" id="eb">
   <div class="el" style="flex-shrink:0;">
-    <div class="ecnt"><span id="ec">0</span>本を選択中</div>
+    <div class="ecnt">♡ <span id="ec">0</span>本 気になる</div>
     <div class="echips" id="ech"></div>
   </div>
   <div class="ebar-mid">
     <button class="ebtn-tool et-share" onclick="shareCart()"><span class="et-ico">🔗</span><span class="et-lbl">URL共有</span></button>
-    <button class="ebtn-tool et-roi" onclick="showROI()"><span class="et-ico">📊</span><span class="et-lbl">ROI試算</span></button>
-    <button class="ebtn-tool et-quote" onclick="showQuote()"><span class="et-ico">📄</span><span class="et-lbl">見積書</span></button>
+    <button class="ebtn-tool et-roi" onclick="showROI()"><span class="et-ico">✨</span><span class="et-lbl">改善効果を見る</span></button>
   </div>
   <div class="er" style="flex-shrink:0;">
-    <div>
-      <div class="etl">見積もり合計（初期費用）</div>
-      <div class="etv" id="etv">¥0〜</div>
-      <div class="etm" id="etm"></div>
-    </div>
     <button class="bclr" onclick="clr()">クリア</button>
     <button class="beq" onclick="showApo()" style="background:var(--green);box-shadow:0 2px 12px rgba(5,150,105,.4);">📅 無料相談を予約 →</button>
   </div>
@@ -624,13 +615,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 <div class="modal-ov" id="roimodal" style="display:none" onclick="if(event.target===this)closeModal('roimodal')">
   <div class="modal-box" style="max-width:540px;">
     <div class="modal-hd">
-      <span class="modal-ttl">📊 ROI試算</span>
+      <span class="modal-ttl">✨ 改善シミュレーション</span>
       <button class="modal-close" onclick="closeModal('roimodal')">✕</button>
     </div>
     <div class="roi-body" id="roi-content"></div>
     <div class="qbtns">
       <button class="qbtn-close" onclick="closeModal('roimodal')">閉じる</button>
-      <button class="qbtn-print" onclick="showQuote()">📄 見積書を出す</button>
       <button class="qbtn-print" style="background:var(--green)" onclick="closeModal('roimodal');showApo()">📅 無料相談を予約</button>
     </div>
   </div>
@@ -692,14 +682,8 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
       </div>
       <!-- Footer -->
       <div class="dm-footer">
-        <div class="dm-price-row">
-          <div>
-            <div class="dm-price-big" id="dm-price"></div>
-            <div class="dm-period">工数目安：<span id="dm-period"></span></div>
-          </div>
-          <div style="font-size:10px;color:var(--mute);text-align:right;">保守なしプランも対応<br>詳細はご相談ください</div>
-        </div>
-        <button class="dm-cart-btn" id="dm-cart-btn" onclick="toggleFromDetail()">+ 見積もりに追加</button>
+        <div style="font-size:11px;color:var(--mute);margin-bottom:8px;">導入目安：<span id="dm-period"></span></div>
+        <button class="dm-cart-btn" id="dm-cart-btn" onclick="toggleFromDetail()">♡ 気になる</button>
         <button style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
       </div>
     </div>
@@ -786,8 +770,6 @@ const QS=[
      {v:'LP・告知ページを作るのが面倒で機会を逃している',i:'😩',score:2,h:10,cat:'marketing'},
      {v:'ほぼ紹介だけ頼り。自分で集客する仕組みがない',i:'🔥',score:3,h:15,cat:'marketing'},
    ]},
-  {id:'budget',q:'最後に1つ。改善に動けそうな予算感は？',h:'1つ選択',multi:false,
-   opts:[{v:'〜 ¥50,000（まず1本試したい）',i:'💡',budget:50000},{v:'〜 ¥150,000（まとめて3〜4本）',i:'⚡',budget:150000},{v:'上限なし（課題解決を優先したい）',i:'🚀',budget:Infinity}]},
 ];
 const DEMO={
   1:'alert',2:'alert',3:'alert',4:'alert',
@@ -810,7 +792,7 @@ const IND={
 
 const MAINT_FREE=new Set([8,16,31,44,49]);
 
-let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null},cart:new Map()};
+let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null},cart:new Map()};
 let F='rec';
 let V='grid';
 
@@ -838,15 +820,13 @@ function sc(){
     const opt=q?.opts.find(o=>o.v===sel);
     if(opt&&opt.score>0)b[opt.cat]=(b[opt.cat]||0)+(opt.score*1.5);
   });
-  const bud=S.ans.budget||Infinity;
   return T.map(t=>{
     let s=(b[t.cat]||0)+(t.sym==='super'?1.5:t.sym==='high'?.7:0);
-    if(t.price>bud)s-=8;
     return{...t,_s:s};
   }).sort((a,z)=>z._s-a._s);
 }
 
-function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0)||S.ans.budget!==null;}
+function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0);}
 
 function pot(){
   let totalH=0;
@@ -856,8 +836,7 @@ function pot(){
     const opt=q?.opts.find(o=>o.v===sel);
     if(opt)totalH+=opt.h||0;
   });
-  const m=S.ans.budget===50000?.7:S.ans.budget===Infinity?1.3:1;
-  return{h:Math.round(totalH*m),c:Math.round(totalH*m*2500)};
+  return{h:Math.round(totalH),c:Math.round(totalH*2500)};
 }
 
 function renderT(){
@@ -880,12 +859,10 @@ function renderT(){
       <th>カテゴリ</th>
       <th>ツール名</th>
       <th>共感度</th>
-      <th>初期費用</th>
-      <th>保守/月</th>
       <th style="max-width:180px">Before（課題）</th>
       <th style="max-width:180px">After（変化）</th>
       <th>デモ</th>
-      <th>追加</th>
+      <th>気になる</th>
     </tr></thead>`;
     const tbody=document.createElement('tbody');
     list.forEach((t,i)=>{
@@ -897,12 +874,10 @@ function renderT(){
         <td><div class="tc-sm">${TI[t.id]||''} ${t.catL}</div></td>
         <td><div class="tn">${t.name}</div></td>
         <td><span class="sym ${t.sym==='super'?'ss':t.sym==='high'?'sh2':'sm'}" style="font-size:9px;">${t.sym==='super'?'🔥 特高':t.sym==='high'?'⚡ 高':'— 中'}</span></td>
-        <td style="font-weight:700;white-space:nowrap;">${t.priceL}</td>
-        <td style="white-space:nowrap;">${mf(t)>0?'<span style="color:var(--sub)">¥'+mf(t).toLocaleString()+'〜/月</span>':'<span class="mn-badge" style="font-size:10px;padding:3px 9px;">✓ 保守なし</span>'}</td>
         <td><div class="bef-sm">${t.bef}</div></td>
         <td><div class="aft-sm">${t.aft}</div></td>
         <td><a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" target="_blank" style="padding:5px 8px;font-size:10px;">デモ</a></td>
-        <td><button class="tc-btn${ink?' added':''}" style="padding:6px 10px;font-size:10px;" onclick="tog(${t.id})">${ink?'✓':'+'}</button></td>`;
+        <td><button class="tc-btn${ink?' added':''}" style="padding:6px 10px;font-size:10px;" onclick="tog(${t.id})">${ink?'★':'♡'}</button></td>`;
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody);
@@ -941,15 +916,12 @@ function renderT(){
   </div>
 </div>
 <div class="tc-ft">
-  <div>
-    <div class="tc-pr">${t.priceL} <span class="tc-pr-lbl">初期</span></div>
-    <div class="tc-pd">工数 ${t.period}　${MAINT_FREE.has(t.id)?'<span class="mn-badge">保守なし</span>':'保守 ¥'+mf(t).toLocaleString()+'〜/月'}</div>
-  </div>
+  <div style="font-size:10px;color:var(--mute);">導入目安：${t.period}</div>
   <div style="display:flex;gap:6px;align-items:center;">
     <a class="tc-demo" href="#" onclick="event.stopPropagation();event.preventDefault();openDetail(${t.id})">詳細 →</a>
     ${MOCK[t.id]?`<a class="tc-demo tc-mock" href="${MOCK[t.id]}" onclick="event.stopPropagation()" target="_blank">🎬 デモを見る</a>`:`<a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>`}
     ${SAMPLE[t.id]?`<a class="tc-demo tc-sample" href="${SAMPLE[t.id]}" onclick="event.stopPropagation()" target="_blank">📄 実際のLP</a>`:''}
-    <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'✓ 選択中':'+ 見積もりに追加'}</button>
+    <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'★ 気になる！':'♡ 気になる'}</button>
   </div>
 </div>`;
     el.addEventListener('click',()=>tog(t.id));
@@ -962,19 +934,16 @@ function tog(id){
   if(S.cart.has(id))S.cart.delete(id);else S.cart.set(id,t);
   const el=document.getElementById('c'+id);const btn=el?.querySelector('.tc-btn');
   el?.classList.toggle('sel',S.cart.has(id));
-  if(btn){btn.classList.toggle('added',S.cart.has(id));btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';}
+  if(btn){btn.classList.toggle('added',S.cart.has(id));btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';}
   updBar();
 }
 function clr(){
-  S.cart.forEach((_,id)=>{const el=document.getElementById('c'+id);el?.classList.remove('sel');const b=el?.querySelector('.tc-btn');if(b){b.classList.remove('added');b.textContent='+ 見積もりに追加';}});
+  S.cart.forEach((_,id)=>{const el=document.getElementById('c'+id);el?.classList.remove('sel');const b=el?.querySelector('.tc-btn');if(b){b.classList.remove('added');b.textContent='♡ 気になる';}});
   S.cart.clear();updBar();
 }
 function updBar(){
-  const items=[...S.cart.values()];const total=items.reduce((s,t)=>s+t.price,0);
-  const maint=items.reduce((s,t)=>s+mf(t),0);
+  const items=[...S.cart.values()];
   document.getElementById('ec').textContent=items.length;
-  document.getElementById('etv').textContent='¥'+total.toLocaleString()+'〜';
-  document.getElementById('etm').textContent=items.length>0?'+ 保守・管理費 ¥'+maint.toLocaleString()+'〜/月 別途':'';
   document.getElementById('ech').innerHTML=items.slice(0,3).map(t=>`<span class="echip">${t.name}</span>`).join('')+(items.length>3?`<span class="emore">他${items.length-3}本</span>`:'');
   document.getElementById('eb').style.display=items.length>0?'flex':'none';
 }
@@ -1034,7 +1003,6 @@ function openDetail(id){
   document.getElementById('dm-cat').textContent=t.catL;
   document.getElementById('dm-bef').textContent=t.bef;
   document.getElementById('dm-aft').textContent=t.aft;
-  document.getElementById('dm-price').textContent=t.priceL+'〜';
   document.getElementById('dm-period').textContent=t.period;
   const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
   document.getElementById('dm-steps').innerHTML=steps.map((s,i)=>`<div class="dm-step"><div class="dm-step-num">${i+1}</div><div class="dm-step-txt">${s}</div></div>`).join('');
@@ -1043,7 +1011,7 @@ function openDetail(id){
   document.getElementById('dm-case-txt').textContent=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
   const btn=document.getElementById('dm-cart-btn');
   btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
+  btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';
   document.getElementById('detailmodal').dataset.toolId=id;
   document.getElementById('detailmodal').style.display='flex';
 }
@@ -1052,7 +1020,7 @@ function toggleFromDetail(){
   tog(id);
   const btn=document.getElementById('dm-cart-btn');
   btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
+  btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';
 }
 
 function closeModal(id){document.getElementById(id).style.display='none';}
@@ -1097,50 +1065,29 @@ function showQuote(){
 
 function showROI(){
   const items=[...S.cart.values()];
-  if(!items.length){showToast('ツールを1本以上選択してください');return;}
-  const total=items.reduce((s,t)=>s+t.price,0);
-  const maint12=items.reduce((s,t)=>s+mf(t)*12,0);
-  const invest=total+maint12;
+  if(!items.length){showToast('ツールを1本以上「気になる」してください');return;}
   const p=pot();
-  const annualSave=p.c*12;
-  const roiMonths=p.c>0?Math.ceil(total/p.c):0;
-  const roiPct=invest>0?Math.round((annualSave-invest)/invest*100):0;
-  const maxBar=Math.max(annualSave,invest,1);
+  const totalH=p.h;
   document.getElementById('roi-content').innerHTML=`
 <div class="roi-hero">
-  <div style="font-size:10px;opacity:.65;letter-spacing:.12em;margin-bottom:6px;">年間の機会損失（このまま何もしなければ）</div>
-  <div class="roi-big">¥${(Math.round(annualSave/10000)*10000).toLocaleString()}<span style="font-size:18px;font-weight:400;">〜/年</span></div>
-  <div class="roi-lbl">AI導入で削減できる業務コスト試算</div>
+  <div style="font-size:10px;opacity:.65;letter-spacing:.12em;margin-bottom:6px;">これらがすべて自動化されたら…</div>
+  <div class="roi-big">${totalH>0?totalH+'時間':'—'}<span style="font-size:18px;font-weight:400;">/月 削減できます</span></div>
+  <div class="roi-lbl">月間の手作業・ムダ時間の削減見込み</div>
 </div>
-<div class="roi-grid">
-  <div class="roi-card">
-    <div class="roi-cv">¥${(Math.round(total/1000)*1000).toLocaleString()}</div>
-    <div class="roi-cl">初期投資合計</div>
-  </div>
-  <div class="roi-card">
-    <div class="roi-cv">${roiMonths>0?roiMonths+'ヶ月':'即月'}</div>
-    <div class="roi-cl">投資回収まで</div>
-  </div>
-  <div class="roi-card">
-    <div class="roi-cv" style="color:var(--green)">${roiPct>0?'+'+roiPct+'%':'試算中'}</div>
-    <div class="roi-cl">1年後ROI</div>
-  </div>
+<div style="margin-bottom:16px;">
+  <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:10px;letter-spacing:.08em;">自動化後のビジョン</div>
+  ${items.map(t=>`
+  <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--bdr);">
+    <div style="font-size:18px;flex-shrink:0;">${TI[t.id]||'✨'}</div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:3px;">${t.name}</div>
+      <div style="font-size:11px;color:#065f46;font-weight:600;">✨ ${t.aft}</div>
+    </div>
+  </div>`).join('')}
 </div>
-<div class="roi-chart">
-  <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:10px;">年間コスト比較</div>
-  <div class="roi-bar-row">
-    <div class="roi-bn">現状コスト（推定）</div>
-    <div class="roi-bg"><div class="roi-bf" style="width:100%;background:linear-gradient(90deg,#e11d48,#f43f5e)"></div></div>
-    <div style="font-size:10px;color:var(--sub);width:80px;text-align:right;">¥${(Math.round(annualSave/1000)*1000).toLocaleString()}</div>
-  </div>
-  <div class="roi-bar-row">
-    <div class="roi-bn">ツール導入費用</div>
-    <div class="roi-bg"><div class="roi-bf" style="width:${Math.min(100,invest/annualSave*100)}%"></div></div>
-    <div style="font-size:10px;color:var(--sub);width:80px;text-align:right;">¥${(Math.round(invest/1000)*1000).toLocaleString()}</div>
-  </div>
-</div>
-<div style="margin-top:16px;padding:12px 14px;background:#ecfdf5;border-radius:8px;font-size:11px;color:#065f46;line-height:1.7;">
-  <strong>📌 試算の前提：</strong>業務時間単価 ¥3,000/時間として計算。実際の効果は業種・運用方法により異なります。
+<div style="padding:12px 14px;background:#ecfdf5;border-radius:8px;font-size:11px;color:#065f46;line-height:1.7;">
+  <strong>💡 こんな毎日になります：</strong><br>
+  ルーティン作業から解放された時間を、もっと大切な仕事・判断・創造に使えるようになります。
 </div>`;
   closeModal('qmodal');
   document.getElementById('roimodal').style.display='flex';
@@ -1325,15 +1272,14 @@ function renderW(){
   }
 
   QS.slice(0,done).forEach((q,i)=>{
-    const budQ=QS.find(x=>x.id==='budget');
-    const val=q.id==='budget'?(budQ.opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
+    const val=(S.ans[q.id]||[]).join('、');
     const d=document.createElement('div');d.className='sdone';d.onclick=()=>{S.step=i;renderW();};
     d.innerHTML=`<div class="sck">✓</div><div class="sdq">${q.q}</div><div class="sda">${val}</div>`;
     area.appendChild(d);
   });
 
   const q=QS[done];
-  const curA=q.id==='budget'?[QS[done].opts.find(o=>o.budget===S.ans.budget)?.v||''].filter(Boolean):(S.ans[q.id]||[]);
+  const curA=(S.ans[q.id]||[]);
   const ad=document.createElement('div');ad.className='sact';
   ad.innerHTML=`
 <div class="sn">STEP ${done+1} / ${total}</div>
@@ -1350,9 +1296,8 @@ function renderW(){
     const btn=document.createElement('button');
     btn.className='opt'+(curA.includes(o.v)?' sel':'');
     btn.dataset.v=o.v;
-    btn.dataset.budget=o.budget!==undefined?String(o.budget):'';
     btn.innerHTML=`<span class="oi">${o.i}</span>${o.v}`;
-    btn.addEventListener('click',()=>pick(q.id, o.v, o.budget!==undefined?o.budget:null, q.multi));
+    btn.addEventListener('click',()=>pick(q.id, o.v, q.multi));
     optsDiv.appendChild(btn);
   });
   area.appendChild(ad);
@@ -1365,20 +1310,19 @@ function renderW(){
   renderT();
 }
 
-function pick(qId,val,budget,multi){
-  if(qId==='budget')S.ans.budget=budget;
-  else if(multi){const a=S.ans[qId]||[];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val);S.ans[qId]=a;}
+function pick(qId,val,multi){
+  if(multi){const a=S.ans[qId]||[];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val);S.ans[qId]=a;}
   else S.ans[qId]=[val];
   document.querySelectorAll('.sact .opt').forEach(btn=>{
     const v=btn.dataset.v;
-    const ca=qId==='budget'?[QS[S.step].opts.find(o=>o.budget===S.ans.budget)?.v||''].filter(Boolean):(S.ans[qId]||[]);
+    const ca=(S.ans[qId]||[]);
     btn.classList.toggle('sel',ca.includes(v));
   });
   renderT();
 }
 function nxt(){if(S.step<QS.length)S.step++;renderW();}
 function prev(){if(S.step>0)S.step--;renderW();}
-function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null};renderW();}
+function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null};renderW();}
 
 document.querySelectorAll('.ftab').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');F=btn.dataset.f;renderT();});
