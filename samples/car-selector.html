@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚗 車種比較ツール</title>
+<style>
+:root {
+  --bg: #f5f5f7;
+  --white: #fff;
+  --primary: #1d1d1f;
+  --gray1: #6e6e73;
+  --gray2: #a1a1a6;
+  --gray3: #d2d2d7;
+  --gray4: #f5f5f7;
+  --accent: #0071e3;
+  --accent-h: #0077ed;
+  --red: #ff3b30;
+  --green: #34c759;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --tray-h: 96px;
+  --header-h: 52px;
+  --filter-h: 56px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; background: var(--bg); color: var(--primary); }
+
+/* ===== HEADER ===== */
+.header {
+  position: sticky; top: 0; z-index: 300; height: var(--header-h);
+  background: rgba(255,255,255,0.82); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--gray3);
+  display: flex; align-items: center; padding: 0 20px; gap: 16px;
+}
+.logo { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.search-wrap { flex: 1; max-width: 320px; }
+.search-input {
+  width: 100%; padding: 7px 14px 7px 34px; border-radius: 20px;
+  border: none; background: var(--gray4); font-size: 0.82rem; color: var(--primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1a6' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 11px center;
+}
+.search-input:focus { outline: 2px solid var(--accent); }
+.saved-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+  background: var(--gray4); border: none; border-radius: 8px; font-size: 0.8rem;
+  font-weight: 600; cursor: pointer; white-space: nowrap; color: var(--primary);
+}
+.saved-btn:hover { background: var(--gray3); }
+.saved-badge {
+  background: var(--red); color: white; border-radius: 10px; padding: 1px 6px;
+  font-size: 0.65rem; font-weight: 700; min-width: 18px; text-align: center;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  position: sticky; top: var(--header-h); z-index: 200; height: var(--filter-h);
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray3);
+  display: flex; align-items: center; padding: 0 20px; gap: 8px; overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip {
+  display: flex; align-items: center; gap: 5px; padding: 6px 14px;
+  border-radius: 20px; border: 1.5px solid var(--gray3); background: white;
+  font-size: 0.78rem; font-weight: 500; cursor: pointer; white-space: nowrap;
+  transition: all 0.15s; color: var(--primary);
+}
+.filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+.filter-chip.on { background: var(--accent); border-color: var(--accent); color: white; }
+.filter-sep { width: 1px; height: 20px; background: var(--gray3); flex-shrink: 0; }
+.sort-select {
+  padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--gray3);
+  font-size: 0.78rem; background: white; cursor: pointer; color: var(--primary);
+}
+.result-count { font-size: 0.75rem; color: var(--gray1); white-space: nowrap; margin-left: auto; }
+
+/* ===== MAIN ===== */
+main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 20px 16px calc(var(--tray-h) + 28px);
+}
+
+/* ===== SAVED COMPARISONS ===== */
+.saved-panel {
+  display: none; background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden;
+}
+.saved-panel.open { display: block; }
+.saved-header { padding: 14px 18px; font-size: 0.88rem; font-weight: 700; border-bottom: 1px solid var(--gray3); display: flex; justify-content: space-between; }
+.saved-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.saved-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--gray4); border-radius: 8px; cursor: pointer;
+  transition: background 0.15s;
+}
+.saved-item:hover { background: var(--gray3); }
+.saved-item-icons { font-size: 1.1rem; }
+.saved-item-info { flex: 1; }
+.saved-item-name { font-size: 0.82rem; font-weight: 600; }
+.saved-item-date { font-size: 0.68rem; color: var(--gray1); }
+.saved-item-del { background: none; border: none; color: var(--gray2); cursor: pointer; font-size: 1rem; padding: 4px; }
+.saved-item-del:hover { color: var(--red); }
+.saved-empty { text-align: center; padding: 20px; color: var(--gray2); font-size: 0.82rem; }
+
+/* ===== CAR GRID ===== */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.car-card {
+  background: white; border-radius: var(--radius); overflow: hidden;
+  border: 2px solid transparent; transition: all 0.2s; cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.car-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.car-card.in-tray { border-color: var(--accent); }
+.car-card-hero {
+  background: linear-gradient(160deg, #f8f9fa 0%, #eef0f4 100%);
+  padding: 18px 16px 12px; position: relative; text-align: center;
+}
+.car-card-icon { font-size: 3rem; display: block; }
+.car-origin-badge {
+  position: absolute; top: 10px; left: 10px;
+  background: rgba(0,0,0,0.06); border-radius: 6px; padding: 2px 7px;
+  font-size: 0.62rem; font-weight: 700; color: var(--gray1);
+}
+.car-card-body { padding: 12px 14px 14px; }
+.car-maker { font-size: 0.68rem; color: var(--gray1); font-weight: 700; text-transform: uppercase; }
+.car-name { font-size: 0.95rem; font-weight: 700; margin: 2px 0 5px; }
+.car-price { font-size: 0.78rem; color: var(--gray1); margin-bottom: 8px; }
+.car-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.chip {
+  border-radius: 20px; padding: 2px 8px; font-size: 0.63rem; font-weight: 600;
+  background: var(--gray4); color: var(--gray1);
+}
+.chip.ev { background: #d1fae5; color: #065f46; }
+.chip.hybrid { background: #ede9fe; color: #5b21b6; }
+.chip.phev { background: #dbeafe; color: #1e40af; }
+.chip.diesel { background: #fef3c7; color: #92400e; }
+.add-btn {
+  width: 100%; padding: 9px; border-radius: 8px; border: none; cursor: pointer;
+  font-size: 0.82rem; font-weight: 700; transition: all 0.18s;
+  background: var(--accent); color: white;
+}
+.add-btn:hover { background: var(--accent-h); }
+.add-btn.remove { background: var(--gray4); color: var(--gray1); }
+.add-btn.remove:hover { background: #fde8e8; color: var(--red); }
+.add-btn:disabled { background: var(--gray3); color: var(--gray2); cursor: not-allowed; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--gray1); }
+.empty-state-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+
+/* ===== COMPARE TRAY ===== */
+.compare-tray {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 400;
+  background: rgba(29,29,31,0.95); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  transform: translateY(100%); transition: transform 0.3s ease;
+  height: var(--tray-h);
+}
+.compare-tray.visible { transform: translateY(0); }
+.tray-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 16px;
+  height: 100%; display: flex; align-items: center; gap: 12px;
+}
+.tray-label { font-size: 0.72rem; color: rgba(255,255,255,0.6); white-space: nowrap; }
+.tray-slots { display: flex; gap: 8px; flex: 1; }
+.tray-slot {
+  flex: 1; max-width: 160px; min-width: 80px;
+  background: rgba(255,255,255,0.08); border: 1.5px dashed rgba(255,255,255,0.25);
+  border-radius: 10px; height: 64px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; color: rgba(255,255,255,0.4); position: relative; transition: all 0.2s;
+}
+.tray-slot.filled { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); border-style: solid; }
+.tray-slot-content { text-align: center; }
+.tray-slot-icon { font-size: 1.6rem; display: block; line-height: 1; }
+.tray-slot-name { font-size: 0.58rem; color: rgba(255,255,255,0.8); display: block; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+.tray-slot-rm {
+  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+  background: rgba(255,255,255,0.2); border: none; border-radius: 50%; color: white;
+  cursor: pointer; font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.tray-slot-rm:hover { background: var(--red); }
+.tray-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.tray-btn {
+  padding: 10px 18px; border-radius: 8px; border: none; font-size: 0.82rem;
+  font-weight: 700; cursor: pointer; transition: all 0.18s; white-space: nowrap;
+}
+.tray-btn-compare { background: var(--accent); color: white; }
+.tray-btn-compare:hover { background: var(--accent-h); }
+.tray-btn-compare:disabled { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); cursor: not-allowed; }
+.tray-btn-clear { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+.tray-btn-clear:hover { background: rgba(255,255,255,0.2); }
+
+/* ===== COMPARE MODAL ===== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  overflow-y: auto; padding: 20px 12px;
+}
+.modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+.modal {
+  background: white; border-radius: 18px; width: 100%; max-width: 960px;
+  overflow: hidden; animation: slideUp 0.3s ease; margin: auto;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.modal-header {
+  padding: 18px 22px; border-bottom: 1px solid var(--gray3);
+  display: flex; align-items: center; gap: 12px; position: sticky; top: 0;
+  background: white; z-index: 10;
+}
+.modal-title { font-size: 1rem; font-weight: 700; flex: 1; }
+.modal-save-btn {
+  padding: 8px 16px; background: var(--green); color: white; border: none;
+  border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+}
+.modal-save-btn:hover { background: #2da44e; }
+.modal-print-btn {
+  padding: 8px 16px; background: var(--gray4); color: var(--primary); border: none;
+  border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+}
+.modal-print-btn:hover { background: var(--gray3); }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--gray4);
+  border: none; cursor: pointer; font-size: 1rem; color: var(--gray1);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.modal-close:hover { background: var(--gray3); }
+
+/* Tab bar */
+.modal-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--gray3);
+  padding: 0 22px; background: white;
+}
+.modal-tab {
+  padding: 12px 18px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  color: var(--gray1); border-bottom: 2px solid transparent; transition: all 0.15s;
+}
+.modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.modal-tab:hover { color: var(--primary); }
+
+.modal-body { padding: 22px; overflow-x: auto; }
+
+/* Comparison table */
+.cmp-table-wrap { overflow-x: auto; }
+table.cmp { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.cmp thead th { padding: 0; border-bottom: 2px solid var(--gray3); }
+.cmp-car-header {
+  padding: 16px 14px; text-align: center; position: relative;
+  border-top: 4px solid var(--gray3);
+}
+.cmp .row-lbl { text-align: left; padding: 10px 14px; font-size: 0.72rem; font-weight: 600; color: var(--gray1); background: var(--gray4); white-space: nowrap; border-bottom: 1px solid var(--gray3); }
+.cmp td { padding: 10px 14px; border-bottom: 1px solid var(--gray3); text-align: center; vertical-align: middle; min-width: 140px; }
+.cmp tr:last-child td { border-bottom: none; }
+.cmp tr:hover td { background: var(--gray4); }
+.cmp tr:hover .row-lbl { background: #eee; }
+.cmp-icon { font-size: 2.2rem; display: block; }
+.cmp-maker { font-size: 0.65rem; color: var(--gray1); font-weight: 700; margin-top: 4px; }
+.cmp-name { font-size: 0.9rem; font-weight: 700; }
+.cmp-rm-btn {
+  display: block; margin: 8px auto 0; padding: 4px 12px;
+  background: var(--gray4); border: none; border-radius: 6px;
+  font-size: 0.68rem; cursor: pointer; color: var(--gray1);
+}
+.cmp-rm-btn:hover { background: #fde8e8; color: var(--red); }
+.best-badge { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 4px; padding: 1px 6px; font-size: 0.6rem; font-weight: 800; margin-left: 4px; }
+.stars { color: var(--gray2); font-size: 0.9rem; }
+.stars .filled { color: #f59e0b; }
+.cmp-section-header td { background: var(--primary); color: white; font-size: 0.72rem; font-weight: 700; text-align: left; padding: 8px 14px; }
+.pros-list { text-align: left; }
+.pros-list li { list-style: none; font-size: 0.73rem; padding: 2px 0; }
+.pro { color: var(--green); } .con { color: var(--gray1); }
+
+/* Priority scoring tab */
+.priority-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.pri-item { display: flex; flex-direction: column; gap: 6px; }
+.pri-label { font-size: 0.78rem; font-weight: 600; }
+.pri-stars-row { display: flex; gap: 4px; }
+.pri-star {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid var(--gray3);
+  background: white; cursor: pointer; font-size: 1.1rem; display: flex;
+  align-items: center; justify-content: center; transition: all 0.12s;
+}
+.pri-star.on { background: #fef3c7; border-color: #f59e0b; }
+.score-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-top: 16px; }
+.score-item {
+  background: var(--gray4); border-radius: 10px; padding: 14px; text-align: center;
+  border-top: 3px solid var(--gray3);
+}
+.score-item.rank1 { border-top-color: #f59e0b; background: #fefce8; }
+.score-item.rank2 { border-top-color: #94a3b8; }
+.score-item.rank3 { border-top-color: #cd7f32; }
+.score-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+.score-car-n { font-size: 0.8rem; font-weight: 700; margin-top: 4px; }
+
+/* Loan tab */
+.loan-cars { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.loan-car-btn {
+  padding: 7px 14px; border-radius: 8px; border: 2px solid var(--gray3);
+  background: white; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
+.loan-car-btn.active { border-color: var(--accent); color: var(--accent); background: #f0f6ff; }
+.loan-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.loan-field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--gray1); margin-bottom: 5px; }
+.loan-field input, .loan-field select {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray3); border-radius: 8px;
+  font-size: 0.88rem; background: white;
+}
+.loan-field input:focus, .loan-field select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.loan-result-box {
+  background: var(--primary); border-radius: var(--radius); padding: 20px 24px;
+  color: white; display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+}
+.loan-main .monthly-label { font-size: 0.72rem; opacity: 0.7; }
+.loan-main .monthly-val { font-size: 2.2rem; font-weight: 800; }
+.loan-subs { display: flex; gap: 20px; flex-wrap: wrap; }
+.loan-sub { }
+.loan-sub .sub-val { font-size: 0.95rem; font-weight: 700; }
+.loan-sub .sub-lbl { font-size: 0.65rem; opacity: 0.7; }
+
+/* ===== PRINT ===== */
+@media print {
+  .header, .filter-bar, .compare-tray, .modal-header .modal-save-btn, .modal-header .modal-close, .modal-tabs { display: none !important; }
+  .modal-overlay { display: block !important; position: static !important; }
+  .modal { box-shadow: none; border-radius: 0; }
+}
+
+@media (max-width: 600px) {
+  .cars-grid { grid-template-columns: 1fr 1fr; }
+  .priority-grid { grid-template-columns: 1fr; }
+  .loan-fields { grid-template-columns: 1fr; }
+  .saved-btn span { display: none; }
+}
+@media (max-width: 380px) {
+  .cars-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">🚗 車種比較</div>
+  <div class="search-wrap">
+    <input class="search-input" type="text" placeholder="車名・メーカーで検索..." id="searchInput" oninput="applyFilters()">
+  </div>
+  <button class="saved-btn" onclick="toggleSavedPanel()">
+    <span>保存済み</span>
+    <span class="saved-badge" id="savedBadge">0</span>
+  </button>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <div class="filter-chip on" data-filter="body" data-val="all" onclick="setBodyFilter('all',this)">すべて</div>
+  <div class="filter-chip" data-filter="body" data-val="kei" onclick="setBodyFilter('kei',this)">🚙 軽自動車</div>
+  <div class="filter-chip" data-filter="body" data-val="compact" onclick="setBodyFilter('compact',this)">🚗 コンパクト</div>
+  <div class="filter-chip" data-filter="body" data-val="sedan" onclick="setBodyFilter('sedan',this)">🚘 セダン</div>
+  <div class="filter-chip" data-filter="body" data-val="suv" onclick="setBodyFilter('suv',this)">🏔️ SUV</div>
+  <div class="filter-chip" data-filter="body" data-val="minivan" onclick="setBodyFilter('minivan',this)">🚐 ミニバン</div>
+  <div class="filter-chip" data-filter="body" data-val="sports" onclick="setBodyFilter('sports',this)">🏎️ スポーツ</div>
+  <div class="filter-sep"></div>
+  <div class="filter-chip" data-filter="fuel" data-val="ev" onclick="toggleFuelFilter('ev',this)">⚡ EV</div>
+  <div class="filter-chip" data-filter="fuel" data-val="hybrid" onclick="toggleFuelFilter('hybrid',this)">🔋 HEV</div>
+  <div class="filter-chip" data-filter="fuel" data-val="phev" onclick="toggleFuelFilter('phev',this)">🔌 PHEV</div>
+  <div class="filter-sep"></div>
+  <div class="filter-chip" data-filter="origin" data-val="domestic" onclick="toggleOriginFilter('domestic',this)">🇯🇵 国産</div>
+  <div class="filter-chip" data-filter="origin" data-val="import" onclick="toggleOriginFilter('import',this)">🌍 輸入</div>
+  <div class="filter-sep"></div>
+  <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+    <option value="default">並び順：おすすめ</option>
+    <option value="price-asc">価格が安い順</option>
+    <option value="price-desc">価格が高い順</option>
+    <option value="fuel-desc">燃費が良い順</option>
+    <option value="az">メーカー順</option>
+  </select>
+  <div class="result-count" id="resultCount"></div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- Saved comparisons panel -->
+  <div class="saved-panel" id="savedPanel">
+    <div class="saved-header">
+      <span>📁 保存済み比較</span>
+      <button style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--gray1)" onclick="toggleSavedPanel()">閉じる</button>
+    </div>
+    <div class="saved-list" id="savedList"></div>
+  </div>
+
+  <!-- Car grid -->
+  <div class="cars-grid" id="carsGrid"></div>
+</main>
+
+<!-- COMPARE TRAY -->
+<div class="compare-tray" id="compareTray">
+  <div class="tray-inner">
+    <div class="tray-label">比較中</div>
+    <div class="tray-slots" id="traySlots"></div>
+    <div class="tray-actions">
+      <button class="tray-btn tray-btn-clear" onclick="clearTray()">クリア</button>
+      <button class="tray-btn tray-btn-compare" id="compareBtn" onclick="openModal()" disabled>比較する</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-title">📊 車種比較</div>
+      <button class="modal-save-btn" onclick="saveComparison()">💾 保存</button>
+      <button class="modal-print-btn" onclick="window.print()">🖨️ 印刷</button>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" onclick="switchTab('specs',this)">スペック比較</div>
+      <div class="modal-tab" onclick="switchTab('score',this)">優先度スコア</div>
+      <div class="modal-tab" onclick="switchTab('loan',this)">ローン試算</div>
+    </div>
+    <div class="modal-body">
+      <div id="tabSpecs"></div>
+      <div id="tabScore" style="display:none"></div>
+      <div id="tabLoan" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// CAR DATABASE
+// ================================================================
+const CARS = [
+  { id:"k01", name:"N-BOX", maker:"ホンダ", origin:"domestic", icon:"🚙",
+    body:["kei"], fuel:["gasoline"], seats:4, pMin:171, pMax:233,
+    specs:{ price:"171〜233万円", fc:"21.2km/L", drive:"FF/4WD", engine:"660ccターボ" },
+    desc:"日本一売れる軽ハイトワゴン。室内の広さが最大の魅力。",
+    pros:["室内高が広い","スライドドアで乗降楽","維持費が安い"], cons:["高速は非力","4名フル乗車だと走りが辛い"],
+    r:{ cost:5, economy:3, perf:2, design:3, space:4, safety:3, quality:4, status:2 } },
+
+  { id:"k02", name:"スペーシア", maker:"スズキ", origin:"domestic", icon:"🚙",
+    body:["kei"], fuel:["gasoline","hybrid"], seats:4, pMin:152, pMax:215,
+    specs:{ price:"152〜215万円", fc:"25.0km/L(HEV)", drive:"FF/4WD", engine:"660cc マイルドHEV" },
+    desc:"マイルドHEVで軽クラストップ燃費。収納も充実。",
+    pros:["マイルドHEVで燃費良","収納が多い","価格安い"], cons:["N-BOXより室内狭め","加速おとなしい"],
+    r:{ cost:5, economy:4, perf:2, design:3, space:4, safety:3, quality:4, status:2 } },
+
+  { id:"k03", name:"タント", maker:"ダイハツ", origin:"domestic", icon:"🚙",
+    body:["kei"], fuel:["gasoline"], seats:4, pMin:145, pMax:197,
+    specs:{ price:"145〜197万円", fc:"21.4km/L", drive:"FF/4WD", engine:"660cc" },
+    desc:"ピラーレスで最大開口1,490mm。乗り降りが最も楽な軽。",
+    pros:["乗り降りが楽","価格最安クラス","大開口"], cons:["剛性が若干劣る","内装の質感は普通"],
+    r:{ cost:5, economy:3, perf:2, design:2, space:4, safety:3, quality:3, status:2 } },
+
+  { id:"k04", name:"ジムニー", maker:"スズキ", origin:"domestic", icon:"🏔️",
+    body:["kei","suv"], fuel:["gasoline"], seats:4, pMin:173, pMax:199,
+    specs:{ price:"173〜199万円", fc:"16.6km/L", drive:"4WD", engine:"660ccターボ" },
+    desc:"ラダーフレーム採用。軽唯一の本格4WD。悪路走破性は別格。",
+    pros:["悪路走破性No.1","頑丈","リセール高"], cons:["後席・荷室は狭い","乗り心地ゴツゴツ"],
+    r:{ cost:4, economy:2, perf:3, design:4, space:2, safety:3, quality:4, status:4 } },
+
+  { id:"k05", name:"サクラ", maker:"日産", origin:"domestic", icon:"⚡",
+    body:["kei"], fuel:["ev"], seats:4, pMin:254, pMax:291,
+    specs:{ price:"254〜291万円", fc:"180km(WLTC)", drive:"FF/4WD", engine:"EV 47kW" },
+    desc:"補助金活用で実質200万円台。自宅充電で通勤に最適。",
+    pros:["ランニングコスト最安","自宅充電できる","加速が滑らか"], cons:["航続180kmで長距離不安","急速充電は50kWまで"],
+    r:{ cost:3, economy:5, perf:3, design:3, space:3, safety:4, quality:4, status:3 } },
+
+  { id:"c01", name:"ヤリス", maker:"トヨタ", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["gasoline","hybrid"], seats:5, pMin:155, pMax:252,
+    specs:{ price:"155〜252万円", fc:"最大36.0km/L", drive:"FF/E-Four", engine:"1.0L/1.5L HEV" },
+    desc:"世界で最も売れるコンパクト。HEV燃費36km/Lを誇る。",
+    pros:["圧倒的な燃費性能","コンパクトで駐車楽","安全装備標準"], cons:["後席は狭い","荷室が小さい"],
+    r:{ cost:4, economy:5, perf:3, design:3, space:2, safety:4, quality:4, status:2 } },
+
+  { id:"c02", name:"フィット", maker:"ホンダ", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["gasoline","hybrid"], seats:5, pMin:177, pMax:265,
+    specs:{ price:"177〜265万円", fc:"最大29.4km/L", drive:"FF/4WD", engine:"1.5L e:HEV" },
+    desc:"低床センタータンクで室内が広い。シートアレンジも多彩。",
+    pros:["室内広さクラスNo.1","シートアレンジ多彩","e:HEVが滑らか"], cons:["デザインは地味目","走りは普通"],
+    r:{ cost:4, economy:4, perf:3, design:3, space:4, safety:4, quality:4, status:2 } },
+
+  { id:"c03", name:"ノート", maker:"日産", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["hybrid"], seats:5, pMin:202, pMax:299,
+    specs:{ price:"202〜299万円", fc:"28.4km/L", drive:"FF/4WD", engine:"1.2L e-POWER" },
+    desc:"全グレードe-POWER。ワンペダル感覚でEVのように乗れる。",
+    pros:["EV感覚の走り","力強いトルク","静粛性が高い"], cons:["全車HEVで高め","スポーティさなし"],
+    r:{ cost:3, economy:4, perf:3, design:3, space:3, safety:4, quality:4, status:2 } },
+
+  { id:"c04", name:"スイフト", maker:"スズキ", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["gasoline","hybrid"], seats:5, pMin:154, pMax:250,
+    specs:{ price:"154〜250万円", fc:"最大24.5km/L", drive:"FF/4WD", engine:"1.2L マイルドHEV" },
+    desc:"軽量ボディで走りを楽しめるコンパクト。MT設定あり。",
+    pros:["軽くて軽快な走り","コスパ良","MT選択可"], cons:["後席は狭い","荷室も小さい"],
+    r:{ cost:4, economy:4, perf:4, design:3, space:2, safety:3, quality:4, status:2 } },
+
+  { id:"c05", name:"マツダ2", maker:"マツダ", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["gasoline","diesel"], seats:5, pMin:162, pMax:225,
+    specs:{ price:"162〜225万円", fc:"最大25.0km/L", drive:"FF/4WD", engine:"1.5L/ディーゼル" },
+    desc:"内装の質感がクラス最高峰。ディーゼルで長距離も快適。",
+    pros:["内装の質感が高い","ディーゼルで低燃費","デザインが美しい"], cons:["荷室が狭い","他社より高め"],
+    r:{ cost:4, economy:4, perf:3, design:4, space:2, safety:4, quality:4, status:3 } },
+
+  { id:"c06", name:"アクア", maker:"トヨタ", origin:"domestic", icon:"🚗",
+    body:["compact"], fuel:["hybrid"], seats:5, pMin:198, pMax:270,
+    specs:{ price:"198〜270万円", fc:"最大35.8km/L", drive:"FF/E-Four", engine:"1.5L HEV" },
+    desc:"新型バイポーラ型電池搭載。燃費はヤリスに次ぐクラス。",
+    pros:["トップクラスの燃費","リアヒーター標準","使いやすいサイズ"], cons:["荷室は広くない","デザインは普通"],
+    r:{ cost:3, economy:5, perf:2, design:3, space:3, safety:4, quality:4, status:2 } },
+
+  { id:"s01", name:"プリウス", maker:"トヨタ", origin:"domestic", icon:"🚘",
+    body:["sedan"], fuel:["hybrid","phev"], seats:5, pMin:275, pMax:470,
+    specs:{ price:"275〜470万円", fc:"最大28.6km/L", drive:"FF/4WD", engine:"1.8L HEV/2.0L PHEV" },
+    desc:"全面刷新で一躍スポーティになった5代目。PHEVも設定。",
+    pros:["燃費と走りを両立","スタイリッシュ","PHEV選択可"], cons:["後方視界が悪い","後席頭上が狭め"],
+    r:{ cost:3, economy:5, perf:3, design:4, space:3, safety:5, quality:4, status:3 } },
+
+  { id:"s02", name:"カムリ", maker:"トヨタ", origin:"domestic", icon:"🚘",
+    body:["sedan"], fuel:["hybrid"], seats:5, pMin:347, pMax:439,
+    specs:{ price:"347〜439万円", fc:"23.4km/L", drive:"FF", engine:"2.5L HEV" },
+    desc:"全グレードHEVの上級セダン。静粛性と信頼性が高い。",
+    pros:["静粛性が高い","燃費と上質を両立","信頼性が高い"], cons:["後席頭上少し狭い","FFのみ"],
+    r:{ cost:3, economy:4, perf:3, design:3, space:4, safety:4, quality:5, status:3 } },
+
+  { id:"s03", name:"クラウン", maker:"トヨタ", origin:"domestic", icon:"🚘",
+    body:["sedan","suv"], fuel:["hybrid","phev"], seats:5, pMin:430, pMax:660,
+    specs:{ price:"430〜660万円", fc:"22.4km/L", drive:"FF/AWD", engine:"2.5L HEV/PHEV" },
+    desc:"セダンとSUVを融合した新世代クラウン。日本高級車の代表。",
+    pros:["ステータス感","高い走行安定性","最新技術満載"], cons:["価格が高い","伝統のセダン形状ではない"],
+    r:{ cost:2, economy:4, perf:3, design:4, space:4, safety:5, quality:5, status:4 } },
+
+  { id:"s04", name:"アコード", maker:"ホンダ", origin:"domestic", icon:"🚘",
+    body:["sedan"], fuel:["hybrid"], seats:5, pMin:375, pMax:425,
+    specs:{ price:"375〜425万円", fc:"23.8km/L", drive:"FF", engine:"2.0L e:HEV" },
+    desc:"大人が乗れる広さと静粛性。ホンダの上級セダン。",
+    pros:["後席の広さが秀逸","上質な乗り心地","安全装備全車標準"], cons:["選択肢が少ない","スポーティさ控えめ"],
+    r:{ cost:3, economy:4, perf:3, design:4, space:5, safety:4, quality:5, status:3 } },
+
+  { id:"v01", name:"ヴェゼル", maker:"ホンダ", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid"], seats:5, pMin:257, pMax:330,
+    specs:{ price:"257〜330万円", fc:"最大26.0km/L", drive:"FF/4WD", engine:"1.5L/e:HEV" },
+    desc:"都市派コンパクトSUVの定番。e:HEVで燃費も優秀。",
+    pros:["スタイリッシュ","燃費良好","使いやすいサイズ"], cons:["荷室は広くない","本格4WDではない"],
+    r:{ cost:3, economy:4, perf:3, design:4, space:3, safety:4, quality:4, status:3 } },
+
+  { id:"v02", name:"C-HR", maker:"トヨタ", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid"], seats:5, pMin:299, pMax:435,
+    specs:{ price:"299〜435万円", fc:"最大30.2km/L", drive:"FF/4WD", engine:"1.8L/2.0L HEV" },
+    desc:"クーペライクなフォルムが際立つSUV。燃費も優秀。",
+    pros:["唯一無二のデザイン","燃費が良い","安全装備充実"], cons:["後方視界が悪い","後席頭上が狭い"],
+    r:{ cost:3, economy:4, perf:3, design:5, space:2, safety:4, quality:4, status:3 } },
+
+  { id:"v03", name:"RAV4", maker:"トヨタ", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","phev"], seats:5, pMin:300, pMax:440,
+    specs:{ price:"300〜440万円", fc:"最大22.2km/L", drive:"FF/4WD", engine:"2.5L HEV/PHEV" },
+    desc:"本格4WDと実用性を両立したミドルSUV。PHEVも選べる。",
+    pros:["荷室が広い","PHEVで電動走行可","4WD性能が高い"], cons:["燃費はHEVでも普通","大きめで駐車注意"],
+    r:{ cost:3, economy:3, perf:3, design:3, space:4, safety:4, quality:4, status:3 } },
+
+  { id:"v04", name:"CX-5", maker:"マツダ", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","diesel","hybrid"], seats:5, pMin:284, pMax:393,
+    specs:{ price:"284〜393万円", fc:"最大17.8km/L(D)", drive:"FF/4WD", engine:"2.0L/2.2Lディーゼル/HEV" },
+    desc:"マツダを代表するSUV。内装品質と走りが高評価。",
+    pros:["ディーゼルで力強い走り","内装の質感が高い","美しいデザイン"], cons:["他社より高め","荷室は普通"],
+    r:{ cost:3, economy:4, perf:4, design:5, space:4, safety:4, quality:4, status:3 } },
+
+  { id:"v05", name:"フォレスター", maker:"スバル", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid"], seats:5, pMin:297, pMax:356,
+    specs:{ price:"297〜356万円", fc:"最大15.8km/L", drive:"AWD", engine:"2.0L/e-BOXER" },
+    desc:"全車AWD。視界の広さは国産SUV随一。",
+    pros:["全車AWDで安心","視界が抜群に広い","アイサイトが高性能"], cons:["燃費は良くない","デザインは実用重視"],
+    r:{ cost:3, economy:2, perf:3, design:3, space:4, safety:5, quality:4, status:3 } },
+
+  { id:"v06", name:"エクストレイル", maker:"日産", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid"], seats:7, pMin:327, pMax:433,
+    specs:{ price:"327〜433万円", fc:"最大18.8km/L", drive:"FF/4WD", engine:"1.5L e-POWER" },
+    desc:"e-POWER採用で電動感覚の走り。7人乗り設定もある。",
+    pros:["e-POWERで力強い","7人乗り選択可","防水素材内装"], cons:["3列目は補助的","燃費は普通"],
+    r:{ cost:3, economy:3, perf:3, design:3, space:4, safety:4, quality:4, status:3 } },
+
+  { id:"v07", name:"ジムニーシエラ", maker:"スズキ", origin:"domestic", icon:"🏔️",
+    body:["suv"], fuel:["gasoline"], seats:4, pMin:225, pMax:249,
+    specs:{ price:"225〜249万円", fc:"16.2km/L", drive:"4WD", engine:"1.5L" },
+    desc:"ジムニーの普通車版。山岳・オフロードで圧倒的な走破性。",
+    pros:["悪路走破性が抜群","コンパクト","リセールバリュー高"], cons:["後席・荷室狭い","燃費が悪い"],
+    r:{ cost:4, economy:2, perf:3, design:4, space:2, safety:3, quality:4, status:3 } },
+
+  { id:"v08", name:"ハリアー", maker:"トヨタ", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","phev"], seats:5, pMin:327, pMax:502,
+    specs:{ price:"327〜502万円", fc:"最大22.3km/L", drive:"FF/4WD", engine:"2.0L/2.5L HEV/PHEV" },
+    desc:"都市型ラグジュアリーSUV。上質な内装と洗練されたデザイン。",
+    pros:["内装の質感が高い","PHEVで電動走行可","スタイリッシュ"], cons:["走破性は普通","高価格"],
+    r:{ cost:2, economy:3, perf:3, design:5, space:3, safety:4, quality:4, status:4 } },
+
+  { id:"v09", name:"アウトランダーPHEV", maker:"三菱", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","phev"], seats:7, pMin:445, pMax:537,
+    specs:{ price:"445〜537万円", fc:"最大16.6km/L", drive:"4WD", engine:"2.4L PHEV" },
+    desc:"三菱のPHEV技術×7人乗りSUV。電動4WDで走行安定。",
+    pros:["7人乗りPHEV","電動4WDで高性能","大容量ラゲッジ"], cons:["価格が高い","車体が大きい"],
+    r:{ cost:2, economy:3, perf:3, design:3, space:5, safety:4, quality:4, status:3 } },
+
+  { id:"v10", name:"ランドクルーザー", maker:"トヨタ", origin:"domestic", icon:"🏔️",
+    body:["suv"], fuel:["gasoline","diesel"], seats:7, pMin:524, pMax:775,
+    specs:{ price:"524〜775万円", fc:"最大11.6km/L", drive:"4WD", engine:"3.3Dディーゼル/3.5Lガソリン" },
+    desc:"世界最強の信頼性を誇るSUV。圧倒的なリセールバリュー。",
+    pros:["悪路走破性が世界最高","耐久性・信頼性が抜群","リセール高"], cons:["燃費が悪い","非常に高価格"],
+    r:{ cost:1, economy:1, perf:3, design:4, space:5, safety:4, quality:5, status:5 } },
+
+  { id:"v11", name:"bZ4X", maker:"トヨタ", origin:"domestic", icon:"⚡",
+    body:["suv"], fuel:["ev"], seats:5, pMin:425, pMax:600,
+    specs:{ price:"425〜600万円", fc:"487km(WLTC)", drive:"FF/4WD", engine:"EV 150kW" },
+    desc:"トヨタ初のBEV SUV。ソーラー充電オプションも設定。",
+    pros:["航続距離が長い","安全装備充実","SUVの使い勝手"], cons:["充電インフラ依存","価格が高い"],
+    r:{ cost:2, economy:5, perf:3, design:3, space:4, safety:4, quality:4, status:3 } },
+
+  { id:"v12", name:"アリア", maker:"日産", origin:"domestic", icon:"⚡",
+    body:["suv"], fuel:["ev"], seats:5, pMin:540, pMax:790,
+    specs:{ price:"540〜790万円", fc:"最大610km(WLTC)", drive:"FF/4WD", engine:"EV 160kW" },
+    desc:"最大610km航続の日産フラッグシップEV。e-4ORCE採用。",
+    pros:["航続距離が長い","高い走行性能","上質な内装"], cons:["価格が高い","充電時間かかる"],
+    r:{ cost:1, economy:5, perf:4, design:4, space:4, safety:4, quality:4, status:4 } },
+
+  { id:"m01", name:"シエンタ", maker:"トヨタ", origin:"domestic", icon:"🚐",
+    body:["minivan"], fuel:["gasoline","hybrid"], seats:7, pMin:196, pMax:292,
+    specs:{ price:"196〜292万円", fc:"最大28.2km/L", drive:"FF/4WD", engine:"1.5L/HEV" },
+    desc:"コンパクトで燃費が良く7人乗れる。最も実用的なミニバン。",
+    pros:["コンパクトで扱いやすい","燃費が良い","価格が安い"], cons:["3列目は狭い","大柄な人は窮屈"],
+    r:{ cost:4, economy:4, perf:2, design:3, space:4, safety:4, quality:4, status:2 } },
+
+  { id:"m02", name:"ノア/ヴォクシー", maker:"トヨタ", origin:"domestic", icon:"🚐",
+    body:["minivan"], fuel:["gasoline","hybrid"], seats:8, pMin:285, pMax:395,
+    specs:{ price:"285〜395万円", fc:"最大23.0km/L", drive:"FF/4WD", engine:"1.8L/2.0L HEV" },
+    desc:"日本で最も売れるファミリーミニバン。HEVで燃費も改善。",
+    pros:["広い室内","燃費が良くなった","安全装備充実"], cons:["大きめで駐車が大変","外観が似通う"],
+    r:{ cost:3, economy:4, perf:2, design:3, space:5, safety:4, quality:4, status:3 } },
+
+  { id:"m03", name:"ステップワゴン", maker:"ホンダ", origin:"domestic", icon:"🚐",
+    body:["minivan"], fuel:["gasoline","hybrid"], seats:8, pMin:289, pMax:342,
+    specs:{ price:"289〜342万円", fc:"最大21.2km/L", drive:"FF/4WD", engine:"1.5L/e:HEV" },
+    desc:"後席が下に開く「わくわくゲート」が特徴の8人乗りミニバン。",
+    pros:["わくわくゲートが便利","8人乗り","使いやすい室内"], cons:["外観は保守的","燃費はノア/ヴォクシーに劣る"],
+    r:{ cost:3, economy:3, perf:2, design:3, space:5, safety:4, quality:4, status:3 } },
+
+  { id:"m04", name:"セレナ", maker:"日産", origin:"domestic", icon:"🚐",
+    body:["minivan"], fuel:["gasoline","hybrid"], seats:8, pMin:298, pMax:442,
+    specs:{ price:"298〜442万円", fc:"最大20.6km/L", drive:"FF/4WD", engine:"1.4L e-POWER" },
+    desc:"e-POWERで力強く走れるミニバン。ハンズフリースライドドア採用。",
+    pros:["e-POWERで快適加速","ハンズフリードア","広い室内"], cons:["価格が高め","燃費はやや劣る"],
+    r:{ cost:2, economy:3, perf:2, design:3, space:5, safety:4, quality:4, status:3 } },
+
+  { id:"m05", name:"アルファード", maker:"トヨタ", origin:"domestic", icon:"🚐",
+    body:["minivan"], fuel:["gasoline","hybrid","phev"], seats:7, pMin:490, pMax:860,
+    specs:{ price:"490〜860万円", fc:"最大22.2km/L", drive:"FF/4WD", engine:"2.5L HEV/PHEV" },
+    desc:"日本最高峰のラグジュアリーミニバン。VIP送迎にも対応。",
+    pros:["圧倒的な高級感","PHEVで長いEV走行","存在感が抜群"], cons:["非常に高価格","大きすぎて駐車困難"],
+    r:{ cost:1, economy:3, perf:2, design:5, space:5, safety:4, quality:5, status:5 } },
+
+  { id:"sp01", name:"GR86", maker:"トヨタ", origin:"domestic", icon:"🏎️",
+    body:["sports"], fuel:["gasoline"], seats:4, pMin:265, pMax:313,
+    specs:{ price:"265〜313万円", fc:"12.8km/L", drive:"FR", engine:"2.4L 水平対向" },
+    desc:"スバルとの共同開発FRスポーツ。峠からサーキットまで。",
+    pros:["FRの楽しさが味わえる","価格が手頃","ハンドリングが秀逸"], cons:["後席・荷室は実用的でない","燃費が悪い"],
+    r:{ cost:3, economy:2, perf:5, design:4, space:1, safety:3, quality:4, status:4 } },
+
+  { id:"sp02", name:"ロードスター", maker:"マツダ", origin:"domestic", icon:"🏎️",
+    body:["sports"], fuel:["gasoline"], seats:2, pMin:285, pMax:395,
+    specs:{ price:"285〜395万円", fc:"13.4km/L", drive:"FR", engine:"1.5L/2.0L" },
+    desc:"「人馬一体」をテーマに世界100万台超の名車。オープン2シーター。",
+    pros:["オープンの爽快感","世界トップのハンドリング","軽量コンパクト"], cons:["2人しか乗れない","荷物はほぼ積めない"],
+    r:{ cost:3, economy:2, perf:5, design:5, space:1, safety:3, quality:5, status:5 } },
+
+  { id:"sp03", name:"フェアレディZ", maker:"日産", origin:"domestic", icon:"🏎️",
+    body:["sports"], fuel:["gasoline"], seats:2, pMin:530, pMax:600,
+    specs:{ price:"530〜600万円", fc:"10.6km/L", drive:"FR", engine:"V6 3.0Lツインターボ" },
+    desc:"V6 3.0Lツインターボ400馬力。日産の伝統スポーツカー。",
+    pros:["圧倒的な動力性能","美しいデザイン","日本スポーツカーの代表"], cons:["価格が高い","実用性なし"],
+    r:{ cost:2, economy:1, perf:5, design:5, space:1, safety:3, quality:4, status:5 } },
+
+  { id:"e01", name:"テスラ Model 3", maker:"テスラ", origin:"import", icon:"⚡",
+    body:["sedan"], fuel:["ev"], seats:5, pMin:580, pMax:820,
+    specs:{ price:"580〜820万円", fc:"最大629km(WLTC)", drive:"FF/AWD", engine:"EV 最大490kW" },
+    desc:"世界で最も売れているEVセダン。自動運転機能搭載。",
+    pros:["航続距離が長い","テスラ急速充電網","OTAでソフト更新"], cons:["価格が高い","内装がシンプルすぎる"],
+    r:{ cost:1, economy:5, perf:5, design:4, space:4, safety:5, quality:3, status:5 } },
+
+  { id:"e02", name:"テスラ Model Y", maker:"テスラ", origin:"import", icon:"⚡",
+    body:["suv"], fuel:["ev"], seats:7, pMin:650, pMax:960,
+    specs:{ price:"650〜960万円", fc:"最大573km(WLTC)", drive:"FF/AWD", engine:"EV 最大500kW" },
+    desc:"2023年世界販売No.1。SUVの使い勝手とEV性能を両立。",
+    pros:["広い荷室","テスラ充電網","7人乗り選択可"], cons:["価格が高い","サービス拠点が少ない"],
+    r:{ cost:1, economy:5, perf:4, design:4, space:5, safety:5, quality:3, status:5 } },
+
+  { id:"e03", name:"BYD ATTO3", maker:"BYD", origin:"import", icon:"⚡",
+    body:["suv"], fuel:["ev"], seats:5, pMin:440, pMax:440,
+    specs:{ price:"440万円", fc:"470km(WLTC)", drive:"FF", engine:"EV 150kW" },
+    desc:"中国BYDが日本展開するEV SUV。コスパが最も良い。",
+    pros:["同クラスEVで最安","ユニークな内装","航続距離が長め"], cons:["充電網が少ない","リセール不明"],
+    r:{ cost:3, economy:5, perf:3, design:4, space:4, safety:4, quality:3, status:2 } },
+
+  { id:"i01", name:"ゴルフ", maker:"フォルクスワーゲン", origin:"import", icon:"🚗",
+    body:["compact"], fuel:["gasoline","hybrid"], seats:5, pMin:329, pMax:495,
+    specs:{ price:"329〜495万円", fc:"最大20.4km/L", drive:"FF/4WD", engine:"1.0L/1.5L eTSI" },
+    desc:"世界的ベストセラーのコンパクトハッチ。GTIなどスポーツ版も。",
+    pros:["扱いやすいサイズ","走りのバランスが良い","GTIでスポーツも"], cons:["国産より高い","電装系の故障報告あり"],
+    r:{ cost:3, economy:3, perf:4, design:4, space:3, safety:4, quality:4, status:4 } },
+
+  { id:"i02", name:"MINIクーパー", maker:"MINI", origin:"import", icon:"🚗",
+    body:["compact"], fuel:["gasoline","ev"], seats:4, pMin:356, pMax:536,
+    specs:{ price:"356〜536万円", fc:"最大16.4km/L", drive:"FF", engine:"1.5L/2.0L/EV" },
+    desc:"英国伝統の個性派コンパクト。EV版（MINI Electric）も人気。",
+    pros:["唯一無二のデザイン","走りが楽しい","EV版で街乗り快適"], cons:["後席が狭い","輸入車維持費"],
+    r:{ cost:2, economy:3, perf:4, design:5, space:2, safety:4, quality:3, status:4 } },
+
+  { id:"i03", name:"BMW 3シリーズ", maker:"BMW", origin:"import", icon:"🚘",
+    body:["sedan"], fuel:["gasoline","hybrid","ev"], seats:5, pMin:548, pMax:782,
+    specs:{ price:"548〜782万円", fc:"最大20.4km/L", drive:"FR/AWD", engine:"2.0L/3.0L/EV i3あり" },
+    desc:"「駆け抜ける歓び」の代名詞。スポーティなプレミアムセダン。",
+    pros:["走りの質が高い","ブランド力","多様なパワートレイン"], cons:["価格が高い","維持費がかかる"],
+    r:{ cost:1, economy:3, perf:5, design:5, space:4, safety:5, quality:4, status:5 } },
+
+  { id:"i04", name:"BMW X3", maker:"BMW", origin:"import", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","ev"], seats:5, pMin:613, pMax:845,
+    specs:{ price:"613〜845万円", fc:"最大17.0km/L", drive:"4WD", engine:"2.0L/3.0L/EV iX3" },
+    desc:"BMWのミドルSUV。走りとラグジュアリーを両立。",
+    pros:["SUVとしての走行性能","高い質感","EV版も選べる"], cons:["非常に高価格","維持費がかかる"],
+    r:{ cost:1, economy:3, perf:4, design:5, space:4, safety:5, quality:4, status:5 } },
+
+  { id:"i05", name:"メルセデス Cクラス", maker:"メルセデス・ベンツ", origin:"import", icon:"🚘",
+    body:["sedan"], fuel:["gasoline","hybrid"], seats:5, pMin:600, pMax:776,
+    specs:{ price:"600〜776万円", fc:"最大16.3km/L", drive:"FR/AWD", engine:"1.5L/2.0L マイルドHEV" },
+    desc:"メルセデスを代表する高級セダン。内装は圧倒的な高品質。",
+    pros:["内装の質感が最高峰","ブランドステータス","快適な乗り心地"], cons:["高価格","オプションも高い"],
+    r:{ cost:1, economy:2, perf:4, design:5, space:4, safety:5, quality:5, status:5 } },
+
+  { id:"i06", name:"メルセデス GLC", maker:"メルセデス・ベンツ", origin:"import", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid"], seats:5, pMin:715, pMax:870,
+    specs:{ price:"715〜870万円", fc:"最大13.9km/L", drive:"4WD", engine:"2.0L PHEV含む" },
+    desc:"メルセデスのミドルSUV。プレミアムSUVの最高峰。",
+    pros:["最高峰の質感","4MATICで走行安定","PHEV選択可"], cons:["非常に高価格","維持費がかかる"],
+    r:{ cost:1, economy:2, perf:3, design:5, space:4, safety:5, quality:5, status:5 } },
+
+  { id:"i07", name:"アウディ A4/A5", maker:"アウディ", origin:"import", icon:"🚘",
+    body:["sedan"], fuel:["gasoline","hybrid"], seats:5, pMin:568, pMax:750,
+    specs:{ price:"568〜750万円", fc:"最大17.6km/L", drive:"AWD", engine:"2.0L quattro" },
+    desc:"技術力で選ぶプレミアムセダン。quattroシステムで安定。",
+    pros:["quattroで安定した走り","上質でシンプルな内装","高い技術力"], cons:["高価格","維持費がかかる"],
+    r:{ cost:1, economy:3, perf:4, design:4, space:4, safety:5, quality:4, status:5 } },
+
+  { id:"i08", name:"ボルボ XC40", maker:"ボルボ", origin:"import", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","ev"], seats:5, pMin:539, pMax:620,
+    specs:{ price:"539〜620万円", fc:"最大15.4km/L", drive:"FF/AWD", engine:"1.5L/2.0L/EV" },
+    desc:"北欧安全基準の最高峰。EV版も人気。北欧デザイン。",
+    pros:["安全性が世界最高峰","シンプルな北欧内装","EV版も選べる"], cons:["価格が高い","荷室は広くない"],
+    r:{ cost:2, economy:3, perf:3, design:5, space:3, safety:5, quality:4, status:4 } },
+
+  { id:"i09", name:"ボルボ XC60", maker:"ボルボ", origin:"import", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","phev"], seats:5, pMin:649, pMax:836,
+    specs:{ price:"649〜836万円", fc:"最大15.3km/L", drive:"AWD", engine:"2.0L B4/PHEV" },
+    desc:"ワールドカーオブザイヤー受賞。プレミアムSUVの傑作。",
+    pros:["世界最高レベルの安全性","美しい内装","PHEVで電動走行"], cons:["高価格","大きめで駐車場注意"],
+    r:{ cost:1, economy:3, perf:3, design:5, space:4, safety:5, quality:4, status:4 } },
+
+  { id:"i10", name:"レクサス NX", maker:"レクサス", origin:"domestic", icon:"🚙",
+    body:["suv"], fuel:["gasoline","hybrid","phev"], seats:5, pMin:490, pMax:638,
+    specs:{ price:"490〜638万円", fc:"最大21.4km/L", drive:"FF/4WD", engine:"2.5L HEV/PHEV" },
+    desc:"レクサスのコンパクトSUV。日本ブランドの高品質と信頼性。",
+    pros:["日本ブランドの高品質","PHEVで燃費良好","信頼性が高い"], cons:["価格が高い","欧州と比べ個性が薄め"],
+    r:{ cost:2, economy:4, perf:3, design:4, space:3, safety:5, quality:5, status:4 } },
+
+  { id:"i11", name:"ランドローバー ディフェンダー", maker:"ランドローバー", origin:"import", icon:"🏔️",
+    body:["suv"], fuel:["gasoline","hybrid","phev"], seats:5, pMin:750, pMax:1400,
+    specs:{ price:"750〜1400万円", fc:"最大11.4km/L", drive:"4WD", engine:"2.0L/3.0L/PHEV" },
+    desc:"英国が誇る本格ラグジュアリーオフロードSUV。",
+    pros:["悪路走破性が世界最高クラス","ラグジュアリーな内装","圧倒的な存在感"], cons:["非常に高価格","燃費が悪い"],
+    r:{ cost:1, economy:1, perf:3, design:5, space:4, safety:4, quality:3, status:5 } },
+
+  { id:"i12", name:"ポルシェ マカン（EV）", maker:"ポルシェ", origin:"import", icon:"🏎️",
+    body:["suv","sports"], fuel:["ev"], seats:5, pMin:950, pMax:1300,
+    specs:{ price:"950〜1300万円", fc:"最大533km(WLTC)", drive:"AWD", engine:"EV 最大470kW" },
+    desc:"ポルシェのフルEV SUV。SUVとは思えない走行性能。",
+    pros:["SUV離れした走り","EV航続距離も良好","ポルシェのブランド力"], cons:["非常に高価格","実用性はSUVとして普通"],
+    r:{ cost:1, economy:4, perf:5, design:5, space:3, safety:5, quality:4, status:5 } },
+];
+
+const PRIORITIES = [
+  { k:"cost",    icon:"💰", label:"コスパ（価格の安さ）" },
+  { k:"economy", icon:"⛽", label:"燃費・経済性" },
+  { k:"perf",    icon:"🏎️", label:"走り・加速感" },
+  { k:"design",  icon:"✨", label:"デザイン・スタイル" },
+  { k:"space",   icon:"📦", label:"室内の広さ" },
+  { k:"safety",  icon:"🛡️", label:"安全性・運転支援" },
+  { k:"quality", icon:"🔧", label:"品質・信頼性" },
+  { k:"status",  icon:"👑", label:"ブランド・ステータス" },
+];
+
+const CARD_COLORS = ["#0071e3","#e94560","#16a34a","#f59e0b"];
+
+// ================================================================
+// STATE
+// ================================================================
+let tray = [];          // car ids in compare tray (max 4)
+let bodyFilter = "all";
+let fuelFilters = [];
+let originFilters = [];
+let priorities = {};
+let loanCarId = null;
+let currentTab = "specs";
+let savedComparisons = JSON.parse(localStorage.getItem("carCompare_saved") || "[]");
+
+PRIORITIES.forEach(p => { priorities[p.k] = 3; });
+
+// ================================================================
+// FILTERS
+// ================================================================
+function setBodyFilter(val, el) {
+  bodyFilter = val;
+  document.querySelectorAll("[data-filter='body']").forEach(c => c.classList.remove("on"));
+  el.classList.add("on");
+  applyFilters();
+}
+function toggleFuelFilter(val, el) {
+  el.classList.toggle("on");
+  if (fuelFilters.includes(val)) fuelFilters = fuelFilters.filter(v => v !== val);
+  else fuelFilters.push(val);
+  applyFilters();
+}
+function toggleOriginFilter(val, el) {
+  el.classList.toggle("on");
+  if (originFilters.includes(val)) originFilters = originFilters.filter(v => v !== val);
+  else originFilters.push(val);
+  applyFilters();
+}
+
+function getFilteredCars() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const sort = document.getElementById("sortSelect").value;
+  let result = CARS.filter(c => {
+    if (bodyFilter !== "all" && !c.body.includes(bodyFilter)) return false;
+    if (fuelFilters.length > 0 && !fuelFilters.some(f => c.fuel.includes(f))) return false;
+    if (originFilters.length > 0 && !originFilters.includes(c.origin)) return false;
+    if (q && !c.name.toLowerCase().includes(q) && !c.maker.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (sort === "price-asc") result.sort((a,b) => a.pMin - b.pMin);
+  else if (sort === "price-desc") result.sort((a,b) => b.pMax - a.pMax);
+  else if (sort === "az") result.sort((a,b) => a.maker.localeCompare(b.maker));
+  return result;
+}
+
+function applyFilters() { renderGrid(); }
+
+// ================================================================
+// RENDER GRID
+// ================================================================
+function renderGrid() {
+  const cars = getFilteredCars();
+  const grid = document.getElementById("carsGrid");
+  document.getElementById("resultCount").textContent = cars.length + "台";
+
+  if (cars.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <span class="empty-state-icon">😕</span>条件に合う車が見つかりません<br>
+      <button style="margin-top:12px;padding:8px 18px;background:var(--accent);color:white;border:none;border-radius:8px;cursor:pointer;font-size:0.82rem;" onclick="resetFilters()">フィルターをリセット</button>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = cars.map(c => {
+    const inTray = tray.includes(c.id);
+    const trayFull = tray.length >= 4;
+    const fuelChips = c.fuel.map(f => {
+      const cls = f==="ev"?"ev":f==="hybrid"?"hybrid":f==="phev"?"phev":f==="diesel"?"diesel":"";
+      const lbl = {gasoline:"ガソリン",hybrid:"HEV",phev:"PHEV",ev:"EV",diesel:"ディーゼル"}[f]||f;
+      return `<span class="chip ${cls}">${lbl}</span>`;
+    }).join("");
+    const btnClass = inTray ? "add-btn remove" : trayFull ? "add-btn" : "add-btn";
+    const btnText = inTray ? "✕ 比較から外す" : "＋ 比較に追加";
+    const btnDisabled = !inTray && trayFull ? "disabled" : "";
+    return `<div class="car-card${inTray?" in-tray":""}" id="card-${c.id}">
+      <div class="car-card-hero">
+        <span class="car-origin-badge">${c.origin==="domestic"?"🇯🇵 国産":"🌍 輸入"}</span>
+        <span class="car-card-icon">${c.icon}</span>
+      </div>
+      <div class="car-card-body">
+        <div class="car-maker">${c.maker}</div>
+        <div class="car-name">${c.name}</div>
+        <div class="car-price">${c.specs.price}</div>
+        <div class="car-chips">${fuelChips}<span class="chip">👥 ${c.seats}人</span></div>
+        <button class="${btnClass}" ${btnDisabled} onclick="toggleTray('${c.id}')">${btnText}</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function resetFilters() {
+  bodyFilter = "all";
+  fuelFilters = [];
+  originFilters = [];
+  document.getElementById("searchInput").value = "";
+  document.querySelectorAll("[data-filter='body']").forEach(c => c.classList.remove("on"));
+  document.querySelector("[data-filter='body'][data-val='all']").classList.add("on");
+  document.querySelectorAll("[data-filter='fuel'],[data-filter='origin']").forEach(c => c.classList.remove("on"));
+  applyFilters();
+}
+
+// ================================================================
+// TRAY
+// ================================================================
+function toggleTray(id) {
+  if (tray.includes(id)) {
+    tray = tray.filter(x => x !== id);
+  } else {
+    if (tray.length >= 4) return;
+    tray.push(id);
+  }
+  renderTray();
+  renderGrid();
+}
+
+function removeFromTray(id) {
+  tray = tray.filter(x => x !== id);
+  renderTray();
+  renderGrid();
+}
+
+function clearTray() {
+  tray = [];
+  renderTray();
+  renderGrid();
+}
+
+function renderTray() {
+  const el = document.getElementById("compareTray");
+  const btn = document.getElementById("compareBtn");
+  const slots = document.getElementById("traySlots");
+
+  if (tray.length === 0) {
+    el.classList.remove("visible");
+    return;
+  }
+  el.classList.add("visible");
+  btn.disabled = tray.length < 2;
+
+  // render 4 slots
+  slots.innerHTML = Array.from({length:4}).map((_, i) => {
+    const id = tray[i];
+    if (!id) return `<div class="tray-slot">+ 追加</div>`;
+    const car = CARS.find(c => c.id === id);
+    return `<div class="tray-slot filled" style="border-color:${CARD_COLORS[i]}40">
+      <div class="tray-slot-content">
+        <span class="tray-slot-icon">${car.icon}</span>
+        <span class="tray-slot-name">${car.name}</span>
+      </div>
+      <button class="tray-slot-rm" onclick="removeFromTray('${id}')">✕</button>
+    </div>`;
+  }).join("");
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+function openModal() {
+  document.getElementById("modalOverlay").classList.add("open");
+  switchTab("specs", document.querySelector(".modal-tab"));
+}
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById("modalOverlay")) closeModal();
+}
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll(".modal-tab").forEach(t => t.classList.remove("active"));
+  if (el) el.classList.add("active");
+  document.getElementById("tabSpecs").style.display = tab === "specs" ? "" : "none";
+  document.getElementById("tabScore").style.display = tab === "score" ? "" : "none";
+  document.getElementById("tabLoan").style.display  = tab === "loan"  ? "" : "none";
+  if (tab === "specs") renderSpecsTab();
+  if (tab === "score") renderScoreTab();
+  if (tab === "loan")  renderLoanTab();
+}
+
+// ================================================================
+// SPECS TAB
+// ================================================================
+function renderSpecsTab() {
+  const cars = tray.map(id => CARS.find(c => c.id === id)).filter(Boolean);
+  const el = document.getElementById("tabSpecs");
+
+  const headers = cars.map((c, i) => `
+    <th>
+      <div class="cmp-car-header" style="border-top-color:${CARD_COLORS[i]}">
+        <span class="cmp-icon">${c.icon}</span>
+        <div class="cmp-maker">${c.maker}</div>
+        <div class="cmp-name">${c.name}</div>
+        <button class="cmp-rm-btn" onclick="removeFromTray('${c.id}');renderSpecsTab()">✕ 外す</button>
+      </div>
+    </th>`).join("");
+
+  function row(label, fn, best) {
+    const vals = cars.map(c => fn(c));
+    let bestIdx = -1;
+    if (best === "min") {
+      const nums = vals.map(v => parseFloat(v.replace(/[^0-9.]/g,"")));
+      bestIdx = nums.indexOf(Math.min(...nums));
+    } else if (best === "max") {
+      const nums = vals.map(v => parseFloat(v.replace(/[^0-9.]/g,"")));
+      bestIdx = nums.indexOf(Math.max(...nums));
+    }
+    const tds = vals.map((v, i) => `<td>${v}${i===bestIdx?'<span class="best-badge">Best</span>':""}</td>`).join("");
+    return `<tr><td class="row-lbl">${label}</td>${tds}</tr>`;
+  }
+
+  const fuelLabel = f => ({gasoline:"ガソリン",hybrid:"HEV",phev:"PHEV",ev:"EV",diesel:"ディーゼル"}[f]||f);
+  const stars = n => `<span class="stars">${"★".repeat(n)}<span style="opacity:.3">${"★".repeat(5-n)}</span></span>`;
+
+  el.innerHTML = `<div class="cmp-table-wrap"><table class="cmp">
+    <thead><tr><th class="row-lbl" style="min-width:110px">項目</th>${headers}</tr></thead>
+    <tbody>
+      <tr class="cmp-section-header"><td colspan="${cars.length+1}">📋 基本スペック</td></tr>
+      ${row("価格", c => c.specs.price, "min")}
+      ${row("パワートレイン", c => c.fuel.map(fuelLabel).join(" / "))}
+      ${row("エンジン/モーター", c => c.specs.engine)}
+      ${row("燃費・航続距離", c => c.specs.fc, "max")}
+      ${row("乗車定員", c => c.seats + "人", "max")}
+      ${row("駆動方式", c => c.specs.drive)}
+      ${row("産地", c => c.origin==="domestic"?"国産 🇯🇵":"輸入 🌍")}
+      <tr class="cmp-section-header"><td colspan="${cars.length+1}">⭐ 評価（5段階）</td></tr>
+      ${row("💰 コスパ",   c => stars(c.r.cost))}
+      ${row("⛽ 燃費",    c => stars(c.r.economy))}
+      ${row("🏎️ 走り",   c => stars(c.r.perf))}
+      ${row("✨ デザイン", c => stars(c.r.design))}
+      ${row("📦 広さ",    c => stars(c.r.space))}
+      ${row("🛡️ 安全性", c => stars(c.r.safety))}
+      ${row("🔧 品質",    c => stars(c.r.quality))}
+      ${row("👑 ブランド", c => stars(c.r.status))}
+      <tr class="cmp-section-header"><td colspan="${cars.length+1}">👍 おすすめポイント</td></tr>
+      ${(() => {
+        const tds = cars.map(c => `<td><ul class="pros-list">${c.pros.map(p=>`<li class="pro">✅ ${p}</li>`).join("")}${c.cons.map(p=>`<li class="con">△ ${p}</li>`).join("")}</ul></td>`).join("");
+        return `<tr><td class="row-lbl">ポイント</td>${tds}</tr>`;
+      })()}
+    </tbody>
+  </table></div>`;
+}
+
+// ================================================================
+// SCORE TAB
+// ================================================================
+function renderScoreTab() {
+  const cars = tray.map(id => CARS.find(c => c.id === id)).filter(Boolean);
+  const el = document.getElementById("tabScore");
+
+  const priHtml = PRIORITIES.map(p => {
+    const val = priorities[p.k];
+    const starsHtml = [1,2,3,4,5].map(n =>
+      `<div class="pri-star${val>=n?" on":""}" onclick="setPri('${p.k}',${n})">${n <= val ? "★" : "☆"}</div>`
+    ).join("");
+    return `<div class="pri-item">
+      <div class="pri-label">${p.icon} ${p.label}</div>
+      <div class="pri-stars-row">${starsHtml}</div>
+    </div>`;
+  }).join("");
+
+  const maxScore = Object.values(priorities).reduce((s,v) => s + v*5, 0);
+  const scored = cars.map(c => {
+    const total = PRIORITIES.reduce((s, p) => s + (c.r[p.k]||3) * priorities[p.k], 0);
+    return { ...c, pct: maxScore > 0 ? Math.round(total / maxScore * 100) : 0 };
+  }).sort((a,b) => b.pct - a.pct);
+
+  const resultCards = scored.map((c, i) =>
+    `<div class="score-item${i===0?" rank1":i===1?" rank2":i===2?" rank3":""}">
+      <div>${c.icon}</div>
+      <div style="font-size:0.7rem;color:var(--gray1)">${c.maker}</div>
+      <div class="score-car-n">${c.name}</div>
+      <div class="score-num">${c.pct}<span style="font-size:0.9rem">点</span></div>
+      ${i===0?"<div style='font-size:0.68rem;color:#92400e;margin-top:3px'>🏆 スコア1位</div>":""}
+    </div>`
+  ).join("");
+
+  el.innerHTML = `
+    <p style="font-size:0.8rem;color:var(--gray1);margin-bottom:16px">各項目の重要度を★で設定してください。優先度が高いほどスコアに大きく影響します。</p>
+    <div class="priority-grid">${priHtml}</div>
+    <div class="score-results">${resultCards}</div>`;
+}
+
+function setPri(key, val) {
+  priorities[key] = val;
+  if (currentTab === "score") renderScoreTab();
+}
+
+// ================================================================
+// LOAN TAB
+// ================================================================
+function renderLoanTab() {
+  const cars = tray.map(id => CARS.find(c => c.id === id)).filter(Boolean);
+  if (!loanCarId || !tray.includes(loanCarId)) loanCarId = tray[0];
+
+  const el = document.getElementById("tabLoan");
+  const carBtns = cars.map(c =>
+    `<button class="loan-car-btn${c.id===loanCarId?" active":""}" onclick="setLoanCar('${c.id}','${c.pMin}')">${c.icon} ${c.name}</button>`
+  ).join("");
+
+  el.innerHTML = `
+    <p style="font-size:0.8rem;color:var(--gray1);margin-bottom:12px">気になる車のローン月額を試算できます。</p>
+    <div class="loan-cars">${carBtns}</div>
+    <div class="loan-fields">
+      <div class="loan-field"><label>車両本体価格（万円）</label><input type="number" id="lnPrice" placeholder="例: 350" oninput="calcLoan()" value="${CARS.find(c=>c.id===loanCarId)?.pMin||""}"></div>
+      <div class="loan-field"><label>頭金（万円）</label><input type="number" id="lnDown" value="0" oninput="calcLoan()"></div>
+      <div class="loan-field"><label>金利（年率 %）</label><input type="number" id="lnRate" value="3.5" step="0.1" oninput="calcLoan()"></div>
+      <div class="loan-field"><label>期間</label>
+        <select id="lnMonths" onchange="calcLoan()">
+          <option value="12">12ヶ月（1年）</option><option value="24">24ヶ月（2年）</option>
+          <option value="36">36ヶ月（3年）</option><option value="48">48ヶ月（4年）</option>
+          <option value="60" selected>60ヶ月（5年）</option><option value="72">72ヶ月（6年）</option>
+          <option value="84">84ヶ月（7年）</option>
+        </select>
+      </div>
+    </div>
+    <div class="loan-result-box">
+      <div class="loan-main">
+        <div class="monthly-label">月々の支払額</div>
+        <div class="monthly-val" id="lnMonthly">—</div>
+      </div>
+      <div class="loan-subs">
+        <div class="loan-sub"><div class="sub-val" id="lnTotal">—</div><div class="sub-lbl">総支払額</div></div>
+        <div class="loan-sub"><div class="sub-val" id="lnInterest">—</div><div class="sub-lbl">利息総額</div></div>
+        <div class="loan-sub"><div class="sub-val" id="lnBorrow">—</div><div class="sub-lbl">借入額</div></div>
+      </div>
+    </div>`;
+  setTimeout(calcLoan, 0);
+}
+
+function setLoanCar(id, price) {
+  loanCarId = id;
+  document.querySelectorAll(".loan-car-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("lnPrice").value = price;
+  calcLoan();
+}
+
+function calcLoan() {
+  const price   = parseFloat(document.getElementById("lnPrice")?.value) || 0;
+  const down    = parseFloat(document.getElementById("lnDown")?.value)   || 0;
+  const rate    = parseFloat(document.getElementById("lnRate")?.value)   || 0;
+  const months  = parseInt(document.getElementById("lnMonths")?.value)   || 60;
+  const borrow  = Math.max(0, price - down);
+
+  if (borrow === 0) {
+    ["lnMonthly","lnTotal","lnInterest","lnBorrow"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
+    return;
+  }
+  const r = rate / 100 / 12;
+  const monthly = r === 0 ? borrow * 10000 / months : borrow * 10000 * r / (1 - Math.pow(1+r, -months));
+  const total = monthly * months;
+  const interest = total - borrow * 10000;
+  const f = n => Math.round(n).toLocaleString() + "円";
+  const fm = n => (n/10000).toFixed(1) + "万円";
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set("lnMonthly", f(monthly));
+  set("lnTotal", fm(total));
+  set("lnInterest", fm(interest));
+  set("lnBorrow", fm(borrow * 10000));
+}
+
+// ================================================================
+// SAVE / LOAD
+// ================================================================
+function saveComparison() {
+  const name = prompt("比較セットに名前をつけてください（例: SUV比較）", `比較 ${new Date().toLocaleDateString("ja")}`);
+  if (!name) return;
+  const cars = tray.map(id => CARS.find(c => c.id === id)).filter(Boolean);
+  savedComparisons.unshift({
+    id: Date.now(),
+    name,
+    date: new Date().toLocaleDateString("ja"),
+    carIds: [...tray],
+    icons: cars.map(c => c.icon),
+    carNames: cars.map(c => c.name),
+  });
+  localStorage.setItem("carCompare_saved", JSON.stringify(savedComparisons));
+  updateSavedBadge();
+  alert("保存しました！");
+}
+
+function deleteSaved(id) {
+  savedComparisons = savedComparisons.filter(s => s.id !== id);
+  localStorage.setItem("carCompare_saved", JSON.stringify(savedComparisons));
+  updateSavedBadge();
+  renderSavedList();
+}
+
+function loadSaved(saved) {
+  tray = saved.carIds.filter(id => CARS.some(c => c.id === id));
+  renderTray();
+  renderGrid();
+  toggleSavedPanel();
+  if (tray.length >= 2) openModal();
+}
+
+function updateSavedBadge() {
+  document.getElementById("savedBadge").textContent = savedComparisons.length;
+}
+
+function toggleSavedPanel() {
+  const panel = document.getElementById("savedPanel");
+  panel.classList.toggle("open");
+  if (panel.classList.contains("open")) renderSavedList();
+}
+
+function renderSavedList() {
+  const el = document.getElementById("savedList");
+  if (savedComparisons.length === 0) {
+    el.innerHTML = `<div class="saved-empty">保存された比較はありません</div>`;
+    return;
+  }
+  el.innerHTML = savedComparisons.map(s => `
+    <div class="saved-item" onclick="loadSaved(${JSON.stringify(s).replace(/"/g,"&quot;")})">
+      <div class="saved-item-icons">${s.icons.join("")}</div>
+      <div class="saved-item-info">
+        <div class="saved-item-name">${s.name}</div>
+        <div class="saved-item-date">${s.carNames.join("・")} — ${s.date}</div>
+      </div>
+      <button class="saved-item-del" onclick="event.stopPropagation();deleteSaved(${s.id})">🗑️</button>
+    </div>`).join("");
+}
+
+// ================================================================
+// INIT
+// ================================================================
+updateSavedBadge();
+renderGrid();
+</script>
+</body>
+</html>
