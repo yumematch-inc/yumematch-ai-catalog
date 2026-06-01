@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小口現金管理 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;}
+.tab{padding:14px 24px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;transition:.15s;}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+
+.screen{display:none;padding:24px;max-width:900px;margin:0 auto;}
+.screen.active{display:block;}
+
+.balance-banner{background:var(--navy);border-radius:16px;padding:24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;border-left:5px solid var(--gold);}
+.balance-label{font-size:13px;color:#94a3b8;margin-bottom:4px;}
+.balance-amount{font-size:36px;font-weight:900;color:#fff;}
+.balance-sub{font-size:12px;color:var(--gold);margin-top:4px;}
+.balance-right{text-align:right;}
+.balance-badge{background:rgba(244,162,97,.2);border:1px solid var(--gold);color:var(--gold);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.form-section{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.fs-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+.field-row{margin-bottom:14px;}
+.field-label{font-size:12px;font-weight:700;color:#64748b;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.field-label span{color:var(--red);}
+input,select{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus{border-color:var(--blue);}
+.amount-wrap{position:relative;}
+.amount-wrap input{padding-left:30px;}
+.yen{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#64748b;font-weight:700;}
+.tag-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.tag-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.tag-chip.active{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+.receipt-box{border:2px dashed #e2e8f0;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.15s;}
+.receipt-box:hover{border-color:var(--blue);background:#eff6ff;}
+.receipt-icon{font-size:28px;margin-bottom:6px;}
+.receipt-text{font-size:13px;color:#64748b;}
+
+.submit-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;}
+.submit-btn:hover{background:#1e3a5f;}
+
+/* Table */
+.ledger-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ledger-title{font-size:15px;font-weight:700;color:var(--navy);}
+.filter-wrap{display:flex;gap:8px;}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;transition:.1s;}
+.filter-btn.active{border-color:var(--navy);color:var(--navy);}
+
+.ledger-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.ledger-table th{background:#f8fafc;padding:10px 14px;font-size:11px;font-weight:700;color:#64748b;text-align:left;border-bottom:1px solid #e2e8f0;}
+.ledger-table td{padding:12px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f1f5f9;}
+.ledger-table tr:last-child td{border-bottom:none;}
+.ledger-table tr:hover td{background:#f8fafc;}
+.cat-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.cat-office{background:#dbeafe;color:#1e40af;}
+.cat-travel{background:#dcfce7;color:#166534;}
+.cat-supplies{background:#fce7f3;color:#9d174d;}
+.cat-other{background:#f3f4f6;color:#374151;}
+.amount-cell{font-weight:700;text-align:right;}
+.amount-out{color:var(--red);}
+.amount-in{color:var(--green);}
+.receipt-link{color:var(--blue);font-size:11px;text-decoration:none;}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);text-align:center;}
+.sc-val{font-size:28px;font-weight:900;color:var(--navy);line-height:1.1;}
+.sc-val.red{color:var(--red);}
+.sc-val.green{color:var(--green);}
+.sc-val.gold{color:var(--gold);}
+.sc-label{font-size:11px;color:#64748b;margin-top:4px;}
+.sc-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+.ai-box{background:var(--navy);border-radius:14px;padding:20px;margin-bottom:20px;border-left:4px solid var(--gold);}
+.ai-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.ai-body{font-size:13px;color:#e2e8f0;line-height:1.7;}
+
+.alert-card{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.alert-icon{font-size:24px;}
+.alert-text{font-size:13px;font-weight:700;color:#991b1b;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">小口<span>現金管理</span></div>
+  <div class="header-right">
+    <span style="font-size:12px;color:#94a3b8;">2026年6月1日</span>
+    <div class="avatar" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);">管理</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('entry')">💴 支出入力</div>
+  <div class="tab" onclick="switchView('ledger')">📒 出納帳</div>
+  <div class="tab" onclick="switchView('admin')">📊 管理者ビュー</div>
+</div>
+
+<!-- 支出入力 -->
+<div class="screen active" id="entry">
+
+  <div class="balance-banner">
+    <div>
+      <div class="balance-label">現在残高</div>
+      <div class="balance-amount">¥ 18,450</div>
+      <div class="balance-sub">上限 ¥30,000 ／ 残 ¥11,550 で補充要請</div>
+    </div>
+    <div class="balance-right">
+      <div class="balance-badge">🏢 寿事業所</div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">支出を記録する</div>
+    <div class="field-row">
+      <div class="field-label">支出日 <span>*</span></div>
+      <input type="date" value="2026-06-01">
+    </div>
+    <div class="field-row">
+      <div class="field-label">金額 <span>*</span></div>
+      <div class="amount-wrap">
+        <span class="yen">¥</span>
+        <input type="number" placeholder="0">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">カテゴリ</div>
+      <div class="tag-chips">
+        <div class="tag-chip active" onclick="this.classList.toggle('active')">📋 事務用品</div>
+        <div class="tag-chip" onclick="this.classList.toggle('active')">🚌 交通費</div>
+        <div class="tag-chip" onclick="this.classList.toggle('active')">🍱 食料品</div>
+        <div class="tag-chip" onclick="this.classList.toggle('active')">🔧 消耗品</div>
+        <div class="tag-chip" onclick="this.classList.toggle('active')">📮 通信・郵便</div>
+        <div class="tag-chip" onclick="this.classList.toggle('active')">🎁 その他</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">用途・摘要 <span>*</span></div>
+      <input type="text" placeholder="例：コピー用紙A4 500枚、文房具購入">
+    </div>
+    <div class="field-row">
+      <div class="field-label">担当者</div>
+      <select>
+        <option>芝山 巧</option>
+        <option>鶴見 恵理子</option>
+        <option>井出 光輝</option>
+        <option>その他スタッフ</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field-label">領収書</div>
+      <div class="receipt-box">
+        <div class="receipt-icon">📷</div>
+        <div class="receipt-text">タップして写真を撮る / ファイルを選択</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn">支出を記録する</button>
+
+  <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 18px;">
+    <div style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:6px;">✨ AIの提案</div>
+    <div style="font-size:13px;color:#1e40af;line-height:1.6;">「事務用品」カテゴリの支出が今月すでに3回記録されています。まとめて購入すると手間が省けそうです。次回の発注タイミングを提案しますか？</div>
+  </div>
+
+</div>
+
+<!-- 出納帳 -->
+<div class="screen" id="ledger">
+
+  <div class="ledger-header">
+    <div class="ledger-title">出納帳 — 2026年6月</div>
+    <div class="filter-wrap">
+      <div class="filter-btn active">すべて</div>
+      <div class="filter-btn">支出</div>
+      <div class="filter-btn">補充</div>
+    </div>
+  </div>
+
+  <table class="ledger-table">
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>摘要</th>
+        <th>カテゴリ</th>
+        <th>担当</th>
+        <th style="text-align:right">金額</th>
+        <th style="text-align:right">残高</th>
+        <th>領収書</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>6/1</td>
+        <td>コピー用紙A4 × 2セット</td>
+        <td><span class="cat-badge cat-office">事務用品</span></td>
+        <td>芝山</td>
+        <td class="amount-cell amount-out">▼ 1,320</td>
+        <td class="amount-cell">18,450</td>
+        <td><a class="receipt-link" href="#">📎 確認</a></td>
+      </tr>
+      <tr>
+        <td>5/30</td>
+        <td>バス回数券（利用者送迎）</td>
+        <td><span class="cat-badge cat-travel">交通費</span></td>
+        <td>鶴見</td>
+        <td class="amount-cell amount-out">▼ 1,100</td>
+        <td class="amount-cell">19,770</td>
+        <td><a class="receipt-link" href="#">📎 確認</a></td>
+      </tr>
+      <tr>
+        <td>5/28</td>
+        <td>【補充】月次補充</td>
+        <td><span class="cat-badge cat-other">補充</span></td>
+        <td>管理者</td>
+        <td class="amount-cell amount-in">▲ 20,000</td>
+        <td class="amount-cell">20,870</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>5/27</td>
+        <td>清掃用洗剤・ゴム手袋</td>
+        <td><span class="cat-badge cat-supplies">消耗品</span></td>
+        <td>井出</td>
+        <td class="amount-cell amount-out">▼ 876</td>
+        <td class="amount-cell">870</td>
+        <td><a class="receipt-link" href="#">📎 確認</a></td>
+      </tr>
+      <tr>
+        <td>5/25</td>
+        <td>ゴミ袋・アルコール消毒液</td>
+        <td><span class="cat-badge cat-supplies">消耗品</span></td>
+        <td>芝山</td>
+        <td class="amount-cell amount-out">▼ 1,254</td>
+        <td class="amount-cell">1,746</td>
+        <td><a class="receipt-link" href="#">📎 確認</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- 管理者ビュー -->
+<div class="screen" id="admin">
+
+  <div class="alert-card">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-text">塩尻事業所の残高が ¥4,200 — 補充要請が届いています</div>
+      <div style="font-size:12px;color:#ef4444;margin-top:4px;">5/29 鶴見さんより申請</div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sc-val">¥4.6万</div>
+      <div class="sc-label">今月合計支出</div>
+      <div class="sc-sub">先月比 +8%</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val gold">23件</div>
+      <div class="sc-label">6月の支出件数</div>
+      <div class="sc-sub">1日平均 1.5件</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val green">100%</div>
+      <div class="sc-label">領収書添付率</div>
+      <div class="sc-sub">全件確認済み</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val red">1</div>
+      <div class="sc-label">補充待ち事業所</div>
+      <div class="sc-sub">塩尻：¥4,200</div>
+    </div>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-title">🤖 AIの分析レポート（6月）</div>
+    <div class="ai-body">
+      今月の「消耗品」支出が先月比 +32% で増加しています。清掃用品の消費ペースが上がっている可能性があります。<strong style="color:var(--gold);">まとめ購入に切り替えることで年間 ¥8,000〜12,000 の節約</strong>が見込めます。仕入先との交渉も検討されることをお勧めします。
+    </div>
+  </div>
+
+  <div class="ledger-header">
+    <div class="ledger-title">事業所別残高</div>
+  </div>
+
+  <table class="ledger-table">
+    <thead>
+      <tr>
+        <th>事業所</th>
+        <th style="text-align:right">現在残高</th>
+        <th style="text-align:right">上限</th>
+        <th>ステータス</th>
+        <th>最終記録日</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>🏢 寿事業所</td>
+        <td class="amount-cell">¥18,450</td>
+        <td class="amount-cell" style="color:#64748b">¥30,000</td>
+        <td><span style="color:var(--green);font-weight:700;">● 正常</span></td>
+        <td>6/1</td>
+      </tr>
+      <tr>
+        <td>🌿 soil</td>
+        <td class="amount-cell">¥12,800</td>
+        <td class="amount-cell" style="color:#64748b">¥30,000</td>
+        <td><span style="color:var(--green);font-weight:700;">● 正常</span></td>
+        <td>5/30</td>
+      </tr>
+      <tr>
+        <td>🏠 塩尻事業所</td>
+        <td class="amount-cell" style="color:var(--red)">¥4,200</td>
+        <td class="amount-cell" style="color:#64748b">¥30,000</td>
+        <td><span style="color:var(--red);font-weight:700;">⚠️ 補充要請</span></td>
+        <td>5/29</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+function switchView(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

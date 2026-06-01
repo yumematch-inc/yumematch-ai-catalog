@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自家用車使用申請 — YUMEMATCH AIツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f4f6fb;color:#1e293b;min-height:100vh;}
+:root{--navy:#0d1b35;--gold:#f4a261;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;}
+
+.header{background:var(--navy);color:#fff;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.logo{font-size:17px;font-weight:900;}.logo span{color:var(--gold);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e2e8f0;padding:0 24px;}
+.tab{padding:14px 24px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;transition:.15s;}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+
+.screen{display:none;padding:24px;max-width:900px;margin:0 auto;}
+.screen.active{display:block;}
+
+.info-banner{background:var(--navy);border-radius:14px;padding:18px 20px;margin-bottom:20px;border-left:4px solid var(--gold);display:flex;align-items:center;gap:14px;}
+.info-icon{font-size:28px;}
+.info-text{font-size:13px;color:#e2e8f0;line-height:1.6;}
+.info-rate{font-size:15px;font-weight:900;color:var(--gold);}
+
+.form-section{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.fs-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+.field-row{margin-bottom:14px;}
+.field-label{font-size:12px;font-weight:700;color:#64748b;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.field-label span{color:var(--red);}
+input,select,textarea{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:#374151;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+textarea{resize:vertical;}
+
+.route-row{display:grid;grid-template-columns:1fr 48px 1fr;gap:8px;align-items:center;margin-bottom:14px;}
+.route-arrow{text-align:center;font-size:20px;color:#94a3b8;}
+
+.calc-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px;margin-top:14px;}
+.calc-title{font-size:12px;font-weight:700;color:#1e40af;margin-bottom:10px;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.calc-item{text-align:center;}
+.calc-val{font-size:22px;font-weight:900;color:var(--navy);}
+.calc-label{font-size:11px;color:#64748b;margin-top:2px;}
+.calc-eq{display:flex;align-items:center;justify-content:center;font-size:18px;color:#94a3b8;margin-top:8px;}
+
+.submit-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;}
+.submit-btn:hover{background:#1e3a5f;}
+
+/* Table */
+.req-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.req-table th{background:#f8fafc;padding:10px 14px;font-size:11px;font-weight:700;color:#64748b;text-align:left;border-bottom:1px solid #e2e8f0;}
+.req-table td{padding:12px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f1f5f9;}
+.req-table tr:last-child td{border-bottom:none;}
+.req-table tr:hover td{background:#f8fafc;}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.status-pending{background:#fef3c7;color:#92400e;}
+.status-approved{background:#dcfce7;color:#166534;}
+.status-rejected{background:#fee2e2;color:#991b1b;}
+.amount-cell{font-weight:700;text-align:right;}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);text-align:center;}
+.sc-val{font-size:28px;font-weight:900;color:var(--navy);line-height:1.1;}
+.sc-val.red{color:var(--red);}
+.sc-val.green{color:var(--green);}
+.sc-val.gold{color:var(--gold);}
+.sc-label{font-size:11px;color:#64748b;margin-top:4px;}
+.sc-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+
+.approve-row{display:flex;gap:8px;margin-top:4px;}
+.approve-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
+.btn-ok{background:var(--green);color:#fff;}
+.btn-ng{background:var(--red);color:#fff;}
+.btn-detail{background:#f1f5f9;color:#374151;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">自家用車<span>使用申請</span></div>
+  <div class="header-right">
+    <span style="font-size:12px;color:#94a3b8;">2026年6月1日</span>
+    <div class="avatar" style="background:linear-gradient(135deg,#10b981,#059669);">芝山</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('form')">🚗 申請フォーム</div>
+  <div class="tab" onclick="switchView('history')">📋 申請履歴</div>
+  <div class="tab" onclick="switchView('admin')">✅ 承認管理</div>
+</div>
+
+<!-- 申請フォーム -->
+<div class="screen active" id="form">
+
+  <div class="info-banner">
+    <div class="info-icon">🚗</div>
+    <div class="info-text">
+      交通費精算レート：<span class="info-rate">¥15 / km</span><br>
+      走行距離を入力すると金額が自動計算されます。Google Mapsリンクを添付すると承認がスムーズです。
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">使用情報</div>
+    <div class="field-row">
+      <div class="field-label">使用日 <span>*</span></div>
+      <input type="date" value="2026-06-01">
+    </div>
+    <div class="field-row">
+      <div class="field-label">申請者</div>
+      <select>
+        <option>芝山 巧</option>
+        <option>鶴見 恵理子</option>
+        <option>井出 光輝</option>
+        <option>その他スタッフ</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field-label">使用目的 <span>*</span></div>
+      <select>
+        <option>利用者送迎</option>
+        <option>関係機関訪問</option>
+        <option>買い出し・物資調達</option>
+        <option>研修・会議参加</option>
+        <option>その他業務</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field-label">詳細 / 同乗者</div>
+      <textarea rows="2" placeholder="例：〇〇さん（利用者）の病院送迎。往復利用。"></textarea>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="fs-title">走行ルート</div>
+    <div class="route-row">
+      <div>
+        <div class="field-label">出発地 <span>*</span></div>
+        <input type="text" placeholder="例：寿事業所">
+      </div>
+      <div class="route-arrow">→</div>
+      <div>
+        <div class="field-label">目的地 <span>*</span></div>
+        <input type="text" placeholder="例：長野市民病院">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">走行距離（往復）<span>*</span></div>
+      <input type="number" placeholder="0" id="km" oninput="calc()"> km
+    </div>
+    <div class="calc-box">
+      <div class="calc-title">✨ 自動計算</div>
+      <div class="calc-grid">
+        <div class="calc-item">
+          <div class="calc-val" id="disp-km">0 km</div>
+          <div class="calc-label">走行距離</div>
+        </div>
+        <div class="calc-item" style="display:flex;align-items:center;justify-content:center;">
+          <div style="font-size:24px;color:#94a3b8;">×</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-val">¥15</div>
+          <div class="calc-label">/ km（精算レート）</div>
+        </div>
+      </div>
+      <div class="calc-eq">
+        <div style="font-size:20px;font-weight:900;color:var(--navy);">精算額：<span id="disp-total" style="color:var(--gold)">¥0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn">申請を提出する</button>
+
+</div>
+
+<!-- 申請履歴 -->
+<div class="screen" id="history">
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>使用日</th>
+        <th>目的</th>
+        <th>ルート</th>
+        <th style="text-align:right">距離</th>
+        <th style="text-align:right">金額</th>
+        <th>ステータス</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>6/1</td>
+        <td>利用者送迎</td>
+        <td style="font-size:12px;color:#64748b">寿→長野市民病院</td>
+        <td class="amount-cell">12 km</td>
+        <td class="amount-cell">¥180</td>
+        <td><span class="status-badge status-pending">審査中</span></td>
+      </tr>
+      <tr>
+        <td>5/28</td>
+        <td>関係機関訪問</td>
+        <td style="font-size:12px;color:#64748b">寿→長野市役所</td>
+        <td class="amount-cell">8 km</td>
+        <td class="amount-cell">¥120</td>
+        <td><span class="status-badge status-approved">承認済</span></td>
+      </tr>
+      <tr>
+        <td>5/25</td>
+        <td>買い出し</td>
+        <td style="font-size:12px;color:#64748b">塩尻→コーナン</td>
+        <td class="amount-cell">6 km</td>
+        <td class="amount-cell">¥90</td>
+        <td><span class="status-badge status-approved">承認済</span></td>
+      </tr>
+      <tr>
+        <td>5/20</td>
+        <td>研修参加</td>
+        <td style="font-size:12px;color:#64748b">寿→長野県社会福祉会館</td>
+        <td class="amount-cell">18 km</td>
+        <td class="amount-cell">¥270</td>
+        <td><span class="status-badge status-approved">承認済</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- 承認管理 -->
+<div class="screen" id="admin">
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sc-val gold">3</div>
+      <div class="sc-label">承認待ち</div>
+      <div class="sc-sub">本日 1件 新規</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val green">¥1,560</div>
+      <div class="sc-label">今月承認済み</div>
+      <div class="sc-sub">12件</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val">94 km</div>
+      <div class="sc-label">今月総走行距離</div>
+      <div class="sc-sub">6月累計</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-val red">0</div>
+      <div class="sc-label">要確認</div>
+      <div class="sc-sub">ルート不備など</div>
+    </div>
+  </div>
+
+  <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;">⏳ 承認待ち申請</div>
+
+  <div style="background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;margin-bottom:24px;">
+
+    <div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">芝山 巧 — 利用者送迎</div>
+          <div style="font-size:12px;color:#64748b;margin-top:2px;">6/1 ／ 寿事業所 → 長野市民病院 ／ 12km ／ <strong>¥180</strong></div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:4px;">詳細：〇〇さんの定期受診。往復。</div>
+        </div>
+        <span class="status-badge status-pending">審査中</span>
+      </div>
+      <div class="approve-row">
+        <button class="approve-btn btn-ok">✅ 承認</button>
+        <button class="approve-btn btn-ng">❌ 差戻し</button>
+        <button class="approve-btn btn-detail">📍 ルート確認</button>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">鶴見 恵理子 — 関係機関訪問</div>
+          <div style="font-size:12px;color:#64748b;margin-top:2px;">5/31 ／ 塩尻事業所 → 塩尻市役所 ／ 7km ／ <strong>¥105</strong></div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:4px;">詳細：加算申請書類の提出</div>
+        </div>
+        <span class="status-badge status-pending">審査中</span>
+      </div>
+      <div class="approve-row">
+        <button class="approve-btn btn-ok">✅ 承認</button>
+        <button class="approve-btn btn-ng">❌ 差戻し</button>
+        <button class="approve-btn btn-detail">📍 ルート確認</button>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">井出 光輝 — 買い出し</div>
+          <div style="font-size:12px;color:#64748b;margin-top:2px;">5/31 ／ 寿事業所 → ホームセンター ／ 9km ／ <strong>¥135</strong></div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:4px;">詳細：工房用消耗品の購入</div>
+        </div>
+        <span class="status-badge status-pending">審査中</span>
+      </div>
+      <div class="approve-row">
+        <button class="approve-btn btn-ok">✅ 承認</button>
+        <button class="approve-btn btn-ng">❌ 差戻し</button>
+        <button class="approve-btn btn-detail">📍 ルート確認</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function switchView(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function calc(){
+  const km=parseInt(document.getElementById('km').value)||0;
+  const total=km*15;
+  document.getElementById('disp-km').textContent=km+' km';
+  document.getElementById('disp-total').textContent='¥'+total.toLocaleString();
+}
+</script>
+</body>
+</html>
