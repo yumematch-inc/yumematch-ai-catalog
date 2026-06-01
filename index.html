@@ -26,6 +26,7 @@
   --sh-md:0 4px 16px rgba(15,23,42,.08);
   --diag-w:300px;
   --hdr-h:52px;
+  --interest-w:260px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;}
@@ -41,7 +42,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .hpill{font-size:10px;font-weight:400;color:var(--mute);padding:3px 9px;border:1px solid var(--bdr);border-radius:20px;}
 
 /* ─── LAYOUT ─── */
-.layout{display:grid;grid-template-columns:var(--diag-w) 1fr;min-height:calc(100vh - var(--hdr-h));align-items:start;}
+.layout{display:grid;grid-template-columns:var(--diag-w) 1fr var(--interest-w);min-height:calc(100vh - var(--hdr-h));align-items:start;}
 
 /* ─── LEFT PANEL ─── */
 .diag{position:sticky;top:var(--hdr-h);height:calc(100vh - var(--hdr-h));background:var(--white);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;}
@@ -240,8 +241,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .dm-cart-btn:hover{background:var(--indigo-d);transform:translateY(-1px);}
 .dm-cart-btn.added{background:#059669;box-shadow:0 2px 10px rgba(5,150,105,.3);}
 .dm-footer{padding-top:16px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:10px;}
-.dm-price-row{display:flex;align-items:center;justify-content:space-between;}
-.dm-price-big{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.03em;}
 .dm-period{font-size:10px;color:var(--mute);margin-top:2px;}
 
 /* ─── MODAL ─── */
@@ -317,7 +316,6 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .ebtn-tool .et-lbl{font-size:9px;font-weight:600;letter-spacing:.04em;opacity:.75;}
 .ebtn-tool.et-share{border-color:rgba(99,179,237,.5);background:rgba(99,179,237,.1);}
 .ebtn-tool.et-roi{border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.1);}
-.ebtn-tool.et-quote{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1);}
 
 /* アポfix */
 .apo-body{display:grid;grid-template-columns:1fr 1fr;min-height:360px;}
@@ -424,6 +422,57 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 .res-cta p{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.5;}
 .res-cta-btn{display:block;width:100%;padding:8px;border-radius:7px;background:#e11d48;border:none;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(225,29,72,.35);}
 .res-cta-btn:hover{background:#be123c;}
+
+/* ─── INTEREST PANEL (right) ─── */
+.int-panel{position:sticky;top:var(--hdr-h);height:calc(100vh - var(--hdr-h));background:var(--white);border-left:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;}
+.int-hd{padding:16px 16px 12px;border-bottom:1px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.int-ttl{font-size:12px;font-weight:700;color:var(--ink);}
+.int-cnt-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-bdr);}
+.int-empty{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mute);font-size:11px;line-height:1.8;padding:20px;}
+.int-list{flex:1;overflow-y:auto;padding:8px;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent;display:none;}
+.int-item{display:flex;align-items:flex-start;gap:8px;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--bdr);margin-bottom:6px;animation:fu .2s ease both;}
+.int-item-ico{font-size:16px;flex-shrink:0;line-height:1.3;}
+.int-item-body{flex:1;min-width:0;}
+.int-item-name{font-size:11px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:3px;}
+.int-item-aft{font-size:10px;color:#065f46;line-height:1.5;}
+.int-item-rm{width:18px;height:18px;border-radius:50%;border:1px solid var(--bdr);background:transparent;cursor:pointer;font-size:10px;color:var(--mute);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;font-family:inherit;}
+.int-item-rm:hover{background:var(--red-lt);border-color:rgba(225,29,72,.3);color:var(--red);}
+.int-foot{padding:12px;border-top:1px solid var(--bdr);flex-shrink:0;display:flex;flex-direction:column;gap:6px;}
+.int-roi-btn{padding:10px;border-radius:8px;background:var(--indigo);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(79,70,229,.25);width:100%;}
+.int-roi-btn:hover{background:var(--indigo-d);transform:translateY(-1px);}
+.int-clr-btn{padding:7px;border-radius:7px;border:1px solid var(--bdr);background:transparent;font-size:11px;color:var(--mute);cursor:pointer;font-family:inherit;transition:all .15s;width:100%;}
+.int-clr-btn:hover{color:var(--sub);}
+@media(max-width:1100px){.layout{grid-template-columns:var(--diag-w) 1fr;}.int-panel{display:none;}}
+/* ─── DETAIL MODAL: dramatic redesign ─── */
+.dm-body-inner{padding:0 0 4px;}
+.dm-before-card{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden;margin:0 22px 0;}
+.dm-before-card::before{content:'"';position:absolute;top:-14px;left:14px;font-size:120px;color:rgba(239,68,68,.12);font-family:Georgia,serif;line-height:1;pointer-events:none;}
+.dm-before-tag{font-size:9px;font-weight:700;letter-spacing:.18em;color:#f87171;margin-bottom:12px;text-transform:uppercase;}
+.dm-before-quote{font-size:14px;font-weight:600;color:#f1f5f9;line-height:1.75;font-style:italic;position:relative;z-index:1;}
+.dm-arrow-sep{display:flex;align-items:center;gap:12px;padding:10px 22px;}
+.dm-arrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(79,70,229,.4),transparent);}
+.dm-arrow-label{font-size:10px;font-weight:700;color:var(--indigo);white-space:nowrap;letter-spacing:.08em;}
+.dm-after-card{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #34d399;border-radius:14px;padding:22px 24px;margin:0 22px;}
+.dm-after-tag{font-size:9px;font-weight:700;letter-spacing:.18em;color:#059669;margin-bottom:12px;text-transform:uppercase;}
+.dm-after-txt{font-size:15px;font-weight:700;color:#065f46;line-height:1.75;}
+.dm-section{padding:18px 22px 0;}
+.dm-section-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:12px;}
+.dm-steps-list{display:flex;flex-direction:column;gap:10px;}
+.dm-step-new{display:flex;gap:12px;align-items:flex-start;}
+.dm-step-num-new{width:24px;height:24px;border-radius:50%;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.dm-step-txt-new{font-size:12px;line-height:1.65;color:var(--ink);padding-top:3px;}
+.dm-case-new{margin:18px 22px 0;background:var(--bg);border-radius:12px;padding:18px;border:1px solid var(--bdr);}
+.dm-case-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.dm-case-q{font-size:32px;color:var(--indigo);font-family:Georgia,serif;line-height:1;opacity:.35;flex-shrink:0;}
+.dm-case-who{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.dm-case-txt-new{font-size:11px;line-height:1.8;color:var(--sub);}
+.dm-footer-new{padding:18px 22px 22px;display:flex;flex-direction:column;gap:8px;}
+.dm-period-new{font-size:11px;color:var(--mute);margin-bottom:2px;}
+.dm-cart-btn-new{width:100%;padding:13px;border-radius:9px;border:none;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(79,70,229,.3);transition:all .2s;}
+.dm-cart-btn-new:hover{background:var(--indigo-d);transform:translateY(-1px);}
+.dm-cart-btn-new.added{background:#059669;box-shadow:0 2px 10px rgba(5,150,105,.3);}
+.dm-consult-btn-new{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;}
+.dm-consult-btn-new:hover{background:var(--bg);}
 </style>
 </head>
 <body>
@@ -451,7 +500,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     <div class="dh">
       <div class="dh-tag">Diagnosis</div>
       <div class="dh-ttl">業務改善診断</div>
-      <div class="dh-sub">6問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
+      <div class="dh-sub">5問に答えるとあなたに合う<br>ツールと改善ポテンシャルが分かります</div>
     </div>
     <div class="prog">
       <div class="pbar" id="pb"></div>
@@ -493,6 +542,20 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
     </div>
     <div class="tg" id="tg"></div>
   </main>
+
+  <!-- RIGHT PANEL: 気になるリスト -->
+  <aside class="int-panel" id="int-panel">
+    <div class="int-hd">
+      <span class="int-ttl">♡ 気になる</span>
+      <span class="int-cnt-badge" id="int-cnt">0本</span>
+    </div>
+    <div class="int-empty" id="int-empty">カードの<br>「♡ 気になる」を押すと<br>ここに追加されます</div>
+    <div class="int-list" id="int-list"></div>
+    <div class="int-foot" id="int-foot" style="display:none">
+      <button class="int-roi-btn" onclick="showROI()">✨ 改善効果を見る</button>
+      <button class="int-clr-btn" onclick="clr()">リストをクリア</button>
+    </div>
+  </aside>
 </div></div>
 
 <!-- PRIVATE VIEW -->
@@ -530,22 +593,16 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 </div>
 
 <!-- ESTIMATE BAR -->
-<div class="ebar" id="eb">
+<div class="ebar" id="eb" style="display:none!important">
   <div class="el" style="flex-shrink:0;">
-    <div class="ecnt"><span id="ec">0</span>本を選択中</div>
+    <div class="ecnt">♡ <span id="ec">0</span>本 気になる</div>
     <div class="echips" id="ech"></div>
   </div>
   <div class="ebar-mid">
     <button class="ebtn-tool et-share" onclick="shareCart()"><span class="et-ico">🔗</span><span class="et-lbl">URL共有</span></button>
-    <button class="ebtn-tool et-roi" onclick="showROI()"><span class="et-ico">📊</span><span class="et-lbl">ROI試算</span></button>
-    <button class="ebtn-tool et-quote" onclick="showQuote()"><span class="et-ico">📄</span><span class="et-lbl">見積書</span></button>
+    <button class="ebtn-tool et-roi" onclick="showROI()"><span class="et-ico">✨</span><span class="et-lbl">改善効果を見る</span></button>
   </div>
   <div class="er" style="flex-shrink:0;">
-    <div>
-      <div class="etl">見積もり合計（初期費用）</div>
-      <div class="etv" id="etv">¥0〜</div>
-      <div class="etm" id="etm"></div>
-    </div>
     <button class="bclr" onclick="clr()">クリア</button>
     <button class="beq" onclick="showApo()" style="background:var(--green);box-shadow:0 2px 12px rgba(5,150,105,.4);">📅 無料相談を予約 →</button>
   </div>
@@ -624,13 +681,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 <div class="modal-ov" id="roimodal" style="display:none" onclick="if(event.target===this)closeModal('roimodal')">
   <div class="modal-box" style="max-width:540px;">
     <div class="modal-hd">
-      <span class="modal-ttl">📊 ROI試算</span>
+      <span class="modal-ttl">✨ 改善シミュレーション</span>
       <button class="modal-close" onclick="closeModal('roimodal')">✕</button>
     </div>
     <div class="roi-body" id="roi-content"></div>
     <div class="qbtns">
       <button class="qbtn-close" onclick="closeModal('roimodal')">閉じる</button>
-      <button class="qbtn-print" onclick="showQuote()">📄 見積書を出す</button>
       <button class="qbtn-print" style="background:var(--green)" onclick="closeModal('roimodal');showApo()">📅 無料相談を予約</button>
     </div>
   </div>
@@ -652,7 +708,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
 
 <!-- ─── 詳細モーダル ─── -->
 <div class="modal-ov" id="detailmodal" style="display:none" onclick="if(event.target===this)closeModal('detailmodal')">
-  <div class="modal-box" style="max-width:620px;">
+  <div class="modal-box" style="max-width:700px;">
     <div class="modal-hd">
       <div style="display:flex;align-items:center;gap:10px;">
         <div id="dm-ico" style="width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;"></div>
@@ -663,46 +719,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif;backgro
       </div>
       <button class="modal-close" onclick="closeModal('detailmodal')">✕</button>
     </div>
-    <div style="padding:22px 26px;display:flex;flex-direction:column;gap:18px;">
-      <!-- Before/After -->
-      <div>
-        <div class="dm-sect-lbl">BEFORE / AFTER</div>
-        <div class="ba" style="margin-bottom:0;">
-          <div class="ba-row">
-            <span class="ba-tag bt-b">😩 以前</span>
-            <span class="ba-txt bb-txt" id="dm-bef"></span>
-          </div>
-          <div class="ba-sep">↓ AI導入後</div>
-          <div class="ba-row">
-            <span class="ba-tag bt-a">✨ 今は</span>
-            <span class="ba-txt ga" id="dm-aft"></span>
-          </div>
-        </div>
-      </div>
-      <!-- 3ステップ -->
-      <div>
-        <div class="dm-sect-lbl">使い方の流れ（3ステップ）</div>
-        <div id="dm-steps" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
-      <!-- Case study -->
-      <div class="dm-case">
-        <div class="dm-sect-lbl">💡 こんな会社で効果が出ています</div>
-        <div id="dm-who" class="dm-who"></div>
-        <div class="dm-case-txt" id="dm-case-txt"></div>
-      </div>
-      <!-- Footer -->
-      <div class="dm-footer">
-        <div class="dm-price-row">
-          <div>
-            <div class="dm-price-big" id="dm-price"></div>
-            <div class="dm-period">工数目安：<span id="dm-period"></span></div>
-          </div>
-          <div style="font-size:10px;color:var(--mute);text-align:right;">保守なしプランも対応<br>詳細はご相談ください</div>
-        </div>
-        <button class="dm-cart-btn" id="dm-cart-btn" onclick="toggleFromDetail()">+ 見積もりに追加</button>
-        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
-      </div>
-    </div>
+    <div id="dm-body" style="overflow-y:auto;max-height:calc(90vh - 60px);"></div>
   </div>
 </div>
 
@@ -729,6 +746,8 @@ const MOCK={
   25:'https://event-lp-studio.vercel.app/',
   16:'mocks/mock-17-realestate.html',
   55:'https://newgo-koike.github.io/yugo-koike-profile/',
+  56:'mocks/mock-19-petty-cash.html',
+  57:'mocks/mock-20-car-expense.html',
 };
 const SAMPLE={
   25:'https://aruka-latrucros.surge.sh/',
@@ -753,6 +772,8 @@ const T=[
   {id:55,cat:'marketing',catL:'営業・マーケ',name:'プロフィールページ自動生成',sym:'high',price:30000,priceL:'¥30,000〜',period:'1週間',bef:'自己紹介ページを作ろうとするたびに「何を書けばいい？」「デザインが決まらない」で止まる',aft:'実績・SNS・お問い合わせが整ったプロフィールページが即完成。名刺の代わりにURLを送れる'},
   {id:31,cat:'industry',catL:'業界特化',name:'ラベル自動生成ツール',sym:'super',price:40000,priceL:'¥40,000〜',period:'2〜3週間',bef:'レシピが変わるたびに栄養計算をやり直してラベルを作り直す。1商品1時間以上',aft:'レシピを入力するだけで栄養計算が完了。そのまま印刷用データで出力'},
   {id:44,cat:'industry',catL:'業界特化',name:'原価計算ツール',sym:'high',price:30000,priceL:'¥30,000〜',period:'1〜2週間',bef:'「このメニュー、いくらで売れば利益が出るの？」が感覚値のまま値付けが決まる',aft:'食材の原価を入力するだけで原価率・推奨売価・利益が自動計算される'},
+  {id:56,cat:'finance',catL:'経営・財務',name:'小口現金管理ツール',sym:'mid',price:25000,priceL:'¥25,000〜',period:'1〜2週間',bef:'「今月の小口現金、いくら残ってる？」の答えに15分かかる。領収書も毎月行方不明になる',aft:'スマホで支出を即記録→残高リアルタイム反映。領収書写真で電子保存、補充アラートも自動'},
+  {id:57,cat:'hr',catL:'採用・人事',name:'自家用車使用申請ツール',sym:'mid',price:20000,priceL:'¥20,000〜',period:'1週間',bef:'交通費申請の紙がたまって月末に大量処理。「この走行距離は正しい？」の確認往復に時間がかかる',aft:'スマホで申請→距離×レートを自動計算→管理者に通知。承認もワンタップで月末集計ゼロに'},
 ];
 
 const QS=[
@@ -786,8 +807,6 @@ const QS=[
      {v:'LP・告知ページを作るのが面倒で機会を逃している',i:'😩',score:2,h:10,cat:'marketing'},
      {v:'ほぼ紹介だけ頼り。自分で集客する仕組みがない',i:'🔥',score:3,h:15,cat:'marketing'},
    ]},
-  {id:'budget',q:'最後に1つ。改善に動けそうな予算感は？',h:'1つ選択',multi:false,
-   opts:[{v:'〜 ¥50,000（まず1本試したい）',i:'💡',budget:50000},{v:'〜 ¥150,000（まとめて3〜4本）',i:'⚡',budget:150000},{v:'上限なし（課題解決を優先したい）',i:'🚀',budget:Infinity}]},
 ];
 const DEMO={
   1:'alert',2:'alert',3:'alert',4:'alert',
@@ -810,7 +829,7 @@ const IND={
 
 const MAINT_FREE=new Set([8,16,31,44,49]);
 
-let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null},cart:new Map()};
+let S={step:0,ans:{industry:[],meeting:null,finance:null,hr:null,marketing:null},cart:new Map()};
 let F='rec';
 let V='grid';
 
@@ -838,15 +857,13 @@ function sc(){
     const opt=q?.opts.find(o=>o.v===sel);
     if(opt&&opt.score>0)b[opt.cat]=(b[opt.cat]||0)+(opt.score*1.5);
   });
-  const bud=S.ans.budget||Infinity;
   return T.map(t=>{
     let s=(b[t.cat]||0)+(t.sym==='super'?1.5:t.sym==='high'?.7:0);
-    if(t.price>bud)s-=8;
     return{...t,_s:s};
   }).sort((a,z)=>z._s-a._s);
 }
 
-function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0)||S.ans.budget!==null;}
+function hasA(){return S.ans.industry.length>0||AREA_QS.some(id=>(S.ans[id]||[]).length>0);}
 
 function pot(){
   let totalH=0;
@@ -856,8 +873,7 @@ function pot(){
     const opt=q?.opts.find(o=>o.v===sel);
     if(opt)totalH+=opt.h||0;
   });
-  const m=S.ans.budget===50000?.7:S.ans.budget===Infinity?1.3:1;
-  return{h:Math.round(totalH*m),c:Math.round(totalH*m*2500)};
+  return{h:Math.round(totalH),c:Math.round(totalH*2500)};
 }
 
 function renderT(){
@@ -880,12 +896,10 @@ function renderT(){
       <th>カテゴリ</th>
       <th>ツール名</th>
       <th>共感度</th>
-      <th>初期費用</th>
-      <th>保守/月</th>
       <th style="max-width:180px">Before（課題）</th>
       <th style="max-width:180px">After（変化）</th>
       <th>デモ</th>
-      <th>追加</th>
+      <th>気になる</th>
     </tr></thead>`;
     const tbody=document.createElement('tbody');
     list.forEach((t,i)=>{
@@ -897,12 +911,10 @@ function renderT(){
         <td><div class="tc-sm">${TI[t.id]||''} ${t.catL}</div></td>
         <td><div class="tn">${t.name}</div></td>
         <td><span class="sym ${t.sym==='super'?'ss':t.sym==='high'?'sh2':'sm'}" style="font-size:9px;">${t.sym==='super'?'🔥 特高':t.sym==='high'?'⚡ 高':'— 中'}</span></td>
-        <td style="font-weight:700;white-space:nowrap;">${t.priceL}</td>
-        <td style="white-space:nowrap;">${mf(t)>0?'<span style="color:var(--sub)">¥'+mf(t).toLocaleString()+'〜/月</span>':'<span class="mn-badge" style="font-size:10px;padding:3px 9px;">✓ 保守なし</span>'}</td>
         <td><div class="bef-sm">${t.bef}</div></td>
         <td><div class="aft-sm">${t.aft}</div></td>
         <td><a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" target="_blank" style="padding:5px 8px;font-size:10px;">デモ</a></td>
-        <td><button class="tc-btn${ink?' added':''}" style="padding:6px 10px;font-size:10px;" onclick="tog(${t.id})">${ink?'✓':'+'}</button></td>`;
+        <td><button class="tc-btn${ink?' added':''}" style="padding:6px 10px;font-size:10px;" onclick="tog(${t.id})">${ink?'★':'♡'}</button></td>`;
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody);
@@ -941,15 +953,12 @@ function renderT(){
   </div>
 </div>
 <div class="tc-ft">
-  <div>
-    <div class="tc-pr">${t.priceL} <span class="tc-pr-lbl">初期</span></div>
-    <div class="tc-pd">工数 ${t.period}　${MAINT_FREE.has(t.id)?'<span class="mn-badge">保守なし</span>':'保守 ¥'+mf(t).toLocaleString()+'〜/月'}</div>
-  </div>
+  <div style="font-size:10px;color:var(--mute);">導入目安：${t.period}</div>
   <div style="display:flex;gap:6px;align-items:center;">
     <a class="tc-demo" href="#" onclick="event.stopPropagation();event.preventDefault();openDetail(${t.id})">詳細 →</a>
     ${MOCK[t.id]?`<a class="tc-demo tc-mock" href="${MOCK[t.id]}" onclick="event.stopPropagation()" target="_blank">🎬 デモを見る</a>`:`<a class="tc-demo" href="samples/sample-${DEMO[t.id]||'form'}.html?id=${t.id}&name=${encodeURIComponent(t.name)}" onclick="event.stopPropagation()" target="_blank">デモ →</a>`}
     ${SAMPLE[t.id]?`<a class="tc-demo tc-sample" href="${SAMPLE[t.id]}" onclick="event.stopPropagation()" target="_blank">📄 実際のLP</a>`:''}
-    <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'✓ 選択中':'+ 見積もりに追加'}</button>
+    <button class="tc-btn${ink?' added':''}" onclick="event.stopPropagation();tog(${t.id})">${ink?'★ 気になる！':'♡ 気になる'}</button>
   </div>
 </div>`;
     el.addEventListener('click',()=>tog(t.id));
@@ -962,21 +971,38 @@ function tog(id){
   if(S.cart.has(id))S.cart.delete(id);else S.cart.set(id,t);
   const el=document.getElementById('c'+id);const btn=el?.querySelector('.tc-btn');
   el?.classList.toggle('sel',S.cart.has(id));
-  if(btn){btn.classList.toggle('added',S.cart.has(id));btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';}
+  if(btn){btn.classList.toggle('added',S.cart.has(id));btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';}
   updBar();
 }
 function clr(){
-  S.cart.forEach((_,id)=>{const el=document.getElementById('c'+id);el?.classList.remove('sel');const b=el?.querySelector('.tc-btn');if(b){b.classList.remove('added');b.textContent='+ 見積もりに追加';}});
+  S.cart.forEach((_,id)=>{const el=document.getElementById('c'+id);el?.classList.remove('sel');const b=el?.querySelector('.tc-btn');if(b){b.classList.remove('added');b.textContent='♡ 気になる';}});
   S.cart.clear();updBar();
 }
 function updBar(){
-  const items=[...S.cart.values()];const total=items.reduce((s,t)=>s+t.price,0);
-  const maint=items.reduce((s,t)=>s+mf(t),0);
-  document.getElementById('ec').textContent=items.length;
-  document.getElementById('etv').textContent='¥'+total.toLocaleString()+'〜';
-  document.getElementById('etm').textContent=items.length>0?'+ 保守・管理費 ¥'+maint.toLocaleString()+'〜/月 別途':'';
-  document.getElementById('ech').innerHTML=items.slice(0,3).map(t=>`<span class="echip">${t.name}</span>`).join('')+(items.length>3?`<span class="emore">他${items.length-3}本</span>`:'');
-  document.getElementById('eb').style.display=items.length>0?'flex':'none';
+  const items=[...S.cart.values()];
+  const cnt=items.length;
+  document.getElementById('int-cnt').textContent=cnt+'本';
+  const empty=document.getElementById('int-empty');
+  const list=document.getElementById('int-list');
+  const foot=document.getElementById('int-foot');
+  if(cnt===0){
+    empty.style.display='flex';
+    list.style.display='none';
+    foot.style.display='none';
+  } else {
+    empty.style.display='none';
+    list.style.display='block';
+    foot.style.display='flex';
+    list.innerHTML=items.map(t=>`
+<div class="int-item" id="ii${t.id}">
+  <div class="int-item-ico">${TI[t.id]||'✨'}</div>
+  <div class="int-item-body">
+    <div class="int-item-name">${t.name}</div>
+    <div class="int-item-aft">${t.aft}</div>
+  </div>
+  <button class="int-item-rm" onclick="event.stopPropagation();tog(${t.id})" title="削除">✕</button>
+</div>`).join('');
+  }
 }
 function sendQ(){
   const items=[...S.cart.values()];
@@ -1024,26 +1050,50 @@ const DEFAULT_CASES={
 function openDetail(id){
   const t=T.find(x=>x.id===id);if(!t)return;
   const detail=TD[id];
-  // icon bg
+  const bgMap={info:'linear-gradient(135deg,#dbeafe,#c7d2fe)',doc:'linear-gradient(135deg,#ede9fe,#ddd6fe)',finance:'linear-gradient(135deg,#fef3c7,#fde68a)',hr:'linear-gradient(135deg,#d1fae5,#a7f3d0)',marketing:'linear-gradient(135deg,#fee2e2,#fecdd3)',industry:'linear-gradient(135deg,#ccfbf1,#99f6e4)'};
+  const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
+  const who=detail?detail.who:[];
+  const caseText=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
+  const inCart=S.cart.has(id);
   const ico=document.getElementById('dm-ico');
   ico.textContent=TI[id]||'🔧';
-  ico.className='';ico.style.cssText='width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;';
-  const bgMap={info:'linear-gradient(135deg,#dbeafe,#c7d2fe)',doc:'linear-gradient(135deg,#ede9fe,#ddd6fe)',finance:'linear-gradient(135deg,#fef3c7,#fde68a)',hr:'linear-gradient(135deg,#d1fae5,#a7f3d0)',marketing:'linear-gradient(135deg,#fee2e2,#fecdd3)',industry:'linear-gradient(135deg,#ccfbf1,#99f6e4)'};
-  ico.style.background=bgMap[t.cat]||'var(--bg)';
+  ico.style.cssText=`width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;background:${bgMap[t.cat]||'var(--bg)'};`;
   document.getElementById('dm-name').textContent=t.name;
   document.getElementById('dm-cat').textContent=t.catL;
-  document.getElementById('dm-bef').textContent=t.bef;
-  document.getElementById('dm-aft').textContent=t.aft;
-  document.getElementById('dm-price').textContent=t.priceL+'〜';
-  document.getElementById('dm-period').textContent=t.period;
-  const steps=detail?detail.steps:DEFAULT_STEPS[t.cat]||DEFAULT_STEPS.doc;
-  document.getElementById('dm-steps').innerHTML=steps.map((s,i)=>`<div class="dm-step"><div class="dm-step-num">${i+1}</div><div class="dm-step-txt">${s}</div></div>`).join('');
-  const who=detail?detail.who:[];
-  document.getElementById('dm-who').innerHTML=who.map(w=>`<span class="dm-who-chip">${w}</span>`).join('');
-  document.getElementById('dm-case-txt').textContent=detail?detail.case:DEFAULT_CASES[t.cat]||DEFAULT_CASES.doc;
-  const btn=document.getElementById('dm-cart-btn');
-  btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
+  document.getElementById('dm-body').innerHTML=`<div class="dm-body-inner">
+<div class="dm-before-card">
+  <div class="dm-before-tag">😩 導入前・こんな状況ありませんか？</div>
+  <div class="dm-before-quote">${t.bef}</div>
+</div>
+<div class="dm-arrow-sep">
+  <div class="dm-arrow-line"></div>
+  <div class="dm-arrow-label">✦ AIが変えること</div>
+  <div class="dm-arrow-line"></div>
+</div>
+<div class="dm-after-card">
+  <div class="dm-after-tag">✨ 導入後・こう変わります</div>
+  <div class="dm-after-txt">${t.aft}</div>
+</div>
+<div class="dm-section">
+  <div class="dm-section-lbl">使い方の流れ（3ステップ）</div>
+  <div class="dm-steps-list">
+    ${steps.map((s,i)=>`<div class="dm-step-new"><div class="dm-step-num-new">${i+1}</div><div class="dm-step-txt-new">${s}</div></div>`).join('')}
+  </div>
+</div>
+<div class="dm-case-new">
+  <div class="dm-case-header">
+    <div class="dm-case-q">"</div>
+    <div class="dm-section-lbl" style="margin-bottom:0;">こんな事業者で効果が出ています</div>
+  </div>
+  ${who.length?`<div class="dm-case-who">${who.map(w=>`<span class="dm-who-chip">${w}</span>`).join('')}</div>`:''}
+  <div class="dm-case-txt-new">${caseText}</div>
+</div>
+<div class="dm-footer-new">
+  <div class="dm-period-new">導入目安：${t.period}</div>
+  <button class="dm-cart-btn-new${inCart?' added':''}" id="dm-cart-btn" onclick="toggleFromDetail()">${inCart?'★ 気になる！':'♡ 気になる'}</button>
+  <button class="dm-consult-btn-new" onclick="closeModal('detailmodal');setTimeout(showApo,120)">📅 この件で無料相談する</button>
+</div>
+</div>`;
   document.getElementById('detailmodal').dataset.toolId=id;
   document.getElementById('detailmodal').style.display='flex';
 }
@@ -1052,7 +1102,7 @@ function toggleFromDetail(){
   tog(id);
   const btn=document.getElementById('dm-cart-btn');
   btn.classList.toggle('added',S.cart.has(id));
-  btn.textContent=S.cart.has(id)?'✓ 選択中':'+ 見積もりに追加';
+  btn.textContent=S.cart.has(id)?'★ 気になる！':'♡ 気になる';
 }
 
 function closeModal(id){document.getElementById(id).style.display='none';}
@@ -1097,50 +1147,33 @@ function showQuote(){
 
 function showROI(){
   const items=[...S.cart.values()];
-  if(!items.length){showToast('ツールを1本以上選択してください');return;}
-  const total=items.reduce((s,t)=>s+t.price,0);
-  const maint12=items.reduce((s,t)=>s+mf(t)*12,0);
-  const invest=total+maint12;
+  if(!items.length){showToast('ツールを1本以上「気になる」してください');return;}
   const p=pot();
-  const annualSave=p.c*12;
-  const roiMonths=p.c>0?Math.ceil(total/p.c):0;
-  const roiPct=invest>0?Math.round((annualSave-invest)/invest*100):0;
-  const maxBar=Math.max(annualSave,invest,1);
+  // 診断済みならその値、未診断なら共感度から概算（super:10h, high:6h, mid:3h）
+  const diagH=p.h;
+  const estH=items.reduce((s,t)=>s+(t.sym==='super'?10:t.sym==='high'?6:3),0);
+  const totalH=diagH>0?diagH:estH;
+  const isEst=diagH===0;
   document.getElementById('roi-content').innerHTML=`
 <div class="roi-hero">
-  <div style="font-size:10px;opacity:.65;letter-spacing:.12em;margin-bottom:6px;">年間の機会損失（このまま何もしなければ）</div>
-  <div class="roi-big">¥${(Math.round(annualSave/10000)*10000).toLocaleString()}<span style="font-size:18px;font-weight:400;">〜/年</span></div>
-  <div class="roi-lbl">AI導入で削減できる業務コスト試算</div>
+  <div style="font-size:10px;opacity:.65;letter-spacing:.12em;margin-bottom:6px;">これらがすべて自動化されたら…</div>
+  <div class="roi-big">最大 ${totalH}時間<span style="font-size:18px;font-weight:400;">/月 削減の可能性</span></div>
+  <div class="roi-lbl">${isEst?'ツールの効果レベルから算出した概算です':'診断結果をもとにした削減見込み'}</div>
 </div>
-<div class="roi-grid">
-  <div class="roi-card">
-    <div class="roi-cv">¥${(Math.round(total/1000)*1000).toLocaleString()}</div>
-    <div class="roi-cl">初期投資合計</div>
-  </div>
-  <div class="roi-card">
-    <div class="roi-cv">${roiMonths>0?roiMonths+'ヶ月':'即月'}</div>
-    <div class="roi-cl">投資回収まで</div>
-  </div>
-  <div class="roi-card">
-    <div class="roi-cv" style="color:var(--green)">${roiPct>0?'+'+roiPct+'%':'試算中'}</div>
-    <div class="roi-cl">1年後ROI</div>
-  </div>
+<div style="margin-bottom:16px;">
+  <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:10px;letter-spacing:.08em;">自動化後のビジョン</div>
+  ${items.map(t=>`
+  <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--bdr);">
+    <div style="font-size:18px;flex-shrink:0;">${TI[t.id]||'✨'}</div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:3px;">${t.name}</div>
+      <div style="font-size:11px;color:#065f46;font-weight:600;">✨ ${t.aft}</div>
+    </div>
+  </div>`).join('')}
 </div>
-<div class="roi-chart">
-  <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:10px;">年間コスト比較</div>
-  <div class="roi-bar-row">
-    <div class="roi-bn">現状コスト（推定）</div>
-    <div class="roi-bg"><div class="roi-bf" style="width:100%;background:linear-gradient(90deg,#e11d48,#f43f5e)"></div></div>
-    <div style="font-size:10px;color:var(--sub);width:80px;text-align:right;">¥${(Math.round(annualSave/1000)*1000).toLocaleString()}</div>
-  </div>
-  <div class="roi-bar-row">
-    <div class="roi-bn">ツール導入費用</div>
-    <div class="roi-bg"><div class="roi-bf" style="width:${Math.min(100,invest/annualSave*100)}%"></div></div>
-    <div style="font-size:10px;color:var(--sub);width:80px;text-align:right;">¥${(Math.round(invest/1000)*1000).toLocaleString()}</div>
-  </div>
-</div>
-<div style="margin-top:16px;padding:12px 14px;background:#ecfdf5;border-radius:8px;font-size:11px;color:#065f46;line-height:1.7;">
-  <strong>📌 試算の前提：</strong>業務時間単価 ¥3,000/時間として計算。実際の効果は業種・運用方法により異なります。
+<div style="padding:12px 14px;background:#ecfdf5;border-radius:8px;font-size:11px;color:#065f46;line-height:1.7;">
+  <strong>💡 こんな毎日になります：</strong><br>
+  ルーティン作業から解放された時間を、もっと大切な仕事・判断・創造に使えるようになります。
 </div>`;
   closeModal('qmodal');
   document.getElementById('roimodal').style.display='flex';
@@ -1325,15 +1358,14 @@ function renderW(){
   }
 
   QS.slice(0,done).forEach((q,i)=>{
-    const budQ=QS.find(x=>x.id==='budget');
-    const val=q.id==='budget'?(budQ.opts.find(o=>o.budget===S.ans.budget)?.v||''):(S.ans[q.id]||[]).join('、');
+    const val=(S.ans[q.id]||[]).join('、');
     const d=document.createElement('div');d.className='sdone';d.onclick=()=>{S.step=i;renderW();};
     d.innerHTML=`<div class="sck">✓</div><div class="sdq">${q.q}</div><div class="sda">${val}</div>`;
     area.appendChild(d);
   });
 
   const q=QS[done];
-  const curA=q.id==='budget'?[QS[done].opts.find(o=>o.budget===S.ans.budget)?.v||''].filter(Boolean):(S.ans[q.id]||[]);
+  const curA=(S.ans[q.id]||[]);
   const ad=document.createElement('div');ad.className='sact';
   ad.innerHTML=`
 <div class="sn">STEP ${done+1} / ${total}</div>
@@ -1350,9 +1382,8 @@ function renderW(){
     const btn=document.createElement('button');
     btn.className='opt'+(curA.includes(o.v)?' sel':'');
     btn.dataset.v=o.v;
-    btn.dataset.budget=o.budget!==undefined?String(o.budget):'';
     btn.innerHTML=`<span class="oi">${o.i}</span>${o.v}`;
-    btn.addEventListener('click',()=>pick(q.id, o.v, o.budget!==undefined?o.budget:null, q.multi));
+    btn.addEventListener('click',()=>pick(q.id, o.v, q.multi));
     optsDiv.appendChild(btn);
   });
   area.appendChild(ad);
@@ -1365,20 +1396,19 @@ function renderW(){
   renderT();
 }
 
-function pick(qId,val,budget,multi){
-  if(qId==='budget')S.ans.budget=budget;
-  else if(multi){const a=S.ans[qId]||[];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val);S.ans[qId]=a;}
+function pick(qId,val,multi){
+  if(multi){const a=S.ans[qId]||[];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val);S.ans[qId]=a;}
   else S.ans[qId]=[val];
   document.querySelectorAll('.sact .opt').forEach(btn=>{
     const v=btn.dataset.v;
-    const ca=qId==='budget'?[QS[S.step].opts.find(o=>o.budget===S.ans.budget)?.v||''].filter(Boolean):(S.ans[qId]||[]);
+    const ca=(S.ans[qId]||[]);
     btn.classList.toggle('sel',ca.includes(v));
   });
   renderT();
 }
 function nxt(){if(S.step<QS.length)S.step++;renderW();}
 function prev(){if(S.step>0)S.step--;renderW();}
-function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null,budget:null};renderW();}
+function rst(){S.step=0;S.ans={industry:[],meeting:null,finance:null,hr:null,marketing:null};renderW();}
 
 document.querySelectorAll('.ftab').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');F=btn.dataset.f;renderT();});
@@ -1405,6 +1435,12 @@ const PT=[
    desc:'毎朝自動発行されるオリジナル新聞。興味ある分野に絞ったニュースが毎日届く。自分専用の情報キュレーション。',
    url:'samples/newspaper-mock.html',
    tags:['自動配信','情報収集','毎朝更新'],
+   status:'live'},
+  {id:'p4',name:'車種決定ルート',emoji:'🚗',
+   cats:['finance','hobby'],
+   desc:'フィルターで絞り込み、最大4台を並べて比較。優先度スコア・ローン月額試算・比較セット保存機能つき。車の買い替えをゼロから決められる意思決定ツール。',
+   url:'samples/car-selector.html',
+   tags:['車選び','比較表','ローン試算','意思決定'],
    status:'live'},
 ];
 
